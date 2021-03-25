@@ -1,0 +1,2743 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <!--
+      Microsoft ResX Schema
+
+      Version 2.0
+
+      The primary goals of this format is to allow a simple XML format
+      that is mostly human readable. The generation and parsing of the
+      various data types are done through the TypeConverter classes
+      associated with the data types.
+
+      Example:
+
+      ... ado.net/XML headers & schema ...
+      <resheader name="resmimetype">text/microsoft-resx</resheader>
+      <resheader name="version">2.0</resheader>
+      <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+      <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+      <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+      <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+      <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+          <value>[base64 mime encoded serialized .NET Framework object]</value>
+      </data>
+      <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+          <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+          <comment>This is a comment</comment>
+      </data>
+
+      There are any number of "resheader" rows that contain simple
+      name/value pairs.
+
+      Each data row contains a name, and value. The row also contains a
+      type or mimetype. Type corresponds to a .NET class that support
+      text/value conversion through the TypeConverter architecture.
+      Classes that don't support this are serialized and stored with the
+      mimetype set.
+
+      The mimetype is used for serialized objects, and tells the
+      ResXResourceReader how to depersist the object. This is currently not
+      extensible. For a given mimetype the value must be set accordingly:
+
+      Note - application/x-microsoft.net.object.binary.base64 is the format
+      that the ResXResourceWriter will generate, however the reader can
+      read any of the formats listed below.
+
+      mimetype: application/x-microsoft.net.object.binary.base64
+      value   : The object must be serialized with
+              : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+              : and then encoded with base64 encoding.
+
+      mimetype: application/x-microsoft.net.object.soap.base64
+      value   : The object must be serialized with
+              : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+              : and then encoded with base64 encoding.
+
+      mimetype: application/x-microsoft.net.object.bytearray.base64
+      value   : The object must be serialized into a byte array
+              : using a System.ComponentModel.TypeConverter
+              : and then encoded with base64 encoding.
+      -->
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+        <xsd:element name="root" msdata:IsDataSet="true">
+            <xsd:complexType>
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="metadata">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string" />
+                            <xsd:attribute name="type" type="xsd:string" />
+                            <xsd:attribute name="mimetype" type="xsd:string" />
+                            <xsd:attribute ref="xml:space" />
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="assembly">
+                        <xsd:complexType>
+                            <xsd:attribute name="alias" type="xsd:string" />
+                            <xsd:attribute name="name" type="xsd:string" />
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+                            <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+                            <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+                            <xsd:attribute ref="xml:space" />
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required" />
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
+            </xsd:complexType>
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="InternalErrorExitBuffer" xml:space="preserve">
+    <value>!InternalErrorExitBuffer
+
+CALL ErrorExit
+STOP
+
+
+
+ErrorExit:
+	CALL TurnOffMotors
+	ENABLE LIFTER_AXIS
+	WAIT 1000
+	CALL LowerLifter
+	DISABLE LIFTER_AXIS
+	CALL Unclamp
+	CALL LowerStopper
+	CALL ClearBoardAvailable
+	CALL ClearMachineReady
+	CURRENT_STATUS = ERROR_STATUS
+RET
+
+TurnOffMotors:
+	DISABLEALL
+RET
+
+LowerLifter:
+	Lifter_Lowered = 0
+	ptp/v LIFTER_AXIS,0,10
+	till ^MST(LIFTER_AXIS).#MOVE
+	wait 200
+	Lifter_Lowered = 1
+
+
+RET
+
+Unclamp:
+	ClampPanel_Bit = 0
+RET
+
+LowerStopper:
+	LockStopper_Bit = 0
+	RaiseBoardStopStopper_Bit = 0
+RET
+
+ClearBoardAvailable:
+	DownStreamBoardAvailable_Bit = 0
+RET
+
+ClearMachineReady:
+	SmemaUpStreamMachineReady_Bit = 0
+RET
+
+
+
+</value>
+  </data>
+	<data name="ConveyorHomingBuffer" xml:space="preserve">
+    <value>!Reset CONVEYOR
+
+int Axis
+int Slave_Number
+
+MFLAGS(Axis).#HOME = 0
+
+Axis= 5
+Slave_Number = 2
+
+int EC_Offset
+
+EC_Offset = 350
+
+disable Axis
+till ^MST(Axis).#ENABLED
+wait 200
+
+!*********Unmapping ethercat offset******
+ecunmapin(EC_Offset)
+ecunmapout(EC_Offset)
+!***************************************
+
+!***********Fault Clear***********
+ecout(EC_Offset,ControlWord_Conveyor)
+ControlWord_Conveyor = 0x8F
+wait 500
+ControlWord_Conveyor = 0x0F
+coewrite/1(Slave_Number,0x6060,0,8)
+ecunmapin(EC_Offset)
+ecunmapout(EC_Offset)
+!***********Fault Clear***********
+
+enable Axis
+till MST(Axis).#ENABLED
+wait 100
+
+set FPOS(Axis)= 0
+
+MFLAGS(Axis).#HOME = 1
+
+stop
+</value>
+  </data>
+	<data name="LifterHoming" xml:space="preserve">
+    <value>!Homing LIFTER
+
+int Axis
+int Slave_Number
+
+Axis= 7
+Slave_Number = 4
+
+MFLAGS(Axis).#HOME = 0
+
+!******Motion parameters for homing***********
+VEL(Axis)=10
+ACC(Axis)=1000
+DEC(Axis)=1000
+KDEC(Axis)=10000
+JERK(Axis)=10000
+
+int EC_Offset, V_Limit_Search, V_Index_Search
+
+V_Limit_Search = -5
+V_Index_Search = 2
+EC_Offset = 378
+!*********************************************
+
+disable Axis
+till ^MST(Axis).#ENABLED
+wait 200
+
+!*********Unmapping ethercat offset for control word******
+ecunmapin(EC_Offset)
+ecunmapout(EC_Offset)
+!***************************************
+
+!***********Fault Clear***********
+ecout(EC_Offset,ControlWord_Lifter)
+ControlWord_Lifter = 0x8F
+wait 500
+ControlWord_Lifter = 0x0F
+coewrite/1(Slave_Number,0x6060,0,8)
+ecunmapin(EC_Offset)
+ecunmapout(EC_Offset)
+!***********Fault Clear***********
+
+
+!*****Disable default limit response******
+FDEF(Axis).#LL=0
+FDEF(Axis).#RL=0
+!*****************************************
+
+!********Search for the negetive limit******
+enable Axis
+wait 100
+jog/v Axis , V_Limit_Search
+till SAFINI(Axis).#LL=1
+halt Axis
+till ^MST(Axis).#MOVE
+wait 10
+!*******************************************
+
+int Touch_Probe_Status
+real Index_Position
+
+!********Initiating touch probe******************
+coewrite/2 (Slave_Number,0x60B8,0,0)
+wait 200
+coewrite/2 (Slave_Number,0x60B8,0,21)
+Touch_Probe_Status=coeread/2 (Slave_Number,0x60B9,0)
+!**********************************************************
+
+!*************Looking for index*****************
+jog/v Axis,V_Index_Search
+while (Touch_Probe_Status=65)
+Touch_Probe_Status=coeread/2 (Slave_Number,0x60B9,0)
+if ^(Touch_Probe_Status = 65 )
+end
+end
+kill Axis
+wait 200
+!************************************************
+
+ecin (380, ActualPos_Lifter)
+set FPOS(Axis)=ActualPos_Lifter/1000
+Index_Position=(coeread/4 (Slave_Number,0x60BA,0))/1000
+set FPOS(Axis)=(FPOS(Axis)-Index_Position)
+
+ptp/v Axis,0,10
+till ^MST(Axis).#MOVE
+wait 200
+
+!*****Enable default limit response******
+FDEF(Axis).#LL=1
+FDEF(Axis).#RL=1
+!*****************************************
+
+MFLAGS(Axis).#HOME = 1
+stop</value>
+  </data>
+	<data name="ScanningBuffer" xml:space="preserve">
+    <value>
+real SCAN_POINTS(_NR_SCAN_POINTS_)(3)
+real SCAN_POINTS_VELOCITY(_NR_SCAN_POINTS_)(3)
+real SCAN_POINTS_DELAY(_NR_SCAN_POINTS_)(3)
+
+!wait 10000
+
+int START_SCAN_POINT_INDEX
+int END_SCAN_POINT_INDEX
+
+int IS_NEED_WAIT_CONTINUE_COMMAND
+
+int START_NEXT_STEP_COMMAND
+int WAIT_CONTINUE_COMMAND_MONITOR
+
+int CURRENT_STEP_INDEX
+int IS_ERROR
+
+int MOVE_MOTION_COMPLETE_RECVD
+int MOVE_PSX_ACK_RECVD
+
+MOVE_MOTION_COMPLETE_RECVD = 0
+MOVE_PSX_ACK_RECVD = 0
+
+DO_SCAN:
+!ENABLE ALL
+
+ENABLE (X_AXIS,Y_AXIS,Z_AXIS)
+CURRENT_STEP_INDEX = START_SCAN_POINT_INDEX
+
+
+OUT(_TRIGGER_PORT_TO_CAMERA_START_)._TRIGGER_BIT_TO_CAMERA_START_ = 1
+
+	int ii
+	ii = START_SCAN_POINT_INDEX
+	int lastIndex
+	lastIndex = END_SCAN_POINT_INDEX
+	if(lastIndex &gt; _NR_SCAN_POINTS_)
+		lastIndex = _NR_SCAN_POINTS_
+	end
+
+	while ii &lt;= lastIndex
+		MOVE_MOTION_COMPLETE_RECVD = 0
+		MOVE_PSX_ACK_RECVD = 0
+
+		VEL(X_AXIS)=SCAN_POINTS_VELOCITY(ii)(_X_AXIS_INDEX_)/1000
+		VEL(Y_AXIS)=SCAN_POINTS_VELOCITY(ii)(_Y_AXIS_INDEX_)/1000
+		VEL(Z_AXIS)=SCAN_POINTS_VELOCITY(ii)(_Z_AXIS_INDEX_)/1000
+
+		PTP/em (X_AXIS,Y_AXIS,Z_AXIS), (SCAN_POINTS(ii)(_X_AXIS_INDEX_))/1000, (SCAN_POINTS(ii)(_Y_AXIS_INDEX_))/1000, (SCAN_POINTS(ii)(_Z_AXIS_INDEX_))/1000
+		!!PTP/em (X_AXIS,Y_AXIS), SCAN_POINTS(ii)(_X_AXIS_INDEX_), SCAN_POINTS(ii)(_Y_AXIS_INDEX_)
+		OUT(_TRIGGER_PORT_TO_CAMERA_START_)._TRIGGER_BIT_TO_CAMERA_START_ = 0
+		MOVE_MOTION_COMPLETE_RECVD = 1
+		!WAIT (SCAN_POINTS_DELAY(ii)(_X_AXIS_INDEX_)+SCAN_POINTS_DELAY(ii)(_Y_AXIS_INDEX_)+SCAN_POINTS_DELAY(ii)(_Z_AXIS_INDEX_))
+		TILL MOVE_MOTION_COMPLETE_RECVD = 0
+
+		TILL IN(_TRIGGER_PORT_FROM_CAMERA_CONTINUE_)._TRIGGER_BIT_FROM_CAMERA_CONTINUE_ = 0,_TRIGGER_FROM_CAMERA_TIME_OUT_
+		MOVE_PSX_ACK_RECVD = 1
+		!IN(_TRIGGER_PORT_FROM_CAMERA_CONTINUE_)._TRIGGER_BIT_FROM_CAMERA_CONTINUE_ = 0
+		TILL MOVE_PSX_ACK_RECVD = 0
+		OUT(_TRIGGER_PORT_TO_CAMERA_START_)._TRIGGER_BIT_TO_CAMERA_START_ = 1
+
+		CURRENT_STEP_INDEX=ii
+
+		ii = ii + 1
+		IS_ERROR=MERR(X_AXIS) + MERR(Y_AXIS) + MERR(Z_AXIS)
+		!IS_ERROR=MERR(X_AXIS) + MERR(Y_AXIS)
+
+		if IS_ERROR = 0
+			if IS_NEED_WAIT_CONTINUE_COMMAND = 1
+				START_NEXT_STEP_COMMAND = 0
+				WAIT_CONTINUE_COMMAND_MONITOR = 1
+				TILL START_NEXT_STEP_COMMAND = 1
+				WAIT_CONTINUE_COMMAND_MONITOR = 0
+			end
+		else
+			ii=lastIndex+10
+		end
+	end
+
+
+
+STOP
+
+</value>
+  </data>
+	<data name="ReleasePanelBuffer" xml:space="preserve">
+    <value>!ReleasePanelBuffer
+
+global int ReleasePanelError
+ReleasePanelError = 0
+
+global int ReleasePanelStateError,ReleasePanelFreeError,ReleasePanelExitError,ReleasePanelReleaseError,ReleasePanelSmemaError
+
+ReleasePanelStateError = 1
+ReleasePanelFreeError = 2
+ReleasePanelExitError = 3
+ReleasePanelReleaseError = 4
+ReleasePanelSmemaError = 5
+
+int WaitTimeToExit
+int WaitTimeToRelease
+int WaitTimeToSmema
+int WaitTimeToCutout
+int WaitTimeToBeltVacuum
+
+if CURRENT_STATUS = PRERELEASED_STATUS
+	CURRENT_STATUS = RELEASING_STATUS
+	CALL SetDownstreamBoardAvailable
+	TILL DownstreamMachineReadySignal_Bit = 1
+	CALL ContinueFrom_SetConveyorBeltsDownstreamSpeedToRelease
+else
+	if CURRENT_STATUS = PRERELEASING_STATUS
+		CURRENT_STATUS = RELEASING_STATUS
+		CALL ContinueFrom_SetDownstreamSmemaBoardAvailable
+	else
+		if CURRENT_STATUS = LOADED_STATUS
+			CURRENT_STATUS = RELEASING_STATUS
+			START FreePanelBufferIndex,1
+			TILL ^ PST(FreePanelBufferIndex).#RUN
+			if PanelFreed = 1
+				CALL StartConveyorBeltsDownstreamInternalSpeed
+				CALL ContinueFrom_SetDownstreamSmemaBoardAvailable
+			else
+				ReleasePanelError = ReleasePanelFreeError
+				CALL ErrorExit
+			end
+		else
+			ReleasePanelError = ReleasePanelStateError
+			CALL ErrorExit
+		end
+	end
+end
+
+STOP
+
+SetDownstreamBoardAvailable:
+	DownStreamBoardAvailable_Bit = 1
+RET
+
+ContinueFrom_SetConveyorBeltsDownstreamSpeedToRelease:
+		CALL SetConveyorBeltsDownstreamSpeedToRelease
+RET3:	TILL ExitOpto_Bit = 0,WaitTimeToRelease
+		if ExitOpto_Bit = 0
+			TILL ExitOpto_Bit = 1,WaitTimeToCutout
+			if ExitOpto_Bit = 1
+				GOTO RET3
+			else
+				CALL ClearDownstreamSmemaBoardAvailable
+				TILL DownstreamMachineReadySignal_Bit = 0,WaitTimeToSmema
+				if DownstreamMachineReadySignal_Bit = 1
+					ReleasePanelError = ReleasePanelSmemaError
+					CALL ErrorExit
+				else
+					CALL TurnOffConveyorBelts
+					BeltShroudVaccumON_Bit = 1
+					Wait WaitTimeToBeltVacuum
+					BeltShroudVaccumON_Bit = 0
+					CURRENT_STATUS = RELEASED_STATUS
+				end
+			end
+		else
+			ReleasePanelError = ReleasePanelReleaseError
+			CALL ErrorExit
+		end
+RET
+
+TurnOffConveyorBelts:
+	HALT CONVEYOR_AXIS
+RET
+
+ClearDownstreamSmemaBoardAvailable:
+	DownStreamBoardAvailable_Bit = 0
+RET
+
+SetConveyorBeltsDownstreamSpeedToRelease:
+	JOG/v CONVEYOR_AXIS,ConveyorBeltReleaseSpeed
+RET
+
+ContinueFrom_SetDownstreamSmemaBoardAvailable:
+	CALL SetDownstreamSmemaBoardAvailable
+	TILL ExitOpto_Bit = 1,WaitTimeToExit
+	if ExitOpto_Bit = 1
+		if DownstreamMachineReadySignal_Bit = 1
+			CALL ContinueFrom_SetConveyorBeltsDownstreamSpeedToRelease
+		else
+			CALL StopConveyorBelts
+			TILL DownstreamMachineReadySignal_Bit = 1
+			CALL ContinueFrom_SetConveyorBeltsDownstreamSpeedToRelease
+		end
+	else
+		ReleasePanelError = ReleasePanelExitError
+		CALL ErrorExit
+	end
+RET
+
+
+StopConveyorBelts:
+	HALT CONVEYOR_AXIS
+RET
+
+SetDownstreamSmemaBoardAvailable:
+	DownStreamBoardAvailable_Bit = 1
+RET
+
+
+StartConveyorBeltsDownstreamInternalSpeed:
+	JOG/v CONVEYOR_AXIS,ConveyorBeltReleaseSpeed
+RET
+
+ErrorExit:
+	START InternalErrorExitBufferIndex,1
+	TILL ^ PST(InternalErrorExitBufferIndex).#RUN
+RET
+
+</value>
+  </data>
+	<data name="HomingForIndexExampl" xml:space="preserve">
+    <value>#/ Controller version = 2.00.28.00
+#/ Date = 1/18/2012 9:53 AM
+#/ User remarks =
+#1
+! (M-NT) Homing Program.prg
+! The program executes the following sequence:
+! - Move to the left limit switch
+! - Wait for the left limit release
+! - Move to the encoder index
+! - Set the iAxis origin to the position of index
+! - Move to the origin
+
+INT iAxis               ! Define a global variable named "iAxis"
+iAxis = 0               ! Define the iAxis name (0=X Axis, 1=Y Axis...)
+VEL(iAxis)= 2000        ! Set maximum velocity
+ACC(iAxis)= 100000      ! Set acceleration
+DEC(iAxis)= 100000      ! Set deceleration
+JERK(iAxis)= 20000000   ! Set jerk
+KDEC(iAxis)= 200000     ! Set kill deceleration
+FDEF(iAxis).#LL=0       ! Disable the iAxis left limit default response
+FDEF(iAxis).#RL=0       ! Disable the iAxis right limit default response
+ENABLE (iAxis)          ! Enable the iAxis drive
+
+JOG (iAxis),-           ! Move to the left limit switch
+TILL FAULT(iAxis).#LL   ! Wait for the left limit switch activation
+  ! Can be written also as "TILL ABS(PE(iAxis))&gt;???" when no limit switches exist - only a hard stop.
+JOG (iAxis),+           ! Move to the encoder index
+TILL ^FAULT(iAxis).#LL  ! Wait for the left limit release
+IST(iAxis).#IND=0       ! Reset the index flag - activate index circuit
+TILL IST(iAxis).#IND    ! Wait for crossing the index
+SET FPOS(iAxis)=FPOS(iAxis)-IND(iAxis)  ! Set iAxis origin to the position of index = zero
+PTP (iAxis),0           ! Move to the origin
+FDEF(iAxis).#LL=1       ! Enable the iAxis left limit default response
+FDEF(iAxis).#RL=1       ! Enable the iAxis right limit default response
+STOP
+</value>
+  </data>
+	<data name="AxisHomingBuffer" xml:space="preserve">
+    <value>
+
+int AXIS
+int NEED_FIND_INDEX
+
+FDEF(AXIS).#LL=0       ! Disable the axis left limit default response
+FDEF(AXIS).#RL=0       ! Disable the axis left limit default response
+FDEF(AXIS).#SLL=0
+FDEF(AXIS).#SRL=0
+
+
+
+
+HALT(AXIS)
+MFLAGS(AXIS).#DEFCON = 1 !just in case
+MFLAGS(AXIS).#HOME = 0
+
+_Y_COMMUT_HOOK_
+
+!the motion is
+!	1) in fast
+!	2) out fast
+!	3) in slow
+!	4) out slow
+
+! 1) in fast
+JOG/v(AXIS), -HOME_VEL_IN(AXIS) !Move to the left limit switch
+TILL STOP_CONDITION   ! Wait for the left limit switch activation
+KILL(AXIS)
+TILL ^AST(AXIS).#MOVE
+
+! 2) out fast
+JOG/v(AXIS), HOME_VEL_IN(AXIS) !Move to the left limit switch
+TILL ^STOP_CONDITION   ! Wait for the left limit switch activation
+KILL(AXIS)
+TILL ^AST(AXIS).#MOVE
+
+! 3) in slow
+JOG/v(AXIS), -HOME_VEL_OUT(AXIS) !Move to the left limit switch
+TILL STOP_CONDITION   ! Wait for the left limit switch activation
+KILL(AXIS)
+TILL ^AST(AXIS).#MOVE
+
+! 4) out slow
+JOG/v(AXIS),HOME_VEL_OUT(AXIS) !Move out of the left limit
+if(NEED_FIND_INDEX = 1)
+	IST(AXIS).#IND=0
+	TILL IST(AXIS).#IND
+else
+	TILL ^STOP_CONDITION  !Wait for the left limit release
+end
+
+KILL(AXIS)
+TILL ^AST(AXIS).#MOVE
+
+SET APOS(AXIS) = HOME_OFFSET(AXIS)
+
+MFLAGS(AXIS).#HOME = 1
+
+STOP
+
+RESTORE_SETTINGS:
+	FDEF(AXIS).#LL=1       ! enable the axis left limit default response
+	FDEF(AXIS).#RL=1
+STOP
+
+on ^PST(buffNR).#RUN
+	call RESTORE_SETTINGS
+ret
+
+on MFLAGS(AXIS).#HOME
+	block; if MFLAGS(AXIS).#HOME
+		FDEF(AXIS).#SLL=1
+		FDEF(AXIS).#SRL=1
+	end; end
+ret
+
+on ^MFLAGS(AXIS).#HOME
+	block; if ^MFLAGS(AXIS).#HOME
+		FDEF(AXIS).#SLL=0
+		FDEF(AXIS).#SRL=0
+	end; end
+ret
+</value>
+  </data>
+	<data name="FreePanelBuffer" xml:space="preserve">
+    <value>!FreePanelBuffer
+
+global int FreePanelStateError
+FreePanelStateError = 0
+
+global int FreePanelStopUpError,FreePanelOptoBlockedError,FreePanelToUnliftError,FreePanelToUnclampError
+
+FreePanelStopUpError=1
+FreePanelOptoBlockedError=2
+FreePanelToUnliftError=3
+FreePanelToUnclampError=4
+
+int UnclampLiftDelayTime
+int WaitTimeToUnlift
+int WaitTimeToUnclamp
+
+PanelFreed = -1
+
+if StopperArmDown_Bit = 1
+	CALL TurnOnPanelSensingOptos
+	if (EntryOpto_Bit = 0 &amp; ExitOpto_Bit = 0)
+		CALL UnclampPanel
+		WAIT UnclampLiftDelayTime
+		CALL LowerLifter
+		TILL Lifter_Lowered = 1,WaitTimeToUnlift
+		if Lifter_Lowered &lt;&gt; 1
+			FreePanelStateError = FreePanelToUnliftError
+		else
+			TILL RearClampDown_Bit &amp; FrontClampDown_Bit,WaitTimeToUnclamp
+			if(RearClampDown_Bit &amp; FrontClampDown_Bit)
+				PanelFreed = 1
+			else
+				FreePanelStateError = FreePanelToUnclampError
+			end
+		end
+	else
+		FreePanelStateError = FreePanelOptoBlockedError
+	end
+else
+	FreePanelStateError = FreePanelStopUpError
+end
+
+STOP
+
+
+TurnOnPanelSensingOptos:
+	StopSensor_Bit = 1
+RET
+
+LowerLifter:
+	Lifter_Lowered = 0
+	ptp/v LIFTER_AXIS,0,10
+	till ^MST(LIFTER_AXIS).#MOVE
+	wait 200
+	Lifter_Lowered = 1
+RET
+
+
+UnclampPanel:
+	ClampPanel_Bit = 0
+RET
+
+</value>
+  </data>
+	<data name="XCommutation" xml:space="preserve">
+    <value>! SpiiPlus Commutation Startup Program
+! Date: 15/1/09
+! Program version: 6.5
+! Author: Boaz Kramer
+! Retrieve Commutation Phase at a Detent Point.
+!
+! The following text provides a suggested commutation startup program.
+! It is recommended to use it as a part of the homing process.
+! The user needs to customize the program, add safety checks and  test
+!   before the program can be included in the application.
+!
+! Program clears bits 1,4,5,6 of MFLAGS and sets bit 8 of MFLAGS.
+!
+! Program moves motor away from limit switch, if activated during the process.
+!
+! If the program finishes :
+!   1. Bit 9 of the variable MFLAGS is set (commutation OK).
+!   2. Motor is left disabled (change if necessary)
+!
+! If the program fails:
+!   1. Bit 9 of the variable MFLAGS is cleared (commutation not OK).
+!   2. Motor is left disabled.
+!
+! Program variable SP_Fail_Code is set according to the following:
+! SP_Fail_Code=0 Program finished.
+! SP_Fail_Code=1 Motor error (If occurs, check MERR variable)
+! SP_Fail_Code=4 Unable to get out of the limit switch.
+!
+! The program changes the following motion variables:
+!   VEL, ACC, DEC, KDEC, JERK.
+! Make sure to change them back to your default motion parameters
+!   at the end of the program.
+!
+!*******************************************************************************
+! PROGRAM VARIABLES
+!
+! All the variables used by the program start with "SP_".
+!
+! Input variables:
+
+int  SP_Axis                      ! Axis to be commutated
+real SP_Direction                 ! Search direction
+real SP_Settle_Time               ! Settling time at Detent Points [msec]
+real SP_Search_Vel                ! Search velocity [user-units/sec]
+real SP_Drive                     ! Actuating drive command [% of maximum]
+real SP_Max_Search                ! Maximum search distance [user-units]
+real SP_Init_Offset               ! Initial commutation offset [elec. degrees]
+
+SP_Axis = X_AXIS
+SP_Drive = 10
+SP_Settle_Time = 1000
+SP_Search_Vel  = 8
+SP_Init_Offset = 0
+SP_Direction =  -1
+SP_Max_Search = 64
+
+!   Output varibale:
+int  SP_Fail_Code                 ! Faiure Code of the startup program
+
+! Auxiliary variable:
+real SP_Pitch                     ! Magnetic pitch [180 elec.deg. in user units]
+
+! State Flag
+int  SP_InCommutationStartup      ! Flag indicating commutation startup is in progress
+
+
+SP_Pitch=SLCPRD(SP_Axis)/SLCNP(SP_Axis)*EFAC(SP_Axis)
+
+
+!*******************************************************************************
+! INITIALIZE
+FCLEAR(SP_Axis)
+disable(SP_Axis)
+SETCONF(216,SP_Axis,0)                ! Reset commutation state
+setconf(214,SP_Axis,SP_Init_Offset)   ! Set initial commutation phase
+SP_Fail_Code=0                        ! Reset failure
+SP_Direction=1                        ! Move in positive direction
+SP_InCommutationStartup=1             ! commutation startup in progress
+!*******************************************************************************
+! SET MOTION PROFILE FOR COMMUTATION STARTUP PROCESS
+!
+!   WARNING: The following are the suggested motion parameters for the startup
+!     process. Check that the values are suitable for your application.
+
+ACC(SP_Axis)=SP_Search_Vel*10.; DEC(SP_Axis)=SP_Search_Vel*10.
+KDEC(SP_Axis)=SP_Search_Vel*50.; JERK(SP_Axis)=SP_Search_Vel*100.
+
+!*******************************************************************************
+! STEP 1 - MOVE TO FIRST DETENT POINT
+!
+! WARNING: The motor moves to a detent point by jump.
+!   The jump distance is up to one magnetic pitch in any direction.
+!   The motor jumps to the closest detent point within its motion range.
+!   If necessary modify initial detent point by changing the variable
+!     SP_Init_Offset between 0-360 electrical degrees.
+disp ""
+disp "...Commutation Startup Program Running..."
+enable(SP_Axis)
+while (DCOM(SP_Axis)+0.05 &lt; SP_Drive); DCOM(SP_Axis) = DCOM(SP_Axis) + 0.05; end
+DCOM(SP_Axis) = SP_Drive
+wait SP_Settle_Time
+call Limit_Check
+!*******************************************************************************
+! STEP 2 - MOVE TO SECOND DETENT POINT
+!
+!   The program moves the motor 90 electrical degrees in order to eliminate
+!      a state of unstable equilibrium.
+
+Move_Detent:
+ptp/rv (SP_Axis), SP_Direction*SP_Pitch/2.,SP_Search_Vel
+till ^AST(SP_Axis).#MOVE; wait SP_Settle_Time
+call Limit_Check
+disable(SP_Axis)
+
+MFLAGS(SP_Axis).9=1               ! Set commutation state
+DCOM(SP_Axis) = 0
+
+! If motor is to be left enabled after startup process delete the following line:
+
+Finish:
+SP_InCommutationStartup=0              ! commutation startup is finished
+If SP_Fail_Code=0; disp "   Commutation Startup Finished."
+else disp "   Commutation Startup Failed."; disp "   Failure Code = %i",SP_Fail_Code; end
+STOP
+
+!*******************************************************************************
+!   The following routine move the motor away from limit switches
+
+Limit_Check:
+if MERR(SP_Axis) &amp; MERR(SP_Axis)&lt;&gt;5010 &amp; MERR(SP_Axis)&lt;&gt;5011; SP_Fail_Code=1; DISABLE(SP_Axis); DCOM(SP_Axis)=0; goto Finish; end
+!   if MERR(SP_Axis); SP_Fail_Code=1; DISABLE(SP_Axis); DCOM(SP_Axis)=0; goto Finish; end
+if (FAULT(SP_Axis).#LL)|(FAULT(SP_Axis).#RL)
+   if FAULT(SP_Axis).#LL; SP_Direction=1; else SP_Direction=-1; end
+   ptp/rv (SP_Axis), SP_Direction*SP_Max_Search, SP_Search_Vel
+   till ((^FAULT(SP_Axis).#LL)&amp;(^FAULT(SP_Axis).#RL))|(^AST(SP_Axis).#MOVE)
+   if (FAULT(SP_Axis).#LL)|(FAULT(SP_Axis).#RL); SP_Fail_Code=4; DISABLE(SP_Axis); DCOM(SP_Axis)=0; goto Finish; end
+   kill(SP_Axis);  wait SP_Settle_Time; goto Move_Detent
+end
+ret
+
+ON ((SP_InCommutationStartup = 1) &amp; ((FAULT(SP_Axis)&amp;0x30f80)&gt;0 | (S_FAULT&amp;0x30000000)&gt;0))
+SP_Fail_Code=1; DISABLE(SP_Axis); DCOM(SP_Axis)=0
+CALL Finish
+RET</value>
+  </data>
+	<data name="ReloadPanelBuffer" xml:space="preserve">
+    <value>!ReloadPanelBuffer
+
+global int ReloadPanelError
+ReloadPanelError = 0
+
+global int ReloadPanelStateError,ReloadPanelFreeError,ReloadPanelSearchError,ReloadPanelSlowSensorError
+
+ReloadPanelStateError = 1
+ReloadPanelFreeError = 2
+ReloadPanelSearchError = 3
+ReloadPanelSlowSensorError = 4
+
+int WaitTimeToSearch
+int ReloadDelayTime
+
+if CURRENT_STATUS = LOADED_STATUS								!IF CURRENT STATE = LOADED STATE
+	CURRENT_STATUS = RELOADING_STATUS								!SET STATE = RELOADING STATUS
+	START FreePanelBufferIndex,1									!START FREE PANEL BUFFER
+	TILL ^ PST(FreePanelBufferIndex).#RUN							!UNTIL FREE PANEL COMPLETE
+	if PanelFreed = 1												!IF PANEL IS FREED
+		CALL ContinueReloading											!CALL CONTINUERELOADING
+	else															!ELSE IF PANEL IS NOT FREED
+		ReloadPanelError = ReloadPanelFreeError							!SET RELOAD PANEL FREE ERROR
+		CALL ErrorExit														!CALL ERROR EXIT
+	end
+else															!ELSE IF CURRENT STATE IS NOT = LOADED STATE
+	if CURRENT_STATUS = PRERELEASED_STATUS							!IF CURRENT STATUS = PRERELEASED STATUS
+		CURRENT_STATUS = RELOADING_STATUS								!SET CURRENT STATUS = RELOADING STATUS
+		CALL ContinueReloading											!CALL CONTINUERELOADING
+	else															!ELSE IF CURRENT STATE IS NOT PRELEASED STATUS
+		ReloadPanelError = ReloadPanelStateError						!SET RELOAD PANEL FREE ERROR
+		CALL ErrorExit														!CALL ERROR EXIT
+	end
+
+end
+
+
+STOP
+
+ContinueReloading:
+	CALL StartConveyorBeltsUpstreamInternalSpeed				!START CONVEYOR BELT UPSTREAM
+	TILL EntryOpto_Bit = 1,WaitTimeToSearch						!UNTIL ENTRY OPTO BLOCKED OR TIMEOUT
+	if EntryOpto_Bit = 1										!IF ENTRY OPTO BLOCKED
+		CALL StopConveyorBelts										!STOP CONVEYOR BELT
+		WAIT ReloadDelayTime										!WAIT UNTIL RELOAD DELAY TIME EXPIRES
+		CALL RaiseBoardStop											!RAISE STOPPER THEN LOCK STOPPER
+		CALL StartConveyorBeltsDownstreamInternalSpeed				!START CONVEYOR BELT DOWNSTREAM
+		START InternalMachineLoadBufferIndex,1						!START INTERNAL MACHINE LOAD BUFFER
+		TILL ^ PST(InternalMachineLoadBufferIndex).#RUN				!UNTIL INTERNAL MACHINE LOAD BUFFER END
+	else														!ELSE IF ENTRY OPTO NOT BLOCKED
+		ReloadPanelError = ReloadPanelSearchError					!SET RELOAD PANEL FREE ERROR
+		CALL ErrorExit												!CAL ERROR EXIT
+	end
+RET
+
+
+StartConveyorBeltsDownstreamInternalSpeed:
+	JOG/v CONVEYOR_AXIS,ConveyorBeltLoadingSpeed
+RET
+
+RaiseBoardStop:
+	RaiseBoardStopStopper_Bit = 1
+	IF StopperArmUp_Bit = 1
+		LockStopper_Bit = 1
+	END
+RET
+
+StopConveyorBelts:
+	HALT CONVEYOR_AXIS
+RET
+
+StartConveyorBeltsUpstreamInternalSpeed:
+	JOG/v CONVEYOR_AXIS,-ConveyorBeltLoadingSpeed
+RET
+
+
+ErrorExit:
+	START InternalErrorExitBufferIndex,1
+	TILL ^ PST(InternalErrorExitBufferIndex).#RUN
+RET
+
+</value>
+  </data>
+	<data name="YMasterSlaveCommutationExampl" xml:space="preserve">
+    <value>
+
+
+GLOBAL INT isDone5
+
+isDone5 = 0
+
+GLOBAL INT MASTER_AXIS
+GLOBAL INT SLAVE_AXIS
+
+
+MASTER_AXIS = 0
+SLAVE_AXIS = 1
+SAFETYGROUP(0,1)
+
+SET FPOS(MASTER_AXIS) = 0
+SET FPOS(SLAVE_AXIS) = 1
+
+MFLAGS(MASTER_AXIS).#DEFCON = 1
+
+MFLAGS(SLAVE_AXIS).#DEFCON = 1
+
+
+
+MFLAGS(SLAVE_AXIS).#DEFCON=0   !CONNECT is allowed.
+
+CONNECT RPOS(SLAVE_AXIS)= APOS(SLAVE_AXIS) + FPOS(MASTER_AXIS)
+
+DEPENDS (SLAVE_AXIS),(SLAVE_AXIS,MASTER_AXIS)
+
+ENABLE (MASTER_AXIS,SLAVE_AXIS)
+
+VEL(MASTER_AXIS) = 100
+VEL(SLAVE_AXIS) = 100
+
+ACC(MASTER_AXIS) = 100
+ACC(SLAVE_AXIS) = 100
+
+!MFLAGS(SLAVE_AXIS).#DEFCON = 1
+
+!JOG MASTER_AXIS
+isDone5 = 1
+
+STOP</value>
+  </data>
+	<data name="PreReleasePanelBuffer" xml:space="preserve">
+    <value>!PreReleasePanelBuffer
+
+global int PreReleaseStateError
+PreReleaseStateError = 0
+
+int WaitTimeToExit
+
+
+if CURRENT_STATUS = LOADED_STATUS
+	CURRENT_STATUS = PRERELEASING_STATUS
+	PanelFreed = 0
+	START FreePanelBufferIndex,1
+	TILL ^ PST(FreePanelBufferIndex).#RUN
+
+	if PanelFreed = 0
+		PreReleaseStateError = 2
+		CALL ErrorExit
+		CURRENT_STATUS = ERROR_STATUS
+	else
+	    ReleaseCommandReceived = -1
+		CALL StartConveyorBeltsDownstream
+		TILL ReleaseCommandReceived &lt;&gt; -1,WaitTimeToExit
+		if ReleaseCommandReceived &lt;&gt; 1
+			if ExitOpto_Bit = 1
+				CALL TurnOffConveyor
+				CURRENT_STATUS = PRERELEASED_STATUS
+			else
+				PreReleaseStateError = 3
+				CALL ErrorExit
+				CURRENT_STATUS = ERROR_STATUS
+			end
+		end
+	end
+
+else
+	PreReleaseStateError = 1
+	CALL ErrorExit
+	CURRENT_STATUS = ERROR_STATUS
+end
+
+STOP
+
+StartConveyorBeltsDownstream:
+	JOG/v CONVEYOR_AXIS,ConveyorBeltReleaseSpeed
+RET
+
+TurnOffConveyor:
+	HALT CONVEYOR_AXIS
+RET
+
+ErrorExit:
+	START InternalErrorExitBufferIndex,1
+	TILL ^ PST(InternalErrorExitBufferIndex).#RUN
+RET
+
+</value>
+  </data>
+	<data name="d_buffer" xml:space="preserve">
+    <value>global int I(100),I0,I1,I2,I3,I4,I5,I6,I7,I8,I9,I90,I91,I92,I93,I94,I95,I96,I97,I98,I99
+global real V(100),V0,V1,V2,V3,V4,V5,V6,V7,V8,V9,V90,V91,V92,V93,V94,V95,V96,V97,V98,V99
+
+!homing variables
+global real HOME_VEL_IN(10)
+global real HOME_VEL_OUT(10)
+global real HOME_OFFSET(10)
+
+global int X_AXIS
+global int Y_AXIS
+global int Z_AXIS
+
+global int CONVEYOR_AXIS
+global int CONVEYOR_WIDTH_AXIS
+global int LIFTER_AXIS
+
+global int ECOFFSETM(3)
+
+global int SAFE_STATUS = 0,LOADED_STATUS = 1,ERROR_STATUS = 2
+global int PRERELEASED_STATUS = 3 ,RELEASED_STATUS = 4,CHANGING_WIDTH_STATUS = 5
+global int SEARGING_STATUS = 6,WIDTH_HOMING_STATUS = 7,LOADING_STATUS = 8,RELOADING_STATUS = 9
+global int PRERELEASING_STATUS = 10, RELEASING_STATUS = 11,BYPASS_STATUS = 12
+
+global int ControlWord_Conveyor, ControlWord_Width, ControlWord_Lifter
+global real ActualPos_Conveyor, ActualPos_Width, ActualPos_Lifter
+
+global int CURRENT_STATUS
+
+global int WidthLifterConveyor_Reset_Completed
+global int ReleaseCommandReceived
+global int Lifter_Lowered
+!///////////////////////////////////////////////////////////
+!Inputs
+
+
+global int EntryOpto_Bit ! done I 2.0
+global int ExitOpto_Bit ! done I 2.1
+global int LifterLowered_Bit ! done I 2.2
+global int BoardStopPanelAlignSensor_Bit ! done I 2.3
+global int StopperArmUp_Bit ! done I 2.4
+global int StopperArmDown_Bit ! done I 2.5
+global int StopperLocked_Bit
+global int StopperUnlocked_Bit
+global int RearClampUp_Bit ! done I 2.6
+global int FrontClampUp_Bit ! done I 3.0
+
+global int RearClampDown_Bit ! done I 2.7
+global int FrontClampDown_Bit ! done I 3.1
+global int WidthHomeSwitch_Bit ! not used in PBA modification
+global int WidthLimitSwitch_Bit ! not used in PBA modification
+global int UpstreamBoardAvailableSignal_Bit ! done I 1.4
+global int UpstreamFailedBoardAvailableSignal_Bit ! done I 1.5
+global int DownstreamMachineReadySignal_Bit ! done I 1.6
+global int Reset_Button_Bit! done I 0.3
+global int BypassNormal_Bit ! done I 0.7
+global int EstopAndDoorOpenFeedback_Bit ! done I 0.2
+
+global int Width_RL !done I 3.2
+global int Width_LL !done I 3.3
+
+
+!///////////////////////////////////////////////////////////
+!Outputs
+
+global int ClampPanel_Bit ! done 0 2.0
+global int LockStopper_Bit ! done 0 2.1
+global int RaiseBoardStopStopper_Bit ! done 0 2.2
+global int BeltShroudVaccumON_Bit ! done 0 2.3
+global int TowerLightRed_Bit ! done 0 0.4
+global int TowerLightYellow_Bit ! done 0 0.5
+global int TowerLightGreen_Bit ! done 0 0.6
+global int TowerLightBlue_Bit ! done 0 0.7
+global int TowerLightBuzzer_Bit ! done 0 1.0
+global int StopSensor_Bit ! done 0 1.2
+global int SmemaUpStreamMachineReady_Bit ! done 0 1.3
+global int DownStreamBoardAvailable_Bit ! done 0 1.4
+global int SmemaDownStreamFailedBoardAvailable_Bit ! done 0 1.5
+
+
+!//////////////////////////////////////////////////////////
+
+
+global int PanelFreed
+
+global int PanelSecured
+
+global int ConveyorWidthHomed
+
+global int InternalMachineLoadBufferIndex
+global int InternalErrorExitBufferIndex
+global int FreePanelBufferIndex
+global int SecurePanelBufferIndex
+global int BypassModeBufferIndex
+global int HomeConveyorBufferIndex
+
+global real ConveyorBeltAcquireSpeed
+global real ConveyorBeltLoadingSpeed
+global real ConveyorBeltSlowSpeed
+global real ConveyorBeltReleaseSpeed
+global real ConveyorBeltUnloadingSpeed
+
+!//////////////////////////////////////////////////////////
+
+global int Gantry_Mode
+
+
+STOP
+</value>
+  </data>
+	<data name="InternalMachineLoadBuffer" xml:space="preserve">
+    <value>!InternalMachineLoadBuffer
+
+global int LoadPanelStateError
+LoadPanelStateError = 0
+
+global int LoadPanelAlignBeforeSlowSensorError,LoadPanelSecureError,LoadPanelAlignError,LoadPanelSlowSensorError
+LoadPanelSlowSensorError = 4
+LoadPanelAlignBeforeSlowSensorError = 5
+LoadPanelAlignError = 6
+LoadPanelSecureError = 7
+
+int WaitTimeToSlow
+int WaitTimeToAlign
+int SlowDelayTime
+real SlowPosition
+real absPosTemp
+
+TILL EntryOpto_Bit = 0
+if EntryOpto_Bit = 0
+absPosTemp = RPOS(CONVEYOR_AXIS)
+!SlowPosition = absPosTemp + (550 - 420)
+END
+TILL RPOS(CONVEYOR_AXIS) &gt; SlowPosition
+!TILL RPOS(CONVEYOR_AXIS) &lt; SlowPosition
+
+IF BoardStopPanelAlignSensor_Bit = 1
+	LoadPanelStateError = LoadPanelAlignBeforeSlowSensorError
+END
+
+CALL AdjustConveyorBeltSpeedToSlow
+TILL BoardStopPanelAlignSensor_Bit,WaitTimeToAlign
+if BoardStopPanelAlignSensor_Bit = 1
+	WAIT WaitTimeToAlign
+	CALL TurnOffConveyorBeltMotor
+	START SecurePanelBufferIndex,1
+	TILL ^ PST(SecurePanelBufferIndex).#RUN
+	if PanelSecured = 1
+		CURRENT_STATUS = LOADED_STATUS
+	else
+		LoadPanelStateError = LoadPanelSecureError
+		CALL ErrorExit
+	end
+else
+	LoadPanelStateError = LoadPanelAlignError
+	CALL ErrorExit
+end
+
+STOP
+
+
+
+ErrorExit:
+	START InternalErrorExitBufferIndex,1
+	TILL ^ PST(InternalErrorExitBufferIndex).#RUN
+RET
+
+AdjustConveyorBeltSpeedToSlow:
+	JOG/v CONVEYOR_AXIS,ConveyorBeltSlowSpeed
+RET
+
+TurnOffConveyorBeltMotor:
+	HALT CONVEYOR_AXIS
+RET
+</value>
+  </data>
+	<data name="EmergencyStopBuffer" xml:space="preserve">
+    <value>!EmergencyStopBuffer
+
+!AUTOEXEC:
+
+CALL EnableOptos
+CALL Unclamp
+CALL LowerStopper
+CALL ClearBoardAvailable
+CALL ClearMachineReady
+CURRENT_STATUS = SAFE_STATUS
+
+STOP
+
+EnableOptos:
+	StopSensor_Bit = 1
+RET
+
+Unclamp:
+	ClampPanel_Bit = 0
+RET
+
+LowerStopper:
+	LockStopper_Bit = 0
+	RaiseBoardStopStopper_Bit = 0
+RET
+
+ClearBoardAvailable:
+	DownStreamBoardAvailable_Bit = 0
+RET
+
+ClearMachineReady:
+	SmemaUpStreamMachineReady_Bit = 0
+RET
+
+</value>
+  </data>
+	<data name="WidthHoming" xml:space="preserve">
+    <value>!Homing WIDTH
+
+int Axis
+int Slave_Number
+
+Axis= 6
+Slave_Number = 3
+
+ConveyorWidthHomed = 0
+MFLAGS(Axis).#HOME = 0
+
+!******Motion parameters for homing***********
+VEL(Axis)=10
+ACC(Axis)=1000
+DEC(Axis)=1000
+KDEC(Axis)=10000
+JERK(Axis)=10000
+
+int EC_Offset, V_Limit_Search, V_Index_Search
+
+V_Limit_Search = -5
+V_Index_Search = 2
+EC_Offset = 364
+!*********************************************
+
+disable Axis
+till ^MST(Axis).#ENABLED
+wait 200
+
+!*********Unmapping ethercat offset for control word******
+ecunmapin(EC_Offset)
+ecunmapout(EC_Offset)
+!***************************************
+
+!***********Fault Clear***********
+ecout(EC_Offset,ControlWord_Width)
+ControlWord_Width = 0x8F
+wait 500
+ControlWord_Width = 0x0F
+coewrite/1(Slave_Number,0x6060,0,8)
+ecunmapin(EC_Offset)
+ecunmapout(EC_Offset)
+!***********Fault Clear***********
+
+
+!*****Disable default limit response******
+FDEF(Axis).#LL=0
+FDEF(Axis).#RL=0
+!*****************************************
+
+!********Search for the negetive limit******
+enable Axis
+wait 100
+jog/v Axis , V_Limit_Search
+till SAFINI(Axis).#LL=1
+halt Axis
+till ^MST(Axis).#MOVE
+wait 10
+!*******************************************
+
+int Touch_Probe_Status
+real Index_Position
+
+!********Initiating touch probe******************
+coewrite/2 (Slave_Number,0x60B8,0,0)
+wait 200
+coewrite/2 (Slave_Number,0x60B8,0,21)
+Touch_Probe_Status=coeread/2 (Slave_Number,0x60B9,0)
+!**********************************************************
+
+!*************Looking for index*****************
+jog/v Axis,V_Index_Search
+while (Touch_Probe_Status=65)
+Touch_Probe_Status=coeread/2 (Slave_Number,0x60B9,0)
+if ^(Touch_Probe_Status = 65 )
+end
+end
+kill Axis
+wait 200
+!************************************************
+
+ecin (366, ActualPos_Width)
+set FPOS(Axis)=ActualPos_Width/1000
+Index_Position=(coeread/4 (Slave_Number,0x60BA,0))/1000
+set FPOS(Axis)=(FPOS(Axis)-Index_Position)
+
+ptp/v Axis,0,10
+till ^MST(Axis).#MOVE
+wait 200
+
+!*****Enable default limit response******
+FDEF(Axis).#LL=1
+FDEF(Axis).#RL=1
+!*****************************************
+
+
+MFLAGS(Axis).#HOME = 1
+ConveyorWidthHomed = 1
+stop</value>
+  </data>
+	<data name="ChangeWidthBuffer" xml:space="preserve">
+    <value>!ChangeWidthBuffer
+
+global int ChangeWidthStateError
+ChangeWidthStateError = 0
+
+global  int ChangeWidthToError,ChangeWidthToHomedError,ChangeWidthToNotAtSpecifiedError
+
+
+
+ChangeWidthToError=1
+ChangeWidthToHomedError=2
+ChangeWidthToNotAtSpecifiedError=3
+
+int ConveyorSpecifiedWidth
+int WaitTimeToSearch
+
+
+CALL PanelSearch
+if CURRENT_STATUS = RELEASED_STATUS
+	if ConveyorWidthHomed = 1
+		CURRENT_STATUS = CHANGING_WIDTH_STATUS
+		CALL MoveConveyorToSpecifiedWidth
+		if (^AST(CONVEYOR_WIDTH_AXIS).#MOVE)
+			CURRENT_STATUS = RELEASED_STATUS
+		else
+			ChangeWidthStateError = ChangeWidthToNotAtSpecifiedError
+			CALL ErrorExit
+		end
+	else
+		ChangeWidthStateError = ChangeWidthToHomedError
+		CALL ErrorExit
+	end
+else
+	ChangeWidthStateError = ChangeWidthToError
+	CALL ErrorExit
+end
+
+STOP
+
+PanelSearch:
+	CALL StartConveyorBeltsDownstreamInternalSpeed
+	TILL (EntryOpto_Bit = 1 | ExitOpto_Bit = 1 | BoardStopPanelAlignSensor_Bit = 1) ,WaitTimeToSearch
+	if ^(EntryOpto_Bit = 1 | ExitOpto_Bit = 1 | BoardStopPanelAlignSensor_Bit = 1)
+		CURRENT_STATUS = RELEASED_STATUS
+	end
+RET
+
+StartConveyorBeltsDownstreamInternalSpeed:
+	JOG/v CONVEYOR_AXIS,ConveyorBeltAcquireSpeed
+RET
+
+ErrorExit:
+	START InternalErrorExitBufferIndex,1
+	TILL ^ PST(InternalErrorExitBufferIndex).#RUN
+RET
+
+MoveConveyorToSpecifiedWidth:
+	PTP/em CONVEYOR_WIDTH_AXIS, ConveyorSpecifiedWidth
+	till ^MST(CONVEYOR_WIDTH_AXIS).#MOVE
+	wait 200
+RET
+
+</value>
+  </data>
+	<data name="PowerOnRecoverFromEmergencyStopBuffer" xml:space="preserve">
+    <value>!PowerOnRecoverFromEmergencyStopBuffer
+
+
+int WaitTimeToSearch
+int WaitTimeToExit
+int WaitTimeToReset
+
+int WidthToW_0_Position
+
+CALL InitializeACS
+TILL Reset_Button_Bit = 1 ,WaitTimeToReset
+START 7, 1
+TILL ^ PST(7).#RUN
+WAIT 5000
+CALL InitializeMotors
+
+CALL EnableOptos
+!CALL ErrorExit
+
+if EstopAndDoorOpenFeedback_Bit = 0																				!IF SAFETY NOT ENGAGED
+	CURRENT_STATUS = ERROR_STATUS																					!SET CURRENT STATUS = ERROR STATUS
+	CALL ErrorExit																									!CALL ERROR EXIT
+
+else
+	EMO_RECOVERY:
+		CURRENT_STATUS = SAFE_STATUS																					!SET CURRENT STATUS = SAFE STATUS
+	if BypassNormal_Bit = 1																						!IF BYPASS MODE = 1
+		START BypassModeBufferIndex,1																				!START BYPASS MODE BUFFER
+	else																										!ELSE
+		CURRENT_STATUS = SEARGING_STATUS																			!SET CURRENT STATUS = SEARCHING STATUS
+		if (EntryOpto_Bit = 1 &amp; ExitOpto_Bit = 1 &amp; BoardStopPanelAlignSensor_Bit = 1)								!IF ANY SENSORS BLOCKED
+			CALL ContinueFindPanel																						!START FIND PANEL BUFFER
+		else																										!ELSE
+			CALL StartConveyorBeltsDownstream																			!START CONVEYOR BELT DOWNSTREAM
+			TILL (EntryOpto_Bit = 1 | ExitOpto_Bit = 1 | BoardStopPanelAlignSensor_Bit = 1) ,WaitTimeToSearch			!TIL ANY SENSORS BLOCKED OR TIMEOUT
+			if (EntryOpto_Bit = 1 | ExitOpto_Bit = 1 | BoardStopPanelAlignSensor_Bit = 1)									!IF ANY SENSORS BLOCKED
+				CALL ContinueFindPanel																							!START FIND PANEL BUFFER
+			else																											!ELSE IF TIMEOUT
+				CALL StopConveyorBelts																						!STOP CONVEYOR BELT
+				CALL HomeWidth																								!START WIDTH HOMING BUFFER
+			end
+		end
+	end
+end
+
+STOP
+
+
+ContinueFindPanel:
+	if ConveyorWidthHomed = 1																						!IF WIDTH HOMED
+	    TILL ExitOpto_Bit = 1,WaitTimeToExit																			!WAIT UNTIL EXIT OPTO BLOCKED OR TIMEOUT
+		if ExitOpto_Bit = 1																								!IF EXIT OPTO BLOCKED
+			CALL StopConveyorBelts																							!STOP CONVEYOR BELT
+			CURRENT_STATUS = PRERELEASED_STATUS																				!SET STATUS = PRERELEASED STATE
+		else																											!ELSE IF TIMEOUT
+			CALL ErrorExit																								!CALL ERROR EXIT
+			CURRENT_STATUS = ERROR_STATUS																				!SET STATUS = ERROR STATUS
+		end
+	else																											!IF WIDTH NOT HOMED
+		CALL ErrorExit																									!CALL ERROR EXIT
+		CURRENT_STATUS = ERROR_STATUS																					!SET CURRENT STATUS = ERROR STATUS
+	end
+
+RET
+
+HomeWidth:
+
+	if ConveyorWidthHomed = 1																						!IF WIDTH HOMED
+		CURRENT_STATUS = RELEASED_STATUS																				!SET CURRENT STATUS = RELEASED
+	else																											!ELSE
+		CURRENT_STATUS = WIDTH_HOMING_STATUS																			!SET CURRENT STATUS = WIDTH HOMING STATUS
+		CALL HomeConveyorWidthMotor																						!CALL CONVEYOR WIDTH HOMING BUFFER
+		if ConveyorWidthHomed = 1																						!IF CONVEYOR WIDTH HOMED
+			CALL AdjustConveyorWidthToW_0																					!CALL CHANGE WIDTH BUFFER
+			CURRENT_STATUS = RELEASED_STATUS																				!SET CURRENT STATUS = RELEASED STATUS
+		else																											!ELSE
+			CALL ErrorExit																									!CALL ERROR EXIT
+			CURRENT_STATUS = ERROR_STATUS																					!SET CURRENT STATUS = ERROR STATUS
+		end
+	end
+RET
+
+HomeConveyorWidthMotor:
+	START 5, 1																											!START WIDTH HOMING BUFFER
+	TILL ^ PST(5).#RUN																									!UNTIL BUFFER ENDS
+RET
+
+AdjustConveyorWidthToW_0:																							!START CHANGE WIDTH BUFFER
+	PTP/em CONVEYOR_WIDTH_AXIS, WidthToW_0_Position																	!UNTIL WIDTH AT POSITION
+RET
+
+
+
+ErrorExit:
+	START InternalErrorExitBufferIndex,1
+	TILL ^ PST(InternalErrorExitBufferIndex).#RUN
+RET
+
+InitializeACS:
+!User to reset EMO to clear STO
+RET
+
+InitializeMotors:
+ENABLE X_AXIS
+ENABLE Y_AXIS
+ENABLE Z_AXIS
+
+ENABLE CONVEYOR_AXIS
+ENABLE CONVEYOR_WIDTH_AXIS
+ENABLE LIFTER_AXIS
+
+till MST(X_AXIS).#ENABLED
+till MST(Y_AXIS).#ENABLED
+till MST(Z_AXIS).#ENABLED
+
+till MST(CONVEYOR_AXIS).#ENABLED
+till MST(CONVEYOR_WIDTH_AXIS).#ENABLED
+till MST(LIFTER_AXIS).#ENABLED
+
+RET
+
+EnableOptos:
+	StopSensor_Bit = 1
+RET
+
+StartConveyorBeltsDownstream:
+	JOG/v CONVEYOR_AXIS,ConveyorBeltLoadingSpeed
+
+RET
+
+StopConveyorBelts:
+	HALT CONVEYOR_AXIS
+RET
+</value>
+  </data>
+	<data name="Gantry_X_Homing" xml:space="preserve">
+    <value>!Gantry X Homing
+
+int Axis_X1, Axis_X2
+
+Axis_X1 = 0
+Axis_X2 = 2
+
+MFLAGS(Axis_X1).#HOME = 0
+
+disable Axis_X1
+disable Axis_X2
+
+global real CnvT(5), CnvA(5)
+disable Axis_X1, Axis_X2
+
+CALL INPUTSHAPING_OFF
+CALL NONGANTRY_SETTINGS
+CALL NONGANTRY_PARAMTERS
+Gantry_Mode = 0
+CALL X1_IND_HOMING
+CALL X2_IND_HOMING
+CALL GANTRY_PARAMETERS
+Gantry_Mode = 1
+
+set FPOS(2) = 0
+!set FPOS(2) = FPOS(2) - 1.2336
+CALL GANTRY_SETTINGS
+
+enable Axis_X1
+ptp/ve Axis_X1,0,100
+
+CALL INPUTSHAPING_ON
+
+MFLAGS(Axis_X1).#HOME = 1
+
+stop
+
+
+!FUNCTIONS
+
+INPUTSHAPING_OFF:
+	InShapeOFF 0
+RET
+
+INPUTSHAPING_ON:
+!-------------Regular convalution-----------
+	CnvT(0)= 0*0.5;		CnvA(0)=30391/1e5
+	CnvT(1)= 40*0.5;	CnvA(1)= 1893/1e5
+	CnvT(2)= 51*0.5;	CnvA(2)= 8109/1e5
+	CnvT(3)= 60*0.5;	CnvA(3)= 40192/1e5
+	CnvT(4)= 116*0.5;	CnvA(4)= 19415/1e5
+!-------------------------------------------
+	InShapeOn 0, CnvT, CnvA
+RET
+
+NONGANTRY_SETTINGS:
+	MFLAGS(Axis_X1).#HOME = 0
+
+	FMASK(Axis_X1).#RL = 1
+	FMASK(Axis_X1).#LL = 1
+	FMASK(Axis_X2).#RL = 1
+	FMASK(Axis_X2).#LL = 1
+
+	FDEF(Axis_X1).#RL = 0
+	FDEF(Axis_X1).#LL = 0
+	FDEF(Axis_X2).#RL = 0
+	FDEF(Axis_X2).#LL = 0
+RET
+
+GANTRY_SETTINGS:
+	FMASK(Axis_X1).#RL = 1
+	FMASK(Axis_X1).#LL = 1
+	FMASK(Axis_X2).#RL = 0
+	FMASK(Axis_X2).#LL = 0
+
+	FDEF(Axis_X1).#RL = 1
+	FDEF(Axis_X1).#LL = 1
+
+	VEL (Axis_X1) = 100
+	ACC (Axis_X1) = 6000
+	DEC (Axis_X1) = 6000
+	KDEC(Axis_X1) = 10000
+	JERK (Axis_X1) = 500000
+RET
+
+NONGANTRY_PARAMTERS:
+	SLSBORD(Axis_X1) =0
+
+	ACC (Axis_X1) = 1000
+	DEC (Axis_X1) = 1000
+	KDEC(Axis_X1) = 1000
+	JERK (Axis_X1) = 10000
+
+	ACC (Axis_X2) = 1000
+	DEC (Axis_X2) = 1000
+	KDEC(Axis_X2) = 1000
+	JERK (Axis_X2) = 10000
+
+!X1
+
+	MFLAGS(Axis_X1).25 = 0
+
+	SLPKP(Axis_X1) = 23.5
+	SLVKP(Axis_X1) = 243
+	SLVKI(Axis_X1) = 154
+	SLVSOF(Axis_X1) = 150
+	SLVSOFD(Axis_X1) = 0.707
+
+	MFLAGS(Axis_X1).14 = 0
+	MFLAGS(Axis_X1).16 = 0
+	MFLAGS(Axis_X1).26 = 0
+
+	XCURV(Axis_X1) = 20
+	XCURI(Axis_X1) = 15
+
+	SLAFF(Axis_X1) = 366.01
+
+!X2
+	MFLAGS(Axis_X2).25 = 0
+	MFLAGS(Axis_X2).1 = 0
+
+	SLPKP(Axis_X2) = 23.5
+	SLVKP(Axis_X2) = 243
+	SLVKI(Axis_X2) = 154
+	SLVSOF(Axis_X2) = 150
+	SLVSOFD(Axis_X2) = 0.707
+
+	MFLAGS(Axis_X2).14 = 0
+	MFLAGS(Axis_X2).16 = 0
+	MFLAGS(Axis_X2).26 = 0
+
+	XCURV(Axis_X2) = 20
+	XCURI(Axis_X2) = 15
+
+	SLAFF(Axis_X2) = 366.01
+wait 100
+RET
+
+GANTRY_PARAMETERS:
+	MFLAGS(Axis_X1).25 = 1
+	MFLAGS(Axis_X2).25 = 1
+
+	MFLAGS(Axis_X2).1 = 1
+
+!X1
+
+	SLPKP(Axis_X1) = 250
+	SLVKP(Axis_X1) = 250
+	SLVKI(Axis_X1) = 0
+	SLVSOF(Axis_X1) = 2500
+	SLVSOFD(Axis_X1) = 0.8
+	MFLAGS(Axis_X1).15 = 1
+
+!Velocity notch filter
+	MFLAGS(Axis_X1).14 = 1
+	SLVNATT(Axis_X1) = 0.5
+	SLVNFRQ(Axis_X1) = 17
+	SLVNWID(Axis_X1) = 10
+
+!Velocity BQF 1
+	MFLAGS(Axis_X1).16 = 0
+	SLVB0DD(Axis_X1) = 0.8
+	SLVB0DF(Axis_X1) = 180
+	SLVB0ND(Axis_X1) = 0.3
+	SLVB0NF(Axis_X1) = 300
+
+!Velocity BQF 2
+	MFLAGS(Axis_X1).26 = 0
+	SLVB1DD(Axis_X1) = 0.4
+	SLVB1DF(Axis_X1) = 60
+	SLVB1ND(Axis_X1) = 0.6
+	SLVB1NF(Axis_X1) = 60
+
+!Current limit restoration
+	XCURV(Axis_X1) = 100
+	XCURI(Axis_X1) = 50
+
+!X2
+
+	SLPKP(Axis_X2) = 30
+	SLVKP(Axis_X2) = 100
+	SLVKI(Axis_X2) = 100
+	SLVSOF(Axis_X2) = 200
+	SLVSOFD(Axis_X2) = 0.707
+
+	MFLAGS(Axis_X2).14 = 0
+	MFLAGS(Axis_X2).16 = 0
+	MFLAGS(Axis_X2).26 = 0
+
+
+	XCURV(Axis_X2) = 20
+	XCURI(Axis_X2) = 10
+
+	SLAFF(0) = 170
+	SLSBORD(Axis_X1) = 1
+RET
+
+X1_IND_HOMING:
+	enable Axis_X1
+
+	jog/v Axis_X1, -50
+	till FAULT(Axis_X1).#LL = 1
+	kill Axis_X1
+	TILL ^AST(Axis_X1).#MOVE
+
+	IST(Axis_X1).#IND=0
+	jog/v Axis_X1,20
+	wait 100
+	TILL IST(Axis_X1).#IND
+	kill Axis_X1
+	TILL ^AST(Axis_X1).#MOVE
+	wait 100
+	SET FPOS(Axis_X1)=FPOS(Axis_X1)-IND(Axis_X1)
+
+	disable Axis_X1
+RET
+
+X2_IND_HOMING:
+	enable Axis_X2
+
+	jog/v Axis_X2, -50
+	till FAULT(Axis_X2).#LL = 1
+	kill Axis_X2
+	TILL ^AST(Axis_X2).#MOVE
+
+	IST(Axis_X2).#IND=0
+	jog/v Axis_X2,20
+	wait 100
+	TILL IST(Axis_X2).#IND
+	kill Axis_X2
+	TILL ^AST(Axis_X2).#MOVE
+	wait 100
+	SET FPOS(Axis_X2)=FPOS(Axis_X2)-IND(Axis_X2) + 85
+
+	disable Axis_X2
+RET
+
+
+</value>
+  </data>
+	<data name="YCommutation" xml:space="preserve">
+    <value>! SpiiPlus Commutation Startup Program
+! Date: 15/1/09
+! Program version: 6.5
+! Author: Boaz Kramer
+! Retrieve Commutation Phase at a Detent Point.
+!
+! The following text provides a suggested commutation startup program.
+! It is recommended to use it as a part of the homing process.
+! The user needs to customize the program, add safety checks and  test
+!   before the program can be included in the application.
+!
+! Program clears bits 1,4,5,6 of MFLAGS and sets bit 8 of MFLAGS.
+!
+! Program moves motor away from limit switch, if activated during the process.
+!
+! If the program finishes :
+!   1. Bit 9 of the variable MFLAGS is set (commutation OK).
+!   2. Motor is left disabled (change if necessary)
+!
+! If the program fails:
+!   1. Bit 9 of the variable MFLAGS is cleared (commutation not OK).
+!   2. Motor is left disabled.
+!
+! Program variable SP_Fail_Code is set according to the following:
+! SP_Fail_Code=0 Program finished.
+! SP_Fail_Code=1 Motor error (If occurs, check MERR variable)
+! SP_Fail_Code=4 Unable to get out of the limit switch.
+!
+! The program changes the following motion variables:
+!   VEL, ACC, DEC, KDEC, JERK.
+! Make sure to change them back to your default motion parameters
+!   at the end of the program.
+!
+!*******************************************************************************
+! PROGRAM VARIABLES
+!
+! All the variables used by the program start with "SP_".
+!
+! Input variables:
+
+int  SP_Axis                      ! Axis to be commutated
+real SP_Direction                 ! Search direction
+real SP_Settle_Time               ! Settling time at Detent Points [msec]
+real SP_Search_Vel                ! Search velocity [user-units/sec]
+real SP_Drive                     ! Actuating drive command [% of maximum]
+real SP_Max_Search                ! Maximum search distance [user-units]
+real SP_Init_Offset               ! Initial commutation offset [elec. degrees]
+
+SP_Axis = Y_AXIS
+SP_Drive = 15
+SP_Settle_Time = 1000
+SP_Search_Vel  = 10
+SP_Init_Offset = 0
+SP_Direction =  -1
+SP_Max_Search = 320
+
+!   Output varibale:
+int  SP_Fail_Code                 ! Faiure Code of the startup program
+
+! Auxiliary variable:
+real SP_Pitch                     ! Magnetic pitch [180 elec.deg. in user units]
+
+! State Flag
+int  SP_InCommutationStartup      ! Flag indicating commutation startup is in progress
+
+
+SP_Pitch=SLCPRD(SP_Axis)/SLCNP(SP_Axis)*EFAC(SP_Axis)
+
+
+!*******************************************************************************
+! INITIALIZE
+FCLEAR(SP_Axis)
+disable(SP_Axis)
+SETCONF(216,SP_Axis,0)                ! Reset commutation state
+setconf(214,SP_Axis,SP_Init_Offset)   ! Set initial commutation phase
+SP_Fail_Code=0                        ! Reset failure
+SP_Direction=1                        ! Move in positive direction
+SP_InCommutationStartup=1             ! commutation startup in progress
+!*******************************************************************************
+! SET MOTION PROFILE FOR COMMUTATION STARTUP PROCESS
+!
+!   WARNING: The following are the suggested motion parameters for the startup
+!     process. Check that the values are suitable for your application.
+
+ACC(SP_Axis)=SP_Search_Vel*10.; DEC(SP_Axis)=SP_Search_Vel*10.
+KDEC(SP_Axis)=SP_Search_Vel*50.; JERK(SP_Axis)=SP_Search_Vel*100.
+
+!*******************************************************************************
+! STEP 1 - MOVE TO FIRST DETENT POINT
+!
+! WARNING: The motor moves to a detent point by jump.
+!   The jump distance is up to one magnetic pitch in any direction.
+!   The motor jumps to the closest detent point within its motion range.
+!   If necessary modify initial detent point by changing the variable
+!     SP_Init_Offset between 0-360 electrical degrees.
+disp ""
+disp "...Commutation Startup Program Running..."
+enable(SP_Axis)
+while (DCOM(SP_Axis)+0.05 &lt; SP_Drive); DCOM(SP_Axis) = DCOM(SP_Axis) + 0.05; end
+DCOM(SP_Axis) = SP_Drive
+wait SP_Settle_Time
+call Limit_Check
+!*******************************************************************************
+! STEP 2 - MOVE TO SECOND DETENT POINT
+!
+!   The program moves the motor 90 electrical degrees in order to eliminate
+!      a state of unstable equilibrium.
+
+Move_Detent:
+ptp/rv (SP_Axis), SP_Direction*SP_Pitch/2.,SP_Search_Vel
+till ^AST(SP_Axis).#MOVE; wait SP_Settle_Time
+call Limit_Check
+disable(SP_Axis)
+
+MFLAGS(SP_Axis).9=1               ! Set commutation state
+DCOM(SP_Axis) = 0
+
+! If motor is to be left enabled after startup process delete the following line:
+
+Finish:
+SP_InCommutationStartup=0              ! commutation startup is finished
+If SP_Fail_Code=0; disp "   Commutation Startup Finished."
+else disp "   Commutation Startup Failed."; disp "   Failure Code = %i",SP_Fail_Code; end
+STOP
+
+!*******************************************************************************
+!   The following routine move the motor away from limit switches
+
+Limit_Check:
+if MERR(SP_Axis) &amp; MERR(SP_Axis)&lt;&gt;5010 &amp; MERR(SP_Axis)&lt;&gt;5011; SP_Fail_Code=1; DISABLE(SP_Axis); DCOM(SP_Axis)=0; goto Finish; end
+!   if MERR(SP_Axis); SP_Fail_Code=1; DISABLE(SP_Axis); DCOM(SP_Axis)=0; goto Finish; end
+if (FAULT(SP_Axis).#LL)|(FAULT(SP_Axis).#RL)
+   if FAULT(SP_Axis).#LL; SP_Direction=1; else SP_Direction=-1; end
+   ptp/rv (SP_Axis), SP_Direction*SP_Max_Search, SP_Search_Vel
+   till ((^FAULT(SP_Axis).#LL)&amp;(^FAULT(SP_Axis).#RL))|(^AST(SP_Axis).#MOVE)
+   if (FAULT(SP_Axis).#LL)|(FAULT(SP_Axis).#RL); SP_Fail_Code=4; DISABLE(SP_Axis); DCOM(SP_Axis)=0; goto Finish; end
+   kill(SP_Axis);  wait SP_Settle_Time; goto Move_Detent
+end
+ret
+
+ON ((SP_InCommutationStartup = 1) &amp; ((FAULT(SP_Axis)&amp;0x30f80)&gt;0 | (S_FAULT&amp;0x30000000)&gt;0))
+SP_Fail_Code=1; DISABLE(SP_Axis); DCOM(SP_Axis)=0
+CALL Finish
+RET</value>
+  </data>
+	<data name="Gantry_Y_Homing" xml:space="preserve">
+    <value>!Gantry Y homing
+
+int Axis_Y
+
+global real CnvTY(5), CnvAY(5) !CnvB(612)!CnvB(420)
+
+Axis_Y = 1
+
+MFLAGS(Axis_Y).#HOME = 0
+
+disable Axis_Y
+
+CALL RESTORE_TUNING_PARA
+CALL INPUTSHAPING_OFF
+enable Axis_Y
+
+FMASK(Axis_Y).#RL = 1
+FMASK(Axis_Y).#LL = 1
+
+FDEF(Axis_Y).#RL = 0
+FDEF(Axis_Y).#LL = 0
+
+SLSBORD(Axis_Y) =0
+
+ACC (Axis_Y) = 1000
+DEC (Axis_Y) = 1000
+KDEC(Axis_Y) = 1000
+JERK (Axis_Y) = 10000
+
+enable Axis_Y
+
+XCURV(Axis_Y) = 10
+XCURI(Axis_Y) = 5
+
+jog/v Axis_Y, -50
+till FAULT(Axis_Y).#LL = 1
+kill Axis_Y
+TILL ^AST(Axis_Y).#MOVE
+wait 100
+
+IST(Axis_Y).#IND=0
+jog/v Axis_Y,20
+wait 100
+TILL IST(Axis_Y).#IND
+kill Axis_Y
+TILL ^AST(Axis_Y).#MOVE
+wait 100
+SET FPOS(Axis_Y)=FPOS(Axis_Y)-IND(Axis_Y)
+
+XCURV(Axis_Y) = 100
+XCURI(Axis_Y) = 50
+
+SLSBORD(Axis_Y) =1
+
+ptp/ve Axis_Y,0,100
+
+FMASK(Axis_Y).#RL = 1
+FMASK(Axis_Y).#LL = 1
+
+FDEF(Axis_Y).#RL = 1
+FDEF(Axis_Y).#LL = 1
+
+VEL (Axis_Y) = 100
+ACC (Axis_Y) = 6000
+DEC (Axis_Y) = 6000
+KDEC(Axis_Y) = 10000
+JERK (Axis_Y) = 500000
+
+CALL INPUTSHAPING_ON
+MFLAGS(Axis_Y).#HOME = 1
+
+STOP
+
+INPUTSHAPING_ON:
+!-------------Regular convalution-----------
+!-------------------------------------------
+CnvTY(0)= 0*0.5;      CnvAY(0)= 27207/1e5
+CnvTY(1)= 46*0.5;     CnvAY(1)= 9289/1e5
+CnvTY(2)= 58*0.5;     CnvAY(2)= 41417/1e5
+CnvTY(3)= 111*0.5;    CnvAY(3)= 3093/1e5
+CnvTY(4)= 112*0.5;    CnvAY(4)= 18994/1e5
+!--------------------------------------------
+
+InShapeOn 1, CnvTY, CnvAY
+!InShapeOn x, CnvT1, CnvA1
+RET
+
+INPUTSHAPING_OFF:
+InShapeOFF 1
+RET
+
+RESTORE_TUNING_PARA:
+	SLPKP(Axis_Y) = 230
+	SLVKP(Axis_Y) = 230
+	SLVKI(Axis_Y) = 0
+	SLVSOF(Axis_Y) = 1600
+	SLVSOFD(Axis_Y) = 0.3
+	MFLAGS(Axis_Y).15 = 1
+
+!Velocity notch filter
+	MFLAGS(Axis_Y).14 = 1
+	SLVNATT(Axis_Y) = 4
+	SLVNFRQ(Axis_Y) = 200
+	SLVNWID(Axis_Y) = 50
+
+!Velocity BQF 1
+	MFLAGS(Axis_Y).16 = 1
+	SLVB0DD(Axis_Y) = 0.8
+	SLVB0DF(Axis_Y) = 700
+	SLVB0ND(Axis_Y) = 0.3
+	SLVB0NF(Axis_Y) = 700
+
+!Velocity BQF 2
+	MFLAGS(Axis_Y).26 = 0
+	SLVB1DD(Axis_Y) = 0.3
+	SLVB1DF(Axis_Y) = 70
+	SLVB1ND(Axis_Y) = 0.5
+	SLVB1NF(Axis_Y) = 70
+
+!Current limit restoration
+	XCURV(Axis_Y) = 100
+	XCURI(Axis_Y) = 50
+
+	SLAFF(Axis_Y) = 460
+	SLSBORD(Axis_Y) = 1
+RET
+
+stop
+</value>
+  </data>
+	<data name="LoadPanelBuffer" xml:space="preserve">
+    <value>!LoadPanelBuffer
+
+global int LoadPanelStateError
+LoadPanelStateError = 0
+
+global int LoadPanelNotReleasedError,LoadPanelSensorBlockedError,LoadPanelAcqError,LoadPanelSlowSensorError
+
+LoadPanelNotReleasedError = 1
+LoadPanelSensorBlockedError = 2
+LoadPanelAcqError = 3
+LoadPanelSlowSensorError = 4
+
+int WaitTimeToAcq
+
+if CURRENT_STATUS = RELEASED_STATUS
+	if (EntryOpto_Bit = 0 &amp; ExitOpto_Bit = 0 &amp; BoardStopPanelAlignSensor_Bit = 0)
+		CURRENT_STATUS = LOADING_STATUS
+		CALL UpstreamSmemaMachineReady
+		TILL UpstreamBoardAvailableSignal_Bit = 1
+		CALL RaiseBoardStop
+		CALL StartConveyorBeltsDownstream
+		TILL EntryOpto_Bit = 1,WaitTimeToAcq
+		if EntryOpto_Bit = 1
+IfSlowDown:	TILL EntryOpto_Bit = 0,WaitTimeToAcq
+				if EntryOpto_Bit = 0 !Unblocked
+				CALL ClearUpstreamSmemaMachineReady
+				CALL AdjustConveyorBeltSpeedToInternalSpeed
+				START InternalMachineLoadBufferIndex,1
+				TILL ^ PST(InternalMachineLoadBufferIndex).#RUN
+			else
+			   GOTO IfSlowDown
+			end
+		else
+			LoadPanelStateError = LoadPanelAcqError
+			CALL ErrorExit
+		end
+	else
+		LoadPanelStateError = LoadPanelSensorBlockedError
+		CALL ErrorExit
+	end
+else
+	LoadPanelStateError = LoadPanelNotReleasedError
+	CALL ErrorExit
+end
+
+STOP
+
+ErrorExit:
+	START InternalErrorExitBufferIndex,1
+	TILL ^ PST(InternalErrorExitBufferIndex).#RUN
+RET
+
+UpstreamSmemaMachineReady:
+	SmemaUpStreamMachineReady_Bit = 1
+RET
+
+ClearUpstreamSmemaMachineReady:
+	SmemaUpStreamMachineReady_Bit = 0
+RET
+
+
+RaiseBoardStop:
+	RaiseBoardStopStopper_Bit = 1
+RET
+
+StartConveyorBeltsDownstream:
+	JOG/v CONVEYOR_AXIS,ConveyorBeltAcquireSpeed
+RET
+
+AdjustConveyorBeltSpeedToInternalSpeed:
+	JOG/v CONVEYOR_AXIS,ConveyorBeltLoadingSpeed
+RET
+</value>
+  </data>
+	<data name="Gantry_Z_Homing" xml:space="preserve">
+    <value>!Gantry Z Homing
+
+!Gantry Y homing
+
+int Axis_Z
+
+Axis_Z = 4
+
+FMASK(Axis_Z).#RL = 1
+FMASK(Axis_Z).#LL = 1
+
+FDEF(Axis_Z).#RL = 0
+FDEF(Axis_Z).#LL = 0
+
+MFLAGS(Axis_Z).#HOME = 0
+
+ACC (Axis_Z) = 2000
+DEC (Axis_Z) = 2000
+KDEC(Axis_Z) = 3000
+JERK (Axis_Z) = 10000
+
+enable Axis_Z
+
+XCURV(Axis_Z) = 20
+XCURI(Axis_Z) = 10
+
+jog/v Axis_Z, -1
+till FAULT(Axis_Z).#LL = 1
+
+disable Axis_Z
+
+wait 1000
+
+enable Axis_Z
+
+IST(Axis_Z).#IND=0
+jog/v Axis_Z,5
+wait 100
+TILL IST(Axis_Z).#IND
+kill Axis_Z
+wait 100
+
+SET FPOS(Axis_Z)=FPOS(Axis_Z)-IND(Axis_Z)
+
+XCURV(Axis_Z) = 45
+XCURI(Axis_Z) = 16
+
+ptp/ve Axis_Z,0,100
+
+ACC (Axis_Z) = 5000
+DEC (Axis_Z) = 5000
+KDEC(Axis_Z) = 10000
+JERK (Axis_Z) = 50000
+
+FMASK(Axis_Z).#RL = 1
+FMASK(Axis_Z).#LL = 1
+
+FDEF(Axis_Z).#RL = 1
+FDEF(Axis_Z).#LL = 1
+
+MFLAGS(Axis_Z).#HOME = 1
+
+stop
+</value>
+  </data>
+	<data name="WidthLifterConveyorReset" xml:space="preserve">
+    <value>WidthLifterConveyor_Reset_Completed = 0
+
+
+
+
+
+!Reset Width
+
+int Axis
+int Slave_Number
+
+Axis= 6
+Slave_Number = 3
+
+int EC_Offset
+
+EC_Offset = 364
+
+disable Axis
+till ^MST(Axis).#ENABLED
+wait 200
+
+!*********Unmapping ethercat offset******
+ecunmapin(EC_Offset)
+ecunmapout(EC_Offset)
+!***************************************
+
+!***********Fault Clear***********
+ecout(EC_Offset,ControlWord_Conveyor)
+ControlWord_Conveyor = 0x8F
+wait 500
+ControlWord_Conveyor = 0x0F
+coewrite/1(Slave_Number,0x6060,0,8)
+ecunmapin(EC_Offset)
+ecunmapout(EC_Offset)
+!***********Fault Clear***********
+
+enable Axis
+till MST(Axis).#ENABLED
+wait 100
+
+
+
+
+
+
+!Reset Lifter
+
+
+Axis= 7
+Slave_Number = 4
+
+
+EC_Offset = 378
+
+disable Axis
+till ^MST(Axis).#ENABLED
+wait 200
+
+!*********Unmapping ethercat offset******
+ecunmapin(EC_Offset)
+ecunmapout(EC_Offset)
+!***************************************
+
+!***********Fault Clear***********
+ecout(EC_Offset,ControlWord_Conveyor)
+ControlWord_Conveyor = 0x8F
+wait 500
+ControlWord_Conveyor = 0x0F
+coewrite/1(Slave_Number,0x6060,0,8)
+ecunmapin(EC_Offset)
+ecunmapout(EC_Offset)
+!***********Fault Clear***********
+
+enable Axis
+till MST(Axis).#ENABLED
+wait 100
+
+
+
+
+
+
+!Reset Conveyor
+
+
+Axis= 5
+Slave_Number = 2
+
+
+EC_Offset = 350
+
+disable Axis
+till ^MST(Axis).#ENABLED
+wait 200
+
+!*********Unmapping ethercat offset******
+ecunmapin(EC_Offset)
+ecunmapout(EC_Offset)
+!***************************************
+
+!***********Fault Clear***********
+ecout(EC_Offset,ControlWord_Conveyor)
+ControlWord_Conveyor = 0x8F
+wait 500
+ControlWord_Conveyor = 0x0F
+coewrite/1(Slave_Number,0x6060,0,8)
+ecunmapin(EC_Offset)
+ecunmapout(EC_Offset)
+!***********Fault Clear***********
+
+enable Axis
+till MST(Axis).#ENABLED
+wait 100
+
+set FPOS(Axis)= 0
+
+
+
+
+WidthLifterConveyor_Reset_Completed = 1
+
+stop</value>
+  </data>
+	<data name="BypassModeBuffer" xml:space="preserve">
+    <value>!BypassModeBuffer
+
+int BypassModeError
+BypassModeError = 0
+
+int BypassSensorBlockedError,BypassAcqError,BypassExitError,BypassReleaseError,BypassSmemaError
+
+BypassSensorBlockedError = 1
+BypassAcqError = 2
+BypassExitError = 3
+BypassReleaseError = 4
+BypassSmemaError = 5
+
+int WaitTimeToSearch
+int WaitTimeToAcq
+int WaitTimeToCutout
+int WaitTimeToExit
+int WaitTimeToRelease
+int WaitTimeToSmema
+
+if 	(EntryOpto_Bit = 1 &amp; ExitOpto_Bit = 1 &amp; BoardStopPanelAlignSensor_Bit = 1)								!IF ALL SENSORS BLOCKED
+	BypassModeError = BypassSensorBlockedError																	!ERROR
+	CALL TurnOnAllLightAndSoundTheHom																			!ALARM AND LIGHT
+	CALL ErrorExit																								!ERROR EXIT
+else																										!ELSE IF NOT ALL SENSORS BLOCKED
+	CURRENT_STATUS = BYPASS_STATUS																				!SET CURRENT STATUS = BYPASS STATUS
+	if ExitOpto_Bit = 1																							!IF EXIT OPTO BLOCKED
+		CALL SetDownstreamSmemaBoardAvailable																		!SET DOWNSTREAM SMEMA AVAILABLE
+		!TILL DownstreamMachineReadySignal_Bit = 1																	!UNTIL DOWNSTREAM MACHINE SMEMA READY
+		CALL ContinueFrom_SetConveyorBeltsDownstreamSpeedToRelease													!CONTINUE CONVEYOR BELT DOWNSTREAM SPEED TO RELEASE
+	else																										!ELSE IF EXIT OPTO NOT BLOCKED
+		CALL StartConveyorBeltsDownstreamInternalSpeed																!START CONVEYOR BELT DOWNSTEAM INTERNAL SPEED
+		TILL EntryOpto_Bit = 0 | ExitOpto_Bit = 0 | BoardStopPanelAlignSensor_Bit = 0,WaitTimeToSearch				!UNTIL ANY OPTO BLOCKED OR TIMEOUT
+		if (EntryOpto_Bit = 1 | ExitOpto_Bit = 1 | BoardStopPanelAlignSensor_Bit = 1) 								!IF ANY SENSOR BLOCKED
+			CALL SendPanel																								!CALL SEND PANEL
+		else																										!ELSE IF NOT ANY SENSOR BLOCKED
+			CALL GetPanel																								!CALL GET PANEL
+		end
+	end
+end
+
+STOP
+
+
+GetPanel:
+	CALL SetUpstreamSmemaMachineReady																		!SET UPSTREAM MACHINE SMEMA READY
+	TILL UpstreamBoardAvailableSignal_Bit = 1																!UNTIL UPSTREAM BOARD AVAILABLE SIGNAL
+	CALL StartConveyorBeltsDownstreamAndS_Acq																!CALL START CONVEYOR BELT DOWNSTREAM
+	TILL EntryOpto_Bit = 1,WaitTimeToAcq																	!UNTIL ENTRY OPTO BLOCKED OR TIMEOUT
+	if EntryOpto_Bit = 1																					!IF ENTRY OPTO BLOCKED
+RET1:	TILL EntryOpto_Bit = 0																					!WAIT UNTIL ENTRY OPTO UNBLOCKED
+		TILL EntryOpto_Bit = 1,WaitTimeToCutout																	!WAIT UNTIL ENTRY SENSOR BLOCKED OR TIMEOUT
+		if EntryOpto_Bit = 1																					!IF ENTRY OPTO BLOCKED
+			GOTO RET1																								!GO BACK AND WAIT UNTIL ENTRY OPTO UNBLOCKED
+		else																									!ELSE IF ENTRY OPTO IS UNBLOCKED
+			CALL ClearUpstreamSmemaMachineReady																		!CLEAR UPSTREAM SMEMA MACHINE READY
+			CALL AdjustConveyorBeltSpeedToInternalSpeed																!ADJUST CONVEYOR SPEED TO INTERNAL SPEED
+			CALL SendPanel																							!CALL SEND PANEL
+		end
+	else																									!ELSE IF ENTRY OPTO UNBLOCKED
+		BypassModeError = BypassAcqError																		!SET ERROR
+		CALL ErrorExit																							!CALL ERROR EXIT
+		CALL TurnOnAllLightAndSoundTheHom																		!ALARM
+	end
+RET
+
+
+StartConveyorBeltsDownstreamAndS_Acq:
+	JOG/v CONVEYOR_AXIS,ConveyorBeltAcquireSpeed
+RET
+AdjustConveyorBeltSpeedToInternalSpeed:
+	JOG/v CONVEYOR_AXIS,ConveyorBeltLoadingSpeed
+RET
+ClearUpstreamSmemaMachineReady:
+	SmemaUpStreamMachineReady_Bit = 0
+RET
+
+SetUpstreamSmemaMachineReady:
+	SmemaUpStreamMachineReady_Bit = 1
+RET
+
+SendPanel:
+	CALL SetDownstreamSmemaBoardAvailable																	!SET DOWNSTREAM SMEMA BOARD AVAILABLE
+	TILL ExitOpto_Bit = 1,WaitTimeToExit																	!UNTIL EXIT OPTO BLOCKED OR TIMEOUT
+	if ExitOpto_Bit = 1																						!IF EXIT OPTO BLOCKED
+		if DownstreamMachineReadySignal_Bit = 1																	!IF DOWNSTREAM MACHINE READY
+			CALL ContinueFrom_SetConveyorBeltsDownstreamSpeedToRelease												!CALL CONVEYOR BELT DOWNSTREAM SPEED TO RELEASE
+		else																									!ELSE IF DOWNSTREAM MACHINE NOT READY
+			CALL StopConveyorBelts																					!STOP CONVEYOR BELT
+			TILL DownstreamMachineReadySignal_Bit = 1																!WAIT UNTIL DOWNSTREAM MACHINE READ SIGNAL
+			CALL ContinueFrom_SetConveyorBeltsDownstreamSpeedToRelease												!CALL CONVEYOR BELT DOWNSTREAM SPEED TO RELEASE
+		end
+	else																									!IF EXIT OPTO NOT BLOCKED
+		BypassModeError = BypassExitError																		!SET BYPASS ERROR
+		CALL ErrorExit																							!CALL ERROR EXIT
+		CALL TurnOnAllLightAndSoundTheHom																		!SET ALARM
+	end
+RET
+
+StopConveyorBelts:
+	HALT CONVEYOR_AXIS
+RET
+StartConveyorBeltsDownstreamInternalSpeed:
+	JOG/v CONVEYOR_AXIS,ConveyorBeltLoadingSpeed
+RET
+
+ContinueFrom_SetConveyorBeltsDownstreamSpeedToRelease:
+		CALL SetConveyorBeltsDownstreamSpeedToRelease														!SET CONVEYOR BELT SPEED TO RELEASE
+RET2:	TILL ExitOpto_Bit = 0,WaitTimeToRelease																!WAIT UNTIL EXIT OPTO UNBLOCKED OR TIMEOUT
+		if ExitOpto_Bit = 0																					!IF EXIT OPTO UNBLOCKED
+			TILL ExitOpto_Bit = 1,WaitTimeToCutout																!WAIT UNTIL EXIT OPTO BLOCKED OR TIMEOUT
+			if ExitOpto_Bit = 1																					!IF EXIT OPTO BLOCKED
+				GOTO RET2																							!GO BACK TO RET2
+			else																								!ELSE IF EXIT OPTO NOT BLOCKED
+				CALL ClearDownstreamSmemaBoardAvailable																!CLEAR DOWNSTREAM SMEMA BOARD AVAILABLE
+				TILL DownstreamMachineReadySignal_Bit = 0,WaitTimeToSmema											!WAIT UNTIL DOWNSTREAM MACHINE NOT READY SIGNAL OR TIMEOUT
+				if (DownstreamMachineReadySignal_Bit = 1)															!IF DOWNSTREAM MACHINE SMEMA READY SIGNAL
+					BypassModeError = BypassSmemaError																	!SET BYPASS ERROR
+					CALL ErrorExit																						!CALL ERROR EXIT
+					CALL TurnOnAllLightAndSoundTheHom																	!SET ALARM
+				else																								!ELSE IF DOWNSTREAM NOT READY SIGNAL
+					CALL TurnOffConveyorBelts																			!TURN OFF CONVEYOR BELT
+					CALL GetPanel																						!CALL GET PANEL
+				end
+			end
+
+
+		else
+			BypassModeError = BypassReleaseError
+			CALL ErrorExit
+			CALL TurnOnAllLightAndSoundTheHom
+		end
+RET
+
+TurnOffConveyorBelts:
+	HALT CONVEYOR_AXIS
+RET
+ClearDownstreamSmemaBoardAvailable:
+	DownStreamBoardAvailable_Bit = 0
+RET
+SetConveyorBeltsDownstreamSpeedToRelease:
+	JOG/v CONVEYOR_AXIS,ConveyorBeltReleaseSpeed
+RET
+
+SetDownstreamSmemaBoardAvailable:
+	DownStreamBoardAvailable_Bit = 1
+RET
+TurnOnAllLightAndSoundTheHom:
+
+	TowerLightRed_Bit = 1
+	TowerLightYellow_Bit = 1
+	TowerLightGreen_Bit = 1
+	TowerLightBlue_Bit = 1
+	TowerLightBuzzer_Bit = 1
+
+RET
+
+ErrorExit:
+	START InternalErrorExitBufferIndex,1
+	TILL ^ PST(InternalErrorExitBufferIndex).#RUN
+RET
+</value>
+  </data>
+	<data name="SecurePanelBuffer" xml:space="preserve">
+    <value>!SecurePanelBuffer
+
+int ClampLiftDelayTime
+int WaitTimeToPanelClamped
+int WaitTimeToLifted
+int WaitTimeToUnstop
+real Stage_1_LifterOnlyDistance
+real Stage_2_LifterAndClamperDistance
+
+global int SecurePanelStateError
+SecurePanelStateError = 0
+
+global int SecurePanelToClampedError,SecurePanelToLiftedError,SecurePanelToUnstopError
+
+SecurePanelToClampedError=1
+SecurePanelToLiftedError=2
+SecurePanelToUnstopError=3
+
+int StageLifterResult
+real absPosTemp
+
+PanelSecured = 0
+
+CALL TurnOffPanelSensingOptos
+StageLifterResult = 0
+CALL Stage_1_LifterOnly
+if StageLifterResult = 1
+	StageLifterResult = 0
+	CALL Stage_2_LifterAndClamper
+	if StageLifterResult = 1
+		CALL LowerPanelStopper
+		TILL (StopperUnlocked_Bit &amp; StopperArmDown_Bit),WaitTimeToUnstop
+		if (StopperUnlocked_Bit &amp; StopperArmDown_Bit)
+			PanelSecured = 1
+		else
+			SecurePanelStateError = SecurePanelToUnstopError
+		end
+	end
+end
+STOP
+
+TurnOffPanelSensingOptos:
+	StopSensor_Bit = 0
+RET
+
+
+Stage_1_LifterOnly:
+	absPosTemp = RPOS(LIFTER_AXIS)+Stage_1_LifterOnlyDistance
+	ptp (LIFTER_AXIS), absPosTemp
+	till ^AST(LIFTER_AXIS).#MOVE,WaitTimeToLifted
+
+	if (AST(LIFTER_AXIS).#MOVE)
+		HALT LIFTER_AXIS
+		SecurePanelStateError = SecurePanelToLiftedError
+		StageLifterResult = 0
+
+
+	else
+		StageLifterResult = 1
+	end
+RET
+
+
+Stage_2_LifterAndClamper:
+	CALL ClampPanel
+	absPosTemp = RPOS(LIFTER_AXIS)+Stage_2_LifterAndClamperDistance
+	ptp (LIFTER_AXIS), absPosTemp
+	TILL (RearClampUp_Bit &amp; FrontClampUp_Bit),ClampLiftDelayTime
+	if (RearClampUp_Bit &amp; FrontClampUp_Bit)
+		till ^AST(LIFTER_AXIS).#MOVE,WaitTimeToLifted
+
+		if (AST(LIFTER_AXIS).#MOVE)
+			HALT LIFTER_AXIS
+			SecurePanelStateError = SecurePanelToLiftedError
+			StageLifterResult = 0
+
+		else
+			StageLifterResult = 1
+		end
+	else
+		HALT LIFTER_AXIS
+		SecurePanelStateError = SecurePanelToClampedError
+		StageLifterResult = 0
+	end
+
+RET
+
+ClampPanel:
+	ClampPanel_Bit = 1
+RET
+
+LowerPanelStopper:
+	LockStopper_Bit = 0
+	RaiseBoardStopStopper_Bit = 0
+RET
+
+</value>
+  </data>
+	<data name="IO_InitializationBuffer" xml:space="preserve">
+    <value>AUTOEXEC:
+
+
+!ECUNMAPOUT(396)
+!ECUNMAPOUT(397)
+!ECUNMAPOUT(398)
+!ECUNMAPOUT(399)
+!
+!ECUNMAPIN(396)
+!ECUNMAPIN(397)
+!ECUNMAPIN(398)
+!ECUNMAPIN(399)
+
+!Outputs
+
+!ECOUT/b(3168,)!0 0.0
+!ECOUT/b(3169,)!0 0.1
+!ECOUT/b(3170,)!0 0.2
+!ECOUT/b(3171,)!0 0.3
+ECOUT/b(3172,TowerLightRed_Bit)!0 0.4
+ECOUT/b(3173,TowerLightYellow_Bit)!0 0.5
+ECOUT/b(3174,TowerLightGreen_Bit)!0 0.6
+ECOUT/b(3175,TowerLightBlue_Bit)!0 0.7
+
+ECOUT/b(3176,TowerLightBuzzer_Bit)!0 1.0
+!ECOUT/b(3177,)!0 1.1
+ECOUT/b(3178,StopSensor_Bit)!0 1.2
+ECOUT/b(3179,SmemaUpStreamMachineReady_Bit)!0 1.3
+ECOUT/b(3180,DownStreamBoardAvailable_Bit)!0 1.4
+ECOUT/b(3181,SmemaDownStreamFailedBoardAvailable_Bit)!0 1.5
+!ECOUT/b(3182,)!0 1.6
+!ECOUT/b(3183,)!0 1.7
+
+ECOUT/b(3184,ClampPanel_Bit)!0 2.0
+ECOUT/b(3185,LockStopper_Bit)!0 2.1
+ECOUT/b(3186,RaiseBoardStopStopper_Bit)!0 2.2
+ECOUT/b(3187,BeltShroudVaccumON_Bit)!0 2.3
+!ECOUT/b(3188,)!0 2.4
+!ECOUT/b(3189,)!0 2.5
+!ECOUT/b(3190,)!0 2.6
+!ECOUT/b(3191,)!0 2.7
+
+!ECOUT/b(3192,)!0 3.0
+!ECOUT/b(3193,)!0 3.1
+!ECOUT/b(3194,)!0 3.2
+!ECOUT/b(3195,)!0 3.3
+!ECOUT/b(3196,)!0 3.4
+!ECOUT/b(3197,)!0 3.5
+!ECOUT/b(3198,)!0 3.6
+!ECOUT/b(3299,)!0 3.7
+
+
+
+
+!Inputs
+
+!ECIN/b(3168,)!I 0.0
+!ECIN/b(3169,)!I 0.1
+ECIN/b(3170,EstopAndDoorOpenFeedback_Bit)!I 0.2
+!ECIN/b(3172,)!I 0.4
+!ECIN/b(3173,)!I 0.5
+!ECIN/b(3174,)!I 0.6
+
+ECIN/b(3171,Reset_Button_Bit)!I 0.3
+ECIN/b(3175,BypassNormal_Bit)!I 0.7
+
+!ECIN/b(3176,)!I 1.0
+!ECIN/b(3177,)!I 1.1
+!ECIN/b(3178,)!I 1.2
+!ECIN/b(3179,)!I 1.3
+ECIN/b(3180,UpstreamBoardAvailableSignal_Bit)!I 1.4
+ECIN/b(3181,UpstreamFailedBoardAvailableSignal_Bit)!I 1.5
+ECIN/b(3182,DownstreamMachineReadySignal_Bit)!I 1.6
+!ECIN/b(3183,)!I 1.7
+
+ECIN/b(3184,EntryOpto_Bit)!I 2.0
+ECIN/b(3185,ExitOpto_Bit)!I 2.1
+ECIN/b(3186,LifterLowered_Bit)!I 2.2
+ECIN/b(3187,BoardStopPanelAlignSensor_Bit)!I 2.3
+ECIN/b(3188,StopperArmUp_Bit)!I 2.4
+ECIN/b(3189,StopperArmDown_Bit)!I 2.5
+ECIN/b(3190,RearClampUp_Bit)!I 2.6
+ECIN/b(3191,RearClampDown_Bit)!I 2.7
+
+ECIN/b(3192,FrontClampUp_Bit)!I 3.0
+ECIN/b(3193,FrontClampDown_Bit)!I 3.1
+ECIN/b(3194,Width_LL)!I 3.2
+ECIN/b(3195,Width_RL)!I 3.3
+ECIN/b(3196,StopperLocked_Bit)!I 3.4
+ECIN/b(3197,StopperUnlocked_Bit)!I 3.5
+!ECIN/b(3198,)!I 3.6
+!ECIN/b(3299,)!I 3.7
+
+stop
+
+
+! Width left limit
+ON Width_LL = 0
+SAFINI(6).#LL=0
+RET
+ON Width_LL = 1
+SAFINI(6).#LL= 1
+RET
+
+! Width right limit
+ON Width_RL = 0
+SAFINI(6).#RL=0
+RET
+ON Width_RL = 1
+SAFINI(6).#RL= 1
+RET
+
+! Lifter left limit
+ON LifterLowered_Bit = 0
+SAFINI(7).#LL=0
+RET
+ON LifterLowered_Bit = 1
+SAFINI(7).#LL= 1
+RET</value>
+  </data>
+</root>

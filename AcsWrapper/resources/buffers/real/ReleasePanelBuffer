@@ -1,0 +1,123 @@
+!ReleasePanelBuffer
+
+global int ReleasePanelError
+ReleasePanelError = 0
+
+global int ReleasePanelStateError,ReleasePanelFreeError,ReleasePanelExitError,ReleasePanelReleaseError,ReleasePanelSmemaError
+
+ReleasePanelStateError = 1
+ReleasePanelFreeError = 2
+ReleasePanelExitError = 3
+ReleasePanelReleaseError = 4
+ReleasePanelSmemaError = 5
+
+int WaitTimeToExit
+int WaitTimeToRelease
+int WaitTimeToSmema
+int WaitTimeToCutout
+
+if CURRENT_STATUS = PRERELEASED_STATUS
+	CURRENT_STATUS = RELEASING_STATUS
+	CALL SetDownstreamBoardAvailable
+	TILL IN(DownstreamMachineReadySignal_Port).DownstreamMachineReadySignal_Bit = 1
+	CALL ContinueFrom_SetConveyorBeltsDownstreamSpeedToRelease
+else
+	if CURRENT_STATUS = PRERELEASING_STATUS
+		CURRENT_STATUS = RELEASING_STATUS
+		CALL ContinueFrom_SetDownstreamSmemaBoardAvailable
+	else
+		if CURRENT_STATUS = LOADED_STATUS
+			CURRENT_STATUS = RELEASING_STATUS
+			START FreePanelBufferIndex,1
+			TILL ^ PST(FreePanelBufferIndex).#RUN
+			if PanelFreed = 1
+				CALL StartConveyorBeltsDownstreamInternalSpeed
+				CALL ContinueFrom_SetDownstreamSmemaBoardAvailable
+			else
+				ReleasePanelError = ReleasePanelFreeError
+				CALL ErrorExit
+			end
+		else
+			ReleasePanelError = ReleasePanelStateError
+			CALL ErrorExit
+		end
+	end
+end
+
+STOP
+
+SetDownstreamBoardAvailable:
+	OUT(DownStreamBoardAvailable_Port).DownStreamBoardAvailable_Bit = 1
+RET
+
+ContinueFrom_SetConveyorBeltsDownstreamSpeedToRelease:
+		CALL SetConveyorBeltsDownstreamSpeedToRelease
+RET3:	TILL IN(ExitOpto_Port).ExitOpto_Bit = 0,WaitTimeToRelease
+		if IN(ExitOpto_Port).ExitOpto_Bit = 0
+			TILL IN(ExitOpto_Port).ExitOpto_Bit = 1,WaitTimeToCutout
+			if IN(ExitOpto_Port).ExitOpto_Bit = 1
+				GOTO RET3
+			else
+				CALL ClearDownstreamSmemaBoardAvailable
+				TILL IN(DownstreamMachineReadySignal_Port).DownstreamMachineReadySignal_Bit = 0,WaitTimeToSmema
+				if IN(DownstreamMachineReadySignal_Port).DownstreamMachineReadySignal_Bit = 1
+					ReleasePanelError = ReleasePanelSmemaError
+					CALL ErrorExit
+				else
+					CALL TurnOffConveyorBelts
+					CURRENT_STATUS = RELEASED_STATUS
+				end
+			end
+		else
+			ReleasePanelError = ReleasePanelReleaseError
+			CALL ErrorExit
+		end
+RET
+
+TurnOffConveyorBelts:
+	HALT CONVEYOR_AXIS
+RET
+
+ClearDownstreamSmemaBoardAvailable:
+	OUT(DownStreamBoardAvailable_Port).DownStreamBoardAvailable_Bit = 0
+RET
+
+SetConveyorBeltsDownstreamSpeedToRelease:
+	JOG/v CONVEYOR_AXIS,ConveyorBeltReleaseSpeed
+RET
+
+ContinueFrom_SetDownstreamSmemaBoardAvailable:
+	CALL SetDownstreamSmemaBoardAvailable
+	TILL IN(ExitOpto_Port).ExitOpto_Bit = 1,WaitTimeToExit
+	if IN(ExitOpto_Port).ExitOpto_Bit = 1
+		if IN(DownstreamMachineReadySignal_Port).DownstreamMachineReadySignal_Bit = 1
+			CALL ContinueFrom_SetConveyorBeltsDownstreamSpeedToRelease
+		else
+			CALL StopConveyorBelts
+			TILL IN(DownstreamMachineReadySignal_Port).DownstreamMachineReadySignal_Bit = 1
+			CALL ContinueFrom_SetConveyorBeltsDownstreamSpeedToRelease
+		end
+	else
+		ReleasePanelError = ReleasePanelExitError
+		CALL ErrorExit
+	end
+RET
+
+
+StopConveyorBelts:
+	HALT CONVEYOR_AXIS
+RET
+
+SetDownstreamSmemaBoardAvailable:
+	OUT(DownStreamBoardAvailable_Port).DownStreamBoardAvailable_Bit = 1
+RET
+
+
+StartConveyorBeltsDownstreamInternalSpeed:
+	JOG/v CONVEYOR_AXIS,ConveyorBeltReleaseSpeed
+RET
+
+ErrorExit:
+	START InternalErrorExitBufferIndex,1
+	TILL ^ PST(InternalErrorExitBufferIndex).#RUN
+RET

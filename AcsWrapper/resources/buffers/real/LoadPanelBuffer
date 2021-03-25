@@ -1,0 +1,72 @@
+!LoadPanelBuffer
+
+global int LoadPanelStateError
+LoadPanelStateError = 0
+
+global int LoadPanelNotReleasedError,LoadPanelSensorBlockedError,LoadPanelAcqError,LoadPanelSlowSensorError
+
+LoadPanelNotReleasedError = 1
+LoadPanelSensorBlockedError = 2
+LoadPanelAcqError = 3
+LoadPanelSlowSensorError = 4
+
+int WaitTimeToAcq
+
+if CURRENT_STATUS = RELEASED_STATUS
+	if (IN(EntryOpto_Port).EntryOpto_Bit = 0 & IN(ExitOpto_Port).ExitOpto_Bit = 0 & IN(BoardStopPanelAlignSensor_Port).BoardStopPanelAlignSensor_Bit = 0)
+		CURRENT_STATUS = LOADING_STATUS
+		CALL UpstreamSmemaMachineReady
+		TILL IN(UpstreamBoardAvailableSignal_Port).UpstreamBoardAvailableSignal_Bit = 1
+		CALL RaiseBoardStop
+		CALL StartConveyorBeltsDownstream
+		TILL IN(EntryOpto_Port).EntryOpto_Bit = 1,WaitTimeToAcq
+		if IN(EntryOpto_Port).EntryOpto_Bit = 1
+IfSlowDown:	TILL IN(EntryOpto_Port).EntryOpto_Bit = 0,WaitTimeToAcq
+				if IN(EntryOpto_Port).EntryOpto_Bit = 0 !Unblocked
+				CALL ClearUpstreamSmemaMachineReady
+				CALL AdjustConveyorBeltSpeedToInternalSpeed
+				START InternalMachineLoadBufferIndex,1
+				TILL ^ PST(InternalMachineLoadBufferIndex).#RUN
+			else
+			   GOTO IfSlowDown
+			end
+		else
+			LoadPanelStateError = LoadPanelAcqError
+			CALL ErrorExit
+		end
+	else
+		LoadPanelStateError = LoadPanelSensorBlockedError
+		CALL ErrorExit
+	end
+else
+	LoadPanelStateError = LoadPanelNotReleasedError
+	CALL ErrorExit
+end
+
+STOP
+
+ErrorExit:
+	START InternalErrorExitBufferIndex,1
+	TILL ^ PST(InternalErrorExitBufferIndex).#RUN
+RET
+
+UpstreamSmemaMachineReady:
+	OUT(SmemaUpStreamMachineReady_Port).SmemaUpStreamMachineReady_Bit = 1
+RET
+
+ClearUpstreamSmemaMachineReady:
+	OUT(SmemaUpStreamMachineReady_Port).SmemaUpStreamMachineReady_Bit = 0
+RET
+
+
+RaiseBoardStop:
+	OUT(RaiseBoardStopStopper_Port).RaiseBoardStopStopper_Bit = 1
+RET
+
+StartConveyorBeltsDownstream:
+	JOG/v CONVEYOR_AXIS,ConveyorBeltSlowSpeed
+RET
+
+AdjustConveyorBeltSpeedToInternalSpeed:
+	JOG/v CONVEYOR_AXIS,ConveyorBeltLoadingSpeed
+RET

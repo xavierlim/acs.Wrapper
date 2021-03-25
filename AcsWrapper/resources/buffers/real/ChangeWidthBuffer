@@ -1,0 +1,44 @@
+!ChangeWidthBuffer
+
+global int ChangeWidthStateError
+ChangeWidthStateError = 0
+
+global  int ChangeWidthToError,ChangeWidthToHomedError,ChangeWidthToNotAtSpecifiedError
+
+
+
+ChangeWidthToError=1
+ChangeWidthToHomedError=2
+ChangeWidthToNotAtSpecifiedError=3
+
+int ConveyorSpecifiedWidth
+
+if CURRENT_STATUS = RELEASED_STATUS
+	if ConveyorWidthHomed = 1
+		CURRENT_STATUS = CHANGING_WIDTH_STATUS
+		CALL MoveConveyorToSpecifiedWidth
+		if ConveyorSpecifiedWidth = RPOS(CONVEYOR_WIDTH_AXIS)
+			CURRENT_STATUS = RELEASED_STATUS
+		else
+			ChangeWidthStateError = ChangeWidthToNotAtSpecifiedError
+			CALL ErrorExit
+		end
+	else
+		ChangeWidthStateError = ChangeWidthToHomedError
+		CALL ErrorExit
+	end
+else
+	ChangeWidthStateError = ChangeWidthToError
+	CALL ErrorExit
+end
+
+STOP
+
+ErrorExit:
+	START InternalErrorExitBufferIndex,1
+	TILL ^ PST(InternalErrorExitBufferIndex).#RUN
+RET
+
+MoveConveyorToSpecifiedWidth:
+	PTP/em CONVEYOR_WIDTH_AXIS, ConveyorSpecifiedWidth
+RET

@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props"/>
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{FAB251D6-5395-40EB-97EA-12D773EB058B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CO.Systems.Services.Acs.AcsWrapper</RootNamespace>
+    <AssemblyName>CO.Systems.Services.Acs.AcsWrapper</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>x64</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\..\bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>x64</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\..\..\bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ACS.SPiiPlusNET, Version=2.70.0.26392, Culture=neutral, PublicKeyToken=null">
+      <HintPath>lib\ACS.SPiiPlusNET.dll</HintPath>
+    </Reference>
+    <Reference Include="Configurator.Util, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>lib\Configurator.Util.dll</HintPath>
+    </Reference>
+    <Reference Include="System"/>
+    <Reference Include="System.Core"/>
+    <Reference Include="System.Data"/>
+    <Reference Include="System.Xml"/>
+    <ProjectReference Include="..\..\..\..\..\..\CO.Common\Source\Logger\Logger.csproj">
+      <Project>{874C8B95-1F2B-4D6A-970A-E122987570AE}</Project>
+      <Name>CO.Common.Logger</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\..\CO.Common\Source\Settings\Settings.csproj">
+      <Project>{B77FD732-4571-4B01-A9CC-D7886B531A4C}</Project>
+      <Name>CO.Common.Settings</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="config\AcsSimConfig.cs"/>
+    <Compile Include="config\AcsSimHelper.cs"/>
+    <Compile Include="Properties\AssemblyInfo.cs"/>
+    <Compile Include="resources\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="util\BufferHelper.cs"/>
+    <Compile Include="wrapper\AcsMocker.cs"/>
+    <Compile Include="wrapper\AcsUtils.cs"/>
+    <Compile Include="wrapper\AcsWrapper.cs"/>
+    <Compile Include="wrapper\AcsWrapperFactory.cs"/>
+    <Compile Include="wrapper\ConveyorAxes.cs"/>
+    <Compile Include="wrapper\exceptions\AcsException.cs"/>
+    <Compile Include="wrapper\exceptions\IAcsException.cs"/>
+    <Compile Include="wrapper\IAcsWrapper.cs"/>
+    <Compile Include="wrapper\models\AcsAxis.cs"/>
+    <Compile Include="wrapper\models\AcsBuffers.cs"/>
+    <Compile Include="wrapper\models\AxisParameters.cs"/>
+    <Compile Include="wrapper\models\BuffersParameters.cs"/>
+    <Compile Include="wrapper\models\CurrentandErrorStatusfromACS.cs"/>
+    <Compile Include="wrapper\models\IoStatus.cs"/>
+    <Compile Include="wrapper\models\SetOutputParameters.cs"/>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Configuration\Configuration.csproj">
+      <Project>{2e9e78a6-82f5-4cd1-8386-faf549b6d4e7}</Project>
+      <Name>Configuration</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Conveyor\ConveyorBase\ConveyorBase.csproj">
+      <Project>{569460f7-92c7-4a9b-b9c8-e04bcaca88d6}</Project>
+      <Name>ConveyorBase</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Conveyor\ConveyorInterface\ConveyorInterface.csproj">
+      <Project>{40c2f7c2-de57-48f1-a30e-8faecb23408f}</Project>
+      <Name>ConveyorInterface</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Robot\RobotBase\RobotBase.csproj">
+      <Project>{a75937fd-65d7-4190-9055-f67b10b63020}</Project>
+      <Name>RobotBase</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Robot\RobotInterface\RobotInterface.csproj">
+      <Project>{59c9a766-f4b4-4bb1-9489-a7ce7fd5b686}</Project>
+      <Name>RobotInterface</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="README.md"/>
+    <Content Include="resources\bufferCopier.py"/>
+    <Content Include="resources\buffers\LoadPanelBuffer"/>
+    <Content Include="resources\buffers\original_all.prg"/>
+    <Content Include="resources\buffers\original_xHoming.prg"/>
+    <Content Include="resources\buffers\original_yHoming.prg"/>
+    <Content Include="resources\buffers\real\AxisHomingBuffer"/>
+    <Content Include="resources\buffers\real\BypassModeBuffer"/>
+    <Content Include="resources\buffers\real\ChangeWidthBuffer"/>
+    <Content Include="resources\buffers\real\ConveyorAxisResetBuffer"/>
+    <Content Include="resources\buffers\real\ConveyorLifterHomingBuffer"/>
+    <Content Include="resources\buffers\real\ConveyorWidthHomingBuffer"/>
+    <Content Include="resources\buffers\real\ConveyorWidthLifterResetBuffer"/>
+    <Content Include="resources\buffers\real\DBuffer"/>
+    <Content Include="resources\buffers\real\EmergencyStopBuffer"/>
+    <Content Include="resources\buffers\real\FreePanelBuffer"/>
+    <Content Include="resources\buffers\real\GantryXHomingBuffer"/>
+    <Content Include="resources\buffers\real\GantryYHomingBuffer"/>
+    <Content Include="resources\buffers\real\GantryZHomingBuffer"/>
+    <Content Include="resources\buffers\real\InternalErrorExitBuffer"/>
+    <Content Include="resources\buffers\real\InternalMachineLoadBuffer"/>
+    <Content Include="resources\buffers\real\IoInitializationBuffer.prg"/>
+    <Content Include="resources\buffers\real\LoadPanelBuffer"/>
+    <Content Include="resources\buffers\real\PowerOnRecoverFromEmergencyStopBuffer"/>
+    <Content Include="resources\buffers\real\PreReleasePanelBuffer"/>
+    <Content Include="resources\buffers\real\ReleasePanelBuffer"/>
+    <Content Include="resources\buffers\real\ReloadPanelBuffer.prg"/>
+    <Content Include="resources\buffers\real\ScanningBuffer"/>
+    <Content Include="resources\buffers\real\SecurePanelBuffer"/>
+    <Content Include="resources\buffers\ReleasePanelBuffer"/>
+    <Content Include="resources\buffers\simulation\AxisHomingBuffer"/>
+    <Content Include="resources\buffers\simulation\BypassModeBuffer"/>
+    <Content Include="resources\buffers\simulation\ChangeWidthBuffer"/>
+    <Content Include="resources\buffers\simulation\ConveyorAxisResetBuffer"/>
+    <Content Include="resources\buffers\simulation\ConveyorLifterHomingBuffer"/>
+    <Content Include="resources\buffers\simulation\ConveyorWidthHomingBuffer"/>
+    <Content Include="resources\buffers\simulation\ConveyorWidthLifterResetBuffer"/>
+    <Content Include="resources\buffers\simulation\DBuffer"/>
+    <Content Include="resources\buffers\simulation\EmergencyStopBuffer"/>
+    <Content Include="resources\buffers\simulation\FreePanelBuffer"/>
+    <Content Include="resources\buffers\simulation\GantryYHomingBuffer"/>
+    <Content Include="resources\buffers\simulation\GantryXHomingBuffer"/>
+    <Content Include="resources\buffers\simulation\GantryZHomingBuffer"/>
+    <Content Include="resources\buffers\simulation\InternalErrorExitBuffer"/>
+    <Content Include="resources\buffers\simulation\InternalMachineLoadBuffer"/>
+    <Content Include="resources\buffers\simulation\LoadPanelBuffer"/>
+    <Content Include="resources\buffers\simulation\IoInitializationBuffer.prg"/>
+    <Content Include="resources\buffers\simulation\PowerOnRecoverFromEmergencyStopBuffer"/>
+    <Content Include="resources\buffers\simulation\PreReleasePanelBuffer"/>
+    <Content Include="resources\buffers\simulation\ReleasePanelBuffer"/>
+    <Content Include="resources\buffers\simulation\ReloadPanelBuffer.prg"/>
+    <Content Include="resources\buffers\simulation\ScanningBuffer"/>
+    <Content Include="resources\buffers\simulation\SecurePanelBuffer"/>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="resources\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
+  <PropertyGroup>
+    <PostBuildEvent>xcopy /Y /Q /R /S /D /i $(ProjectDir)resources\buffers\*.* $(TargetDir)AppData\acs\buffers</PostBuildEvent>
+  </PropertyGroup>
+</Project>

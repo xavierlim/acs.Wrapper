@@ -1,0 +1,112 @@
+!PowerOnRecoverFromEmergencyStopBuffer
+
+int WaitTimeToSearch
+int WaitTimeToExit
+
+int WidthToW_0_Position
+
+CALL InitializeACS
+CALL InitializeMotors
+
+CALL EnableOptos
+CALL ErrorExit
+
+if IN(EstopAndDoorOpenFeedback_Port).EstopAndDoorOpenFeedback_Bit = 1
+	CURRENT_STATUS = SAFE_STATUS
+else
+	EMO_RECOVERY:
+	if IN(BypassNormal_Port).BypassNormal_Bit = 1
+		START BypassModeBufferIndex,1
+	else
+		CURRENT_STATUS = SEARGING_STATUS
+		if (IN(EntryOpto_Port).EntryOpto_Bit = 1 & IN(ExitOpto_Port).ExitOpto_Bit = 1 & IN(BoardStopPanelAlignSensor_Port).BoardStopPanelAlignSensor_Bit = 1)
+			CALL ContinueFindPanel
+		else
+			CALL StartConveyorBeltsDownstream
+			TILL (IN(EntryOpto_Port).EntryOpto_Bit = 1 & IN(ExitOpto_Port).ExitOpto_Bit = 1 & IN(BoardStopPanelAlignSensor_Port).BoardStopPanelAlignSensor_Bit = 1) ,WaitTimeToSearch
+			if (IN(EntryOpto_Port).EntryOpto_Bit = 1 & IN(ExitOpto_Port).ExitOpto_Bit = 1 & IN(BoardStopPanelAlignSensor_Port).BoardStopPanelAlignSensor_Bit = 1)
+				CALL ContinueFindPanel
+			else
+				CALL StopConveyorBelts
+				CALL HomeWidth
+			end
+		end
+	end
+end
+
+STOP
+
+
+ContinueFindPanel:
+	if ConveyorWidthHomed = 1
+	    TILL IN(ExitOpto_Port).ExitOpto_Bit = 1,WaitTimeToExit
+		if IN(ExitOpto_Port).ExitOpto_Bit = 1
+			CALL StopConveyorBelts
+			CURRENT_STATUS = PRERELEASED_STATUS
+		else
+			CALL ErrorExit
+			CURRENT_STATUS = ERROR_STATUS
+		end
+	else
+		CALL ErrorExit
+		CURRENT_STATUS = ERROR_STATUS
+	end
+
+RET
+
+HomeWidth:
+
+	if ConveyorWidthHomed = 1
+		CURRENT_STATUS = RELEASED_STATUS
+	else
+		CURRENT_STATUS = WIDTH_HOMING_STATUS
+		CALL HomeConveyorWidthMotor
+		if ConveyorWidthHomed = 1
+			CALL AdjustConveyorWidthToW_0
+			CURRENT_STATUS = RELEASED_STATUS
+		else
+			CALL ErrorExit
+			CURRENT_STATUS = ERROR_STATUS
+		end
+	end
+RET
+
+HomeConveyorWidthMotor:
+	START HomeConveyorBufferIndex,1
+	TILL ^ PST(HomeConveyorBufferIndex).#RUN
+RET
+
+AdjustConveyorWidthToW_0:
+	PTP/em CONVEYOR_WIDTH_AXIS, WidthToW_0_Position
+RET
+
+
+
+ErrorExit:
+	START InternalErrorExitBufferIndex,1
+	TILL ^ PST(InternalErrorExitBufferIndex).#RUN
+RET
+
+InitializeACS:
+	ENABLE ALL
+RET
+
+InitializeMotors:
+
+RET
+
+EnableOptos:
+	OUT(StopSensor_Port).StopSensor_Bit = 1
+RET
+
+StartConveyorBeltsDownstream:
+	JOG/v CONVEYOR_AXIS,ConveyorBeltLoadingSpeed
+RET
+
+StopConveyorBelts:
+	HALT CONVEYOR_AXIS
+RET
+
+
+
+

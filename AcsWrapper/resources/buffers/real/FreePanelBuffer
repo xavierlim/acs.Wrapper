@@ -1,0 +1,59 @@
+!FreePanelBuffer
+
+global int FreePanelStateError
+FreePanelStateError = 0
+
+global int FreePanelStopUpError,FreePanelOptoBlockedError,FreePanelToUnliftError,FreePanelToUnclampError
+
+FreePanelStopUpError=1
+FreePanelOptoBlockedError=2
+FreePanelToUnliftError=3
+FreePanelToUnclampError=4
+
+int UnclampLiftDelayTime
+int WaitTimeToUnlift
+int WaitTimeToUnclamp
+
+PanelFreed = -1
+
+if IN(StopperArmDown_Port).StopperArmDown_Bit = 1
+	CALL TurnOnPanelSensingOptos
+	if (IN(EntryOpto_Port).EntryOpto_Bit = 0 & IN(ExitOpto_Port).ExitOpto_Bit = 0)
+		CALL LowerLifter
+		WAIT UnclampLiftDelayTime
+		CALL UnclampPanel
+		TILL IN(LifterLowered_Port).LifterLowered_Bit = 1,WaitTimeToUnlift
+		if IN(LifterLowered_Port).LifterLowered_Bit <> 1
+			FreePanelStateError = FreePanelToUnliftError
+		else
+			TILL (IN(RearClampDown_Port).RearClampDown_Bit & IN(FrontClampDown_Port).FrontClampDown_Bit),WaitTimeToUnclamp
+			if(IN(RearClampDown_Port).RearClampDown_Bit & IN(FrontClampDown_Port).FrontClampDown_Bit)
+				PanelFreed = 1
+			else
+				FreePanelStateError = FreePanelToUnclampError
+			end
+		end
+	else
+		FreePanelStateError = FreePanelOptoBlockedError
+	end
+else
+	FreePanelStateError = FreePanelStopUpError
+end
+
+STOP
+
+
+TurnOnPanelSensingOptos:
+	OUT(StopSensor_Port).StopSensor_Bit = 1
+RET
+
+LowerLifter:
+	JOG LIFTER_AXIS,-
+	TILL IN(LifterLowered_Port).LifterLowered_Bit = 1
+	HALT LIFTER_AXIS
+RET
+
+
+UnclampPanel:
+	OUT(ClampPanel_Port).ClampPanel_Bit = 0
+RET

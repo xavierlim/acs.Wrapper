@@ -1,0 +1,196 @@
+
+global int I(100),I0,I1,I2,I3,I4,I5,I6,I7,I8,I9,I90,I91,I92,I93,I94,I95,I96,I97,I98,I99
+global real V(100),V0,V1,V2,V3,V4,V5,V6,V7,V8,V9,V90,V91,V92,V93,V94,V95,V96,V97,V98,V99
+
+!homing variables
+global real HOME_VEL_IN(10)
+global real HOME_VEL_OUT(10)
+global real HOME_OFFSET(10)
+
+global int X_AXIS
+global int Y_AXIS
+global int Z_AXIS
+
+global int CONVEYOR_AXIS
+global int CONVEYOR_WIDTH_AXIS
+global int LIFTER_AXIS
+
+global real movine_angle,angle_step
+
+global int ECOFFSETM(3)
+global int WAGO_IN1,WAGO_IN2
+global int WAGO_OUT1,WAGO_OUT2
+global int WAGO_ANAIN_1,WAGO_ANAIN_2,WAGO_ANAIN_3,WAGO_ANAIN_4, ControlWordGen
+global int StatusWord_MT1, ControlWord_MT1
+global int StatusWord_MT2, ControlWord_MT2
+global int StatusWord_Mecapion, ControlWord_Mecapion
+global int ActualPos_MT1,ActualPos_MT2,ActualPos_Mecapion
+global int MecapionHome
+global int Axis_0,Axis_1,Axis_2,Axis_3,Axis_4,Axis_5,Axis_6, Fault_Clr
+!global int TargetPos
+global int ControlWord, StatusWord, TargetPosition, ActualPosition
+global real Slave_number_Mec, vel_search_limit_switch_Mec,vel_search_index_Mec,homing_type_Mec,homing_Acc_Mec
+global real Slave_number_MT1,vel_search_limit_switch_MT1,vel_search_index_MT1,homing_type_MT1,homing_Acc_MT1
+global real Slave_number_MT2,vel_search_limit_switch_MT2, vel_search_index_MT2,homing_type_MT2,homing_Acc_MT2
+global int Elevator_Mode
+
+global int SAFE_STATUS,LOADED_STATUS,ERROR_STATUS,PRERELEASING_STATUS
+global int PRERELEASED_STATUS,RELEASED_STATUS,CHANGING_WIDTH_STATUS
+global int SEARGING_STATUS,WIDTH_HOMING_STATUS,LOADING_STATUS,RELOADING_STATUS
+global int RELEASING_STATUS,BYPASS_STATUS
+
+SAFE_STATUS = 0
+LOADED_STATUS = 1
+ERROR_STATUS = 2
+PRERELEASED_STATUS = 3
+RELEASED_STATUS = 4
+CHANGING_WIDTH_STATUS = 5
+SEARGING_STATUS = 6
+WIDTH_HOMING_STATUS = 7
+LOADING_STATUS = 8
+RELOADING_STATUS = 9
+PRERELEASING_STATUS = 10
+RELEASING_STATUS = 11
+BYPASS_STATUS = 12
+
+global int CURRENT_STATUS
+
+!///////////////////////////////////////////////////////////
+!Inputs
+
+global int EntryOpto_Port
+global int EntryOpto_Bit
+
+global int ExitOpto_Port
+global int ExitOpto_Bit
+
+global int LifterLowered_Port
+global int LifterLowered_Bit
+
+global int BoardStopPanelAlignSensor_Port
+global int BoardStopPanelAlignSensor_Bit
+
+global int StopperArmUp_Port
+global int StopperArmUp_Bit
+
+global int StopperArmDown_Port
+global int StopperArmDown_Bit
+
+global int StopperLocked_Port
+global int StopperLocked_Bit
+
+global int StopperUnlocked_Port
+global int StopperUnlocked_Bit
+
+global int RearClampUp_Port
+global int RearClampUp_Bit
+
+global int FrontClampUp_Port
+global int FrontClampUp_Bit
+
+
+global int RearClampDown_Port
+global int RearClampDown_Bit
+
+global int FrontClampDown_Port
+global int FrontClampDown_Bit
+
+
+global int WidthHomeSwitch_Port
+global int WidthHomeSwitch_Bit
+
+global int WidthLimitSwitch_Port
+global int WidthLimitSwitch_Bit
+
+global int UpstreamBoardAvailableSignal_Port
+global int UpstreamBoardAvailableSignal_Bit
+
+global int UpstreamFailedBoardAvailableSignal_Port
+global int UpstreamFailedBoardAvailableSignal_Bit
+
+
+
+
+global int DownstreamMachineReadySignal_Port
+global int DownstreamMachineReadySignal_Bit
+
+global int BypassNormal_Port
+global int BypassNormal_Bit
+
+
+global int EstopAndDoorOpenFeedback_Port
+global int EstopAndDoorOpenFeedback_Bit
+
+
+!///////////////////////////////////////////////////////////
+!Outputs
+
+global int ClampPanel_Port
+global int ClampPanel_Bit
+
+global int LockStopper_Port
+global int LockStopper_Bit
+
+global int RaiseBoardStopStopper_Port
+global int RaiseBoardStopStopper_Bit
+
+global int BeltShroudVaccumON_Port
+global int BeltShroudVaccumON_Bit
+
+global int TowerLightRed_Port
+global int TowerLightRed_Bit
+
+global int TowerLightYellow_Port
+global int TowerLightYellow_Bit
+
+global int TowerLightGreen_Port
+global int TowerLightGreen_Bit
+
+global int TowerLightBlue_Port
+global int TowerLightBlue_Bit
+
+global int TowerLightBuzzer_Port
+global int TowerLightBuzzer_Bit
+
+global int StopSensor_Port
+global int StopSensor_Bit
+
+global int SmemaUpStreamMachineReady_Port
+global int SmemaUpStreamMachineReady_Bit
+
+global int DownStreamBoardAvailable_Port
+global int DownStreamBoardAvailable_Bit
+
+global int SmemaDownStreamFailedBoardAvailable_Port
+global int SmemaDownStreamFailedBoardAvailable_Bit
+
+
+!//////////////////////////////////////////////////////////
+
+
+global int PanelFreed
+
+global int PanelSecured
+
+global int ConveyorWidthHomed
+
+global int InternalMachineLoadBufferIndex
+global int InternalErrorExitBufferIndex
+global int FreePanelBufferIndex
+global int SecurePanelBufferIndex
+global int BypassModeBufferIndex
+global int HomeConveyorBufferIndex
+
+global real ConveyorBeltAcquireSpeed
+global real ConveyorBeltLoadingSpeed
+global real ConveyorBeltSlowSpeed
+global real ConveyorBeltReleaseSpeed
+global real ConveyorBeltUnloadingSpeed
+
+!//////////////////////////////////////////////////////////
+
+global int Gantry_Bottom_Pos(20), Gantry_Top_Pos(20), Gantry_Z_Pos(20), Combined_Vel(20)
+
+global int Gantry_Mode
+
+STOP

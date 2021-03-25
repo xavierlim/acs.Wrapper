@@ -1,0 +1,63 @@
+!InternalMachineLoadBuffer
+
+global int LoadPanelStateError
+LoadPanelStateError = 0
+
+global int LoadPanelAlignBeforeSlowSensorError,LoadPanelSecureError,LoadPanelAlignError,LoadPanelSlowSensorError
+LoadPanelSlowSensorError = 4
+LoadPanelAlignBeforeSlowSensorError = 5
+LoadPanelAlignError = 6
+LoadPanelSecureError = 7
+
+int WaitTimeToSlow
+int WaitTimeToAlign
+int SlowDelayTime
+real SlowPosition
+real absPosTemp
+
+TILL EntryOpto_Bit = 0
+if EntryOpto_Bit = 0
+absPosTemp = RPOS(CONVEYOR_AXIS)
+!SlowPosition = absPosTemp + (550 - 420)
+END
+TILL RPOS(CONVEYOR_AXIS) > SlowPosition
+!TILL RPOS(CONVEYOR_AXIS) < SlowPosition
+
+IF BoardStopPanelAlignSensor_Bit = 1
+	LoadPanelStateError = LoadPanelAlignBeforeSlowSensorError
+END
+
+CALL AdjustConveyorBeltSpeedToSlow
+TILL BoardStopPanelAlignSensor_Bit,WaitTimeToAlign
+if BoardStopPanelAlignSensor_Bit = 1
+	WAIT WaitTimeToAlign
+	CALL TurnOffConveyorBeltMotor
+	START SecurePanelBufferIndex,1
+	TILL ^ PST(SecurePanelBufferIndex).#RUN
+	if PanelSecured = 1
+		CURRENT_STATUS = LOADED_STATUS
+	else
+		LoadPanelStateError = LoadPanelSecureError
+		CALL ErrorExit
+	end
+else
+	LoadPanelStateError = LoadPanelAlignError
+	CALL ErrorExit
+end
+
+STOP
+
+
+
+ErrorExit:
+	START InternalErrorExitBufferIndex,1
+	TILL ^ PST(InternalErrorExitBufferIndex).#RUN
+RET
+
+AdjustConveyorBeltSpeedToSlow:
+	JOG/v CONVEYOR_AXIS,ConveyorBeltSlowSpeed
+RET
+
+TurnOffConveyorBeltMotor:
+	HALT CONVEYOR_AXIS
+RET

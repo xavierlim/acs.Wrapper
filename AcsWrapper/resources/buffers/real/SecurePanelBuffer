@@ -1,0 +1,90 @@
+!SecurePanelBuffer
+
+int ClampLiftDelayTime
+int WaitTimeToPanelClamped
+int WaitTimeToLifted
+int WaitTimeToUnstop
+real Stage_1_LifterOnlyDistance
+real Stage_2_LifterAndClamperDistance
+
+global int SecurePanelStateError
+SecurePanelStateError = 0
+
+global int SecurePanelToClampedError,SecurePanelToLiftedError,SecurePanelToUnstopError
+
+SecurePanelToClampedError=1
+SecurePanelToLiftedError=2
+SecurePanelToUnstopError=3
+
+int StageLifterResult
+real absPosTemp
+
+PanelSecured = 0
+
+CALL TurnOffPanelSensingOptos
+StageLifterResult = 0
+CALL Stage_1_LifterOnly
+if StageLifterResult = 1
+	StageLifterResult = 0
+	CALL Stage_2_LifterAndClamper
+	if StageLifterResult = 1
+		CALL LowerPanelStopper
+		TILL (IN(StopperUnlocked_Port).StopperUnlocked_Bit & IN(StopperArmDown_Port).StopperArmDown_Bit),WaitTimeToUnstop
+		if (IN(StopperUnlocked_Port).StopperUnlocked_Bit & IN(StopperArmDown_Port).StopperArmDown_Bit)
+			PanelSecured = 1
+		else
+			SecurePanelStateError = SecurePanelToUnstopError
+		end
+	end
+end
+STOP
+
+TurnOffPanelSensingOptos:
+	OUT(StopSensor_Port).StopSensor_Bit = 0
+RET
+
+
+Stage_1_LifterOnly:
+	absPosTemp = RPOS(LIFTER_AXIS)+Stage_1_LifterOnlyDistance
+	ptp (LIFTER_AXIS), absPosTemp
+	till ^AST(LIFTER_AXIS).#MOVE,WaitTimeToLifted
+	if (AST(LIFTER_AXIS).#MOVE | RPOS(LIFTER_AXIS) <> absPosTemp)
+		HALT LIFTER_AXIS
+		SecurePanelStateError = SecurePanelToLiftedError
+		StageLifterResult = 0
+	else
+		StageLifterResult = 1
+	end
+RET
+
+
+Stage_2_LifterAndClamper:
+	CALL ClampPanel
+	absPosTemp = RPOS(LIFTER_AXIS)+Stage_2_LifterAndClamperDistance
+	ptp (LIFTER_AXIS), absPosTemp
+	TILL (IN(RearClampUp_Port).RearClampUp_Bit & IN(FrontClampUp_Port).FrontClampUp_Bit),ClampLiftDelayTime
+	if (IN(RearClampUp_Port).RearClampUp_Bit & IN(FrontClampUp_Port).FrontClampUp_Bit)
+		till ^AST(LIFTER_AXIS).#MOVE,WaitTimeToLifted
+		if (AST(LIFTER_AXIS).#MOVE | RPOS(LIFTER_AXIS) <> absPosTemp)
+			HALT LIFTER_AXIS
+			SecurePanelStateError = SecurePanelToLiftedError
+			StageLifterResult = 0
+		else
+			StageLifterResult = 1
+		end
+	else
+		HALT LIFTER_AXIS
+		SecurePanelStateError = SecurePanelToClampedError
+		StageLifterResult = 0
+	end
+
+RET
+
+ClampPanel:
+	OUT(ClampPanel_Port).ClampPanel_Bit = 1
+RET
+
+LowerPanelStopper:
+	OUT(LockStopper_Port).LockStopper_Port = 0
+	OUT(RaiseBoardStopStopper_Port).RaiseBoardStopStopper_Bit = 0
+RET

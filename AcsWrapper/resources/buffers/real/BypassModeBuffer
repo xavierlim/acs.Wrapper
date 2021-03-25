@@ -1,0 +1,161 @@
+!BypassModeBuffer
+
+int BypassModeError
+BypassModeError = 0
+
+int BypassSensorBlockedError,BypassAcqError,BypassExitError,BypassReleaseError,BypassSmemaError
+
+BypassSensorBlockedError = 1
+BypassAcqError = 2
+BypassExitError = 3
+BypassReleaseError = 4
+BypassSmemaError = 5
+
+int WaitTimeToSearch
+int WaitTimeToAcq
+int WaitTimeToCutout
+int WaitTimeToExit
+int WaitTimeToRelease
+int WaitTimeToSmema
+
+if 	(IN(EntryOpto_Port).EntryOpto_Bit = 1 & IN(ExitOpto_Port).ExitOpto_Bit = 1 & IN(BoardStopPanelAlignSensor_Port).BoardStopPanelAlignSensor_Bit = 1)
+	BypassModeError = BypassSensorBlockedError
+	CALL TurnOnAllLightAndSoundTheHom
+	CALL ErrorExit
+else
+	CURRENT_STATUS = BYPASS_STATUS
+	if IN(ExitOpto_Port).ExitOpto_Bit = 1
+		CALL SetDownstreamSmemaBoardAvailable
+		TILL IN(DownstreamMachineReadySignal_Port).DownstreamMachineReadySignal_Bit = 1
+		CALL ContinueFrom_SetConveyorBeltsDownstreamSpeedToRelease
+	else
+		CALL StartConveyorBeltsDownstreamInternalSpeed
+		TILL (IN(EntryOpto_Port).EntryOpto_Bit = 0 & IN(ExitOpto_Port).ExitOpto_Bit = 0 & IN(BoardStopPanelAlignSensor_Port).BoardStopPanelAlignSensor_Bit = 0),WaitTimeToSearch
+		if (IN(EntryOpto_Port).EntryOpto_Bit = 1 & IN(ExitOpto_Port).ExitOpto_Bit = 1 & IN(BoardStopPanelAlignSensor_Port).BoardStopPanelAlignSensor_Bit = 1)
+			CALL SendPanel
+		else
+			CALL GetPanel
+		end
+	end
+end
+
+STOP
+
+
+GetPanel:
+	CALL SetUpstreamSmemaMachineReady
+	TILL IN(UpstreamBoardAvailableSignal_Port).UpstreamBoardAvailableSignal_Bit = 1
+	CALL StartConveyorBeltsDownstreamAndS_Acq
+	TILL IN(EntryOpto_Port).EntryOpto_Bit = 1,WaitTimeToAcq
+	if IN(EntryOpto_Port).EntryOpto_Bit = 1
+RET1:	TILL IN(EntryOpto_Port).EntryOpto_Bit = 0
+		TILL IN(EntryOpto_Port).EntryOpto_Bit = 1,WaitTimeToCutout
+		if IN(EntryOpto_Port).EntryOpto_Bit = 1
+			GOTO RET1
+		else
+			CALL ClearUpstreamSmemaMachineReady
+		end
+	else
+		BypassModeError = BypassAcqError
+		CALL ErrorExit
+		CALL TurnOnAllLightAndSoundTheHom
+		CALL AdjustConveyorBeltSpeedToInternalSpeed
+		CALL SendPanel
+	end
+RET
+
+
+StartConveyorBeltsDownstreamAndS_Acq:
+	JOG/v CONVEYOR_AXIS,ConveyorBeltAcquireSpeed
+RET
+AdjustConveyorBeltSpeedToInternalSpeed:
+	JOG/v CONVEYOR_AXIS,ConveyorBeltLoadingSpeed
+RET
+ClearUpstreamSmemaMachineReady:
+	OUT(SmemaUpStreamMachineReady_Port).SmemaUpStreamMachineReady_Bit = 0
+RET
+
+SetUpstreamSmemaMachineReady:
+	OUT(SmemaUpStreamMachineReady_Port).SmemaUpStreamMachineReady_Bit = 1
+RET
+
+SendPanel:
+	CALL SetDownstreamSmemaBoardAvailable
+	TILL IN(ExitOpto_Port).ExitOpto_Bit = 1,WaitTimeToExit
+	if IN(ExitOpto_Port).ExitOpto_Bit = 1
+		if IN(DownstreamMachineReadySignal_Port).DownstreamMachineReadySignal_Bit = 1
+			CALL ContinueFrom_SetConveyorBeltsDownstreamSpeedToRelease
+		else
+			CALL StopConveyorBelts
+			TILL IN(DownstreamMachineReadySignal_Port).DownstreamMachineReadySignal_Bit = 1
+			CALL ContinueFrom_SetConveyorBeltsDownstreamSpeedToRelease
+		end
+	else
+		BypassModeError = BypassExitError
+		CALL ErrorExit
+		CALL TurnOnAllLightAndSoundTheHom
+	end
+RET
+
+StopConveyorBelts:
+	HALT CONVEYOR_AXIS
+RET
+StartConveyorBeltsDownstreamInternalSpeed:
+	JOG/v CONVEYOR_AXIS,ConveyorBeltLoadingSpeed
+RET
+
+ContinueFrom_SetConveyorBeltsDownstreamSpeedToRelease:
+		CALL SetConveyorBeltsDownstreamSpeedToRelease
+RET2:	TILL IN(ExitOpto_Port).ExitOpto_Bit = 0,WaitTimeToRelease
+		if IN(ExitOpto_Port).ExitOpto_Bit = 0
+			TILL IN(ExitOpto_Port).ExitOpto_Bit = 1,WaitTimeToCutout
+			if IN(ExitOpto_Port).ExitOpto_Bit = 1
+				GOTO RET2
+			else
+				CALL ClearDownstreamSmemaBoardAvailable
+				TILL IN(DownstreamMachineReadySignal_Port).DownstreamMachineReadySignal_Bit = 0,WaitTimeToSmema
+				if (IN(DownstreamMachineReadySignal_Port).DownstreamMachineReadySignal_Bit = 1)
+					BypassModeError = BypassSmemaError
+					CALL ErrorExit
+					CALL TurnOnAllLightAndSoundTheHom
+				else
+					CALL TurnOffConveyorBelts
+					CALL GetPanel
+				end
+			end
+
+
+		else
+			BypassModeError = BypassReleaseError
+			CALL ErrorExit
+			CALL TurnOnAllLightAndSoundTheHom
+		end
+RET
+
+TurnOffConveyorBelts:
+	HALT CONVEYOR_AXIS
+RET
+ClearDownstreamSmemaBoardAvailable:
+	OUT(DownStreamBoardAvailable_Port).DownStreamBoardAvailable_Bit = 0
+RET
+SetConveyorBeltsDownstreamSpeedToRelease:
+	JOG/v CONVEYOR_AXIS,ConveyorBeltReleaseSpeed
+RET
+
+SetDownstreamSmemaBoardAvailable:
+	OUT(DownStreamBoardAvailable_Port).DownStreamBoardAvailable_Bit = 1
+RET
+TurnOnAllLightAndSoundTheHom:
+
+	OUT(TowerLightRed_Port).TowerLightRed_Bit = 1
+	OUT(TowerLightYellow_Port).TowerLightYellow_Bit = 1
+	OUT(TowerLightGreen_Port).TowerLightGreen_Bit = 1
+	OUT(TowerLightBlue_Port).TowerLightBlue_Bit = 1
+	OUT(TowerLightBuzzer_Port).TowerLightBuzzer_Bit = 1
+
+RET
+
+ErrorExit:
+	START InternalErrorExitBufferIndex,1
+	TILL ^ PST(InternalErrorExitBufferIndex).#RUN
+RET
