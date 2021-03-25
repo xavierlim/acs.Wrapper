@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AcsWrapper", "AcsWrapper\AcsWrapper.csproj", "{EE84BC10-F31A-4FC3-8AA4-EEAE49742807}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EE84BC10-F31A-4FC3-8AA4-EEAE49742807}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE84BC10-F31A-4FC3-8AA4-EEAE49742807}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE84BC10-F31A-4FC3-8AA4-EEAE49742807}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE84BC10-F31A-4FC3-8AA4-EEAE49742807}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
