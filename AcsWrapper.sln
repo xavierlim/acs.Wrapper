@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AcsWrapper", "AcsWrapper.csproj", "{FAB251D6-5395-40EB-97EA-12D773EB058B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AcsWrapperDll", "AcsWrapperDll.csproj", "{FAB251D6-5395-40EB-97EA-12D773EB058B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
