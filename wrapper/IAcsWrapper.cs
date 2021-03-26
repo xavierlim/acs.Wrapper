@@ -25,7 +25,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         /// <summary>
         /// State of Conveyor Operation
         /// </summary>
-        int ConveyorStatus { get; }
+        ConveyorStatus ConveyorStatus { get; }
 
         /// <summary>
         /// true when there's any error in the ACS controller
@@ -45,7 +45,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         /// <summary>
         /// Error Code
         /// </summary>
-        int ErrorCode { get; }
+        ConveyorErrorCode ErrorCode { get; }
 
         event Action<bool> ConnectionStatusChanged;
         event Action<GantryAxes, bool> IdleChanged;

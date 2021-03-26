@@ -7,12 +7,10 @@
 // This copyright notice must not be removed.
 //===================================================================================
 
-namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
+namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
 {
-    public enum ConveyorAxes
+    public enum ConveyorErrorCode
     {
-        Conveyor = 5,
-        Width = 6,
-        Lifter = 7,
+        NoError = 0,
     }
 }

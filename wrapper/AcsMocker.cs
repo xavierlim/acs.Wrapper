@@ -23,11 +23,11 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         public bool IsConnected { get; }
         public string FirmwareVersion { get; }
         public uint NETLibraryVersion { get; }
-        public int ConveyorStatus { get; }
+        public ConveyorStatus ConveyorStatus { get; }
         public bool HasError { get; }
         public bool HasConveyorError { get; set; }
         public bool HasRobotError { get; set; }
-        public int ErrorCode { get; }
+        public ConveyorErrorCode ErrorCode { get; }
         public event Action<bool> ConnectionStatusChanged;
         public event Action<GantryAxes, bool> IdleChanged;
         public event Action<GantryAxes, bool> EnabledChanged;

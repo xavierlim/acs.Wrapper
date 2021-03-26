@@ -78,9 +78,10 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public uint NETLibraryVersion => Ch.GetNETLibraryVersion();
 
-        public int ConveyorStatus { get; private set; }
+        public ConveyorStatus ConveyorStatus { get; private set; }
 
-        public int ErrorCode { get; private set; }
+        public ConveyorErrorCode ErrorCode { get; private set; }
+
         public event Action<bool> ConnectionStatusChanged;
 
         public event Action<GantryAxes, bool> IdleChanged;
@@ -2245,7 +2246,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         }
 
         public bool HasError => HasConveyorError || HasRobotError;
-        public bool HasConveyorError => ErrorCode != 0;
+        public bool HasConveyorError => ErrorCode != ConveyorErrorCode.NoError;
         public bool HasRobotError { get; private set; }
 
         public event EventHandler OnStartButtonPressed;
@@ -2418,8 +2419,8 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         private void UpdateConveyorStatus()
         {
-            ConveyorStatus = Convert.ToInt16(acsUtils.ReadVar("CURRENT_STATUS"));
-            ErrorCode = Convert.ToInt16(acsUtils.ReadVar("ERROR_CODE"));
+            ConveyorStatus = (ConveyorStatus) Convert.ToInt16(acsUtils.ReadVar("CURRENT_STATUS"));
+            ErrorCode = (ConveyorErrorCode) Convert.ToInt16(acsUtils.ReadVar("ERROR_CODE"));
         }
 
         public void PowerOnRecoverFromEmergencyStop(PowerOnRecoverFromEmergencyStopBufferParameters parameter, int timeout)
