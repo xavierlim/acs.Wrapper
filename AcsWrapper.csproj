@@ -60,22 +60,24 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="util\BufferHelper.cs"/>
-    <Compile Include="wrapper\AcsMocker.cs"/>
-    <Compile Include="wrapper\AcsUtils.cs"/>
-    <Compile Include="wrapper\AcsWrapper.cs"/>
-    <Compile Include="wrapper\AcsWrapperFactory.cs"/>
-    <Compile Include="wrapper\ConveyorAxes.cs"/>
-    <Compile Include="wrapper\exceptions\AcsException.cs"/>
-    <Compile Include="wrapper\exceptions\IAcsException.cs"/>
-    <Compile Include="wrapper\IAcsWrapper.cs"/>
-    <Compile Include="wrapper\models\AcsAxis.cs"/>
-    <Compile Include="wrapper\models\AcsBuffers.cs"/>
-    <Compile Include="wrapper\models\AxisParameters.cs"/>
-    <Compile Include="wrapper\models\BuffersParameters.cs"/>
-    <Compile Include="wrapper\models\CurrentandErrorStatusfromACS.cs"/>
-    <Compile Include="wrapper\models\IoStatus.cs"/>
-    <Compile Include="wrapper\models\SetOutputParameters.cs"/>
+    <Compile Include="util\BufferHelper.cs" />
+    <Compile Include="wrapper\AcsMocker.cs" />
+    <Compile Include="wrapper\AcsUtils.cs" />
+    <Compile Include="wrapper\AcsWrapper.cs" />
+    <Compile Include="wrapper\AcsWrapperFactory.cs" />
+    <Compile Include="wrapper\exceptions\AcsException.cs" />
+    <Compile Include="wrapper\exceptions\IAcsException.cs" />
+    <Compile Include="wrapper\IAcsWrapper.cs" />
+    <Compile Include="wrapper\models\AcsAxis.cs" />
+    <Compile Include="wrapper\models\AcsBuffers.cs" />
+    <Compile Include="wrapper\models\AxisParameters.cs" />
+    <Compile Include="wrapper\models\BuffersParameters.cs" />
+    <Compile Include="wrapper\models\ConveyorAxes.cs" />
+    <Compile Include="wrapper\models\ConveyorErrorCode.cs" />
+    <Compile Include="wrapper\models\ConveyorStatus.cs" />
+    <Compile Include="wrapper\models\CurrentandErrorStatusfromACS.cs" />
+    <Compile Include="wrapper\models\IoStatus.cs" />
+    <Compile Include="wrapper\models\SetOutputParameters.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Configuration\Configuration.csproj">
