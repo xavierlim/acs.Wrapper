@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\..\bin\Debug\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -26,7 +26,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\..\..\bin\Release\</OutputPath>
+    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -69,14 +69,6 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <ProjectReference Include="..\..\..\..\..\..\CO.Common\Source\Logger\Logger.csproj">
-      <Project>{874C8B95-1F2B-4D6A-970A-E122987570AE}</Project>
-      <Name>CO.Common.Logger</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\..\CO.Common\Source\Settings\Settings.csproj">
-      <Project>{B77FD732-4571-4B01-A9CC-D7886B531A4C}</Project>
-      <Name>CO.Common.Settings</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="config\AcsSimConfig.cs" />
@@ -105,28 +97,6 @@
     <Compile Include="wrapper\models\CurrentandErrorStatusfromACS.cs" />
     <Compile Include="wrapper\models\IoStatus.cs" />
     <Compile Include="wrapper\models\SetOutputParameters.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Configuration\Configuration.csproj">
-      <Project>{2e9e78a6-82f5-4cd1-8386-faf549b6d4e7}</Project>
-      <Name>Configuration</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Conveyor\ConveyorBase\ConveyorBase.csproj">
-      <Project>{569460f7-92c7-4a9b-b9c8-e04bcaca88d6}</Project>
-      <Name>ConveyorBase</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Conveyor\ConveyorInterface\ConveyorInterface.csproj">
-      <Project>{40c2f7c2-de57-48f1-a30e-8faecb23408f}</Project>
-      <Name>ConveyorInterface</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Robot\RobotBase\RobotBase.csproj">
-      <Project>{a75937fd-65d7-4190-9055-f67b10b63020}</Project>
-      <Name>RobotBase</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Robot\RobotInterface\RobotInterface.csproj">
-      <Project>{59c9a766-f4b4-4bb1-9489-a7ce7fd5b686}</Project>
-      <Name>RobotInterface</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="README.md" />
@@ -190,7 +160,4 @@
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>xcopy /Y /Q /R /S /D /i $(ProjectDir)resources\buffers\*.* $(TargetDir)AppData\acs\buffers</PostBuildEvent>
-  </PropertyGroup>
 </Project>
