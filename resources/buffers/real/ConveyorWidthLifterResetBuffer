@@ -1,7 +1,8 @@
 WidthLifterConveyor_Reset_Completed = 0
 
-
-
+!TURN OFF CONVEYOR BELT SOFT LIMIT
+FMASK5.#SRL = 0
+FMASK5.#SLL = 0
 
 
 !Reset Width
@@ -113,7 +114,7 @@ enable Axis
 till MST(Axis).#ENABLED
 wait 100
 
-set FPOS(Axis)= 0
+set FPOS(Axis)= 0 
 
 
 
