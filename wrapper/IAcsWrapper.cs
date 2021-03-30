@@ -10,7 +10,6 @@
 using System;
 using System.Collections.Generic;
 using CO.Systems.Services.Acs.AcsWrapper.wrapper.models;
-using CO.Systems.Services.Conveyor.ConveyorBase;
 using CO.Systems.Services.Robot.Interface;
 using CO.Systems.Services.Robot.RobotBase;
 

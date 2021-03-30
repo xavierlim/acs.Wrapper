@@ -10,7 +10,7 @@ using System.Threading;
 using ACS.SPiiPlusNET;
 using CO.Common.Logger;
 
-namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
+namespace CO.Systems.Services.Acs.AcsWrapper.util
 {
   internal class AcsUtils
   {

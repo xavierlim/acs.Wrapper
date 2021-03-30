@@ -80,8 +80,8 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="util\BufferHelper.cs" />
-    <Compile Include="wrapper\AcsMocker.cs" />
-    <Compile Include="wrapper\AcsUtils.cs" />
+    <Compile Include="mockery\AcsMocker.cs" />
+    <Compile Include="util\AcsUtils.cs" />
     <Compile Include="wrapper\AcsWrapper.cs" />
     <Compile Include="wrapper\AcsWrapperFactory.cs" />
     <Compile Include="wrapper\exceptions\AcsException.cs" />

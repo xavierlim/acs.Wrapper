@@ -62,15 +62,15 @@
   <ItemGroup>
     <Compile Include="config\AcsSimConfig.cs" />
     <Compile Include="config\AcsSimHelper.cs" />
+    <Compile Include="mockery\AcsMocker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="resources\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="util\AcsUtils.cs" />
     <Compile Include="util\BufferHelper.cs" />
-    <Compile Include="wrapper\AcsMocker.cs" />
-    <Compile Include="wrapper\AcsUtils.cs" />
     <Compile Include="wrapper\AcsWrapper.cs" />
     <Compile Include="wrapper\AcsWrapperFactory.cs" />
     <Compile Include="wrapper\exceptions\AcsException.cs" />
