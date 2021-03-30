@@ -330,9 +330,6 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             throw new NotImplementedException();
         }
 
-        public event EventHandler OnStartButtonPressed;
-        public event EventHandler OnStopButtonPressed;
-        public event EventHandler OnEStopped;
         public void ApplicationError()
         {
             throw new NotImplementedException();
@@ -349,6 +346,11 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         }
 
         public void PowerOnRecoverFromEmergencyStop(PowerOnRecoverFromEmergencyStopBufferParameters parameter, int timeout)
+        {
+            throw new NotImplementedException();
+        }
+
+        public PanelButtons GetPanelButtonsStatus()
         {
             throw new NotImplementedException();
         }

@@ -47,6 +47,14 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
         public bool SmemaDownStreamFailedBoardAvailable;
     }
 
+    public class PanelButtons
+    {
+        public bool StartButton;
+        public bool StopButton;
+        public bool ResetButton;
+        public bool EStopButton;
+    }
+
     public class PresentSensors
     {
         public bool EntryOpto;

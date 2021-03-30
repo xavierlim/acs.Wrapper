@@ -11,8 +11,8 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using ACS.SPiiPlusNET;
-using CO.Common.Logger;
 using CO.Systems.Services.Acs.AcsWrapper.config;
+using CO.Systems.Services.Acs.AcsWrapper.resources;
 using CO.Systems.Services.Acs.AcsWrapper.util;
 using CO.Systems.Services.Acs.AcsWrapper.wrapper.exceptions;
 using CO.Systems.Services.Acs.AcsWrapper.wrapper.models;
@@ -2249,15 +2249,6 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         public bool HasConveyorError => ErrorCode != ConveyorErrorCode.NoError;
         public bool HasRobotError { get; private set; }
 
-        // start button pressed triggering event
-        public event EventHandler OnStartButtonPressed;
-
-        // stop button pressed triggering event
-        public event EventHandler OnStopButtonPressed;
-
-        // EStop triggering event
-        public event EventHandler OnEStopped;
-
         public void ApplicationError()
         {
             // application layer trigger error
@@ -2448,6 +2439,17 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             }
         }
 
+        public PanelButtons GetPanelButtonsStatus()
+        {
+            return new PanelButtons
+            {
+                StartButton = Convert.ToBoolean(acsUtils.ReadVar("Start_Button_Bit")),
+                StopButton = Convert.ToBoolean(acsUtils.ReadVar("Stop_Button_Bit")),
+                ResetButton = Convert.ToBoolean(acsUtils.ReadVar("Reset_Button_Bit")),
+                EStopButton = Convert.ToBoolean(acsUtils.ReadVar("EstopAndDoorOpenFeedback_Bit")),
+            };
+        }
+
         public ClampSensors GetClampSensorsStatus()
         {
             return new ClampSensors()
@@ -2459,12 +2461,15 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             };
         }
 
-        public PresentSensors GetPresentSensorsStatus() => new PresentSensors()
+        public PresentSensors GetPresentSensorsStatus()
         {
-            EntryOpto = Convert.ToBoolean(acsUtils.ReadVar("EntryOpto_Bit")),
-            ExitOpto = Convert.ToBoolean(acsUtils.ReadVar("ExitOpto_Bit")),
-            BoardStopPanelAlignSensor = Convert.ToBoolean(acsUtils.ReadVar("BoardStopPanelAlignSensor_Bit"))
-        };
+            return new PresentSensors()
+            {
+                EntryOpto = Convert.ToBoolean(acsUtils.ReadVar("EntryOpto_Bit")),
+                ExitOpto = Convert.ToBoolean(acsUtils.ReadVar("ExitOpto_Bit")),
+                BoardStopPanelAlignSensor = Convert.ToBoolean(acsUtils.ReadVar("BoardStopPanelAlignSensor_Bit"))
+            };
+        }
 
         public SmemaIo GetSmemaIoStatus()
         {
@@ -2588,7 +2593,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public void JogConveyorAxisRightToLeft(double velocity, double acceleration, double deceleration)
         {
-            Jog(ConveyorAxes.Conveyor, -velocity, acceleration, deceleration);
+            Jog(ConveyorAxes.Conveyor, velocity * -1, acceleration, deceleration);
         }
 
         public void StopConveyorAxis()
