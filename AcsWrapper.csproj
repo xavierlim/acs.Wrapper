@@ -54,12 +54,6 @@
     <Reference Include="Configurator.Util, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>lib\Configurator.Util.dll</HintPath>
     </Reference>
-    <Reference Include="CO.Common.Logger">
-      <HintPath>..\..\..\..\Library\CO.Common\Release\CO.Common.Logger.dll</HintPath>
-    </Reference>
-    <Reference Include="CO.Common.Settings">
-      <HintPath>..\..\..\..\Library\CO.Common\Release\CO.Common.Settings.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
@@ -94,6 +88,14 @@
     <Compile Include="wrapper\models\SetOutputParameters.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\..\CO.Common\Source\Logger\Logger.csproj">
+      <Project>{874c8b95-1f2b-4d6a-970a-e122987570ae}</Project>
+      <Name>Logger</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\..\CO.Common\Source\Settings\Settings.csproj">
+      <Project>{b77fd732-4571-4b01-a9cc-d7886b531a4c}</Project>
+      <Name>Settings</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Configuration\Configuration.csproj">
       <Project>{2e9e78a6-82f5-4cd1-8386-faf549b6d4e7}</Project>
       <Name>Configuration</Name>
@@ -116,59 +118,59 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="README.md"/>
-    <Content Include="resources\bufferCopier.py"/>
-    <Content Include="resources\buffers\LoadPanelBuffer"/>
-    <Content Include="resources\buffers\original_all.prg"/>
-    <Content Include="resources\buffers\original_xHoming.prg"/>
-    <Content Include="resources\buffers\original_yHoming.prg"/>
-    <Content Include="resources\buffers\real\AxisHomingBuffer"/>
-    <Content Include="resources\buffers\real\BypassModeBuffer"/>
-    <Content Include="resources\buffers\real\ChangeWidthBuffer"/>
-    <Content Include="resources\buffers\real\ConveyorAxisResetBuffer"/>
-    <Content Include="resources\buffers\real\ConveyorLifterHomingBuffer"/>
-    <Content Include="resources\buffers\real\ConveyorWidthHomingBuffer"/>
-    <Content Include="resources\buffers\real\ConveyorWidthLifterResetBuffer"/>
-    <Content Include="resources\buffers\real\DBuffer"/>
-    <Content Include="resources\buffers\real\EmergencyStopBuffer"/>
-    <Content Include="resources\buffers\real\FreePanelBuffer"/>
-    <Content Include="resources\buffers\real\GantryXHomingBuffer"/>
-    <Content Include="resources\buffers\real\GantryYHomingBuffer"/>
-    <Content Include="resources\buffers\real\GantryZHomingBuffer"/>
-    <Content Include="resources\buffers\real\InternalErrorExitBuffer"/>
-    <Content Include="resources\buffers\real\InternalMachineLoadBuffer"/>
-    <Content Include="resources\buffers\real\IoInitializationBuffer.prg"/>
-    <Content Include="resources\buffers\real\LoadPanelBuffer"/>
-    <Content Include="resources\buffers\real\PowerOnRecoverFromEmergencyStopBuffer"/>
-    <Content Include="resources\buffers\real\PreReleasePanelBuffer"/>
-    <Content Include="resources\buffers\real\ReleasePanelBuffer"/>
-    <Content Include="resources\buffers\real\ReloadPanelBuffer.prg"/>
-    <Content Include="resources\buffers\real\ScanningBuffer"/>
-    <Content Include="resources\buffers\real\SecurePanelBuffer"/>
-    <Content Include="resources\buffers\ReleasePanelBuffer"/>
-    <Content Include="resources\buffers\simulation\AxisHomingBuffer"/>
-    <Content Include="resources\buffers\simulation\BypassModeBuffer"/>
-    <Content Include="resources\buffers\simulation\ChangeWidthBuffer"/>
-    <Content Include="resources\buffers\simulation\ConveyorAxisResetBuffer"/>
-    <Content Include="resources\buffers\simulation\ConveyorLifterHomingBuffer"/>
-    <Content Include="resources\buffers\simulation\ConveyorWidthHomingBuffer"/>
-    <Content Include="resources\buffers\simulation\ConveyorWidthLifterResetBuffer"/>
-    <Content Include="resources\buffers\simulation\DBuffer"/>
-    <Content Include="resources\buffers\simulation\EmergencyStopBuffer"/>
-    <Content Include="resources\buffers\simulation\FreePanelBuffer"/>
-    <Content Include="resources\buffers\simulation\GantryYHomingBuffer"/>
-    <Content Include="resources\buffers\simulation\GantryXHomingBuffer"/>
-    <Content Include="resources\buffers\simulation\GantryZHomingBuffer"/>
-    <Content Include="resources\buffers\simulation\InternalErrorExitBuffer"/>
-    <Content Include="resources\buffers\simulation\InternalMachineLoadBuffer"/>
-    <Content Include="resources\buffers\simulation\LoadPanelBuffer"/>
-    <Content Include="resources\buffers\simulation\IoInitializationBuffer.prg"/>
-    <Content Include="resources\buffers\simulation\PowerOnRecoverFromEmergencyStopBuffer"/>
-    <Content Include="resources\buffers\simulation\PreReleasePanelBuffer"/>
-    <Content Include="resources\buffers\simulation\ReleasePanelBuffer"/>
-    <Content Include="resources\buffers\simulation\ReloadPanelBuffer.prg"/>
-    <Content Include="resources\buffers\simulation\ScanningBuffer"/>
-    <Content Include="resources\buffers\simulation\SecurePanelBuffer"/>
+    <Content Include="README.md" />
+    <Content Include="resources\bufferCopier.py" />
+    <Content Include="resources\buffers\LoadPanelBuffer" />
+    <Content Include="resources\buffers\original_all.prg" />
+    <Content Include="resources\buffers\original_xHoming.prg" />
+    <Content Include="resources\buffers\original_yHoming.prg" />
+    <Content Include="resources\buffers\real\AxisHomingBuffer" />
+    <Content Include="resources\buffers\real\BypassModeBuffer" />
+    <Content Include="resources\buffers\real\ChangeWidthBuffer" />
+    <Content Include="resources\buffers\real\ConveyorAxisResetBuffer" />
+    <Content Include="resources\buffers\real\ConveyorLifterHomingBuffer" />
+    <Content Include="resources\buffers\real\ConveyorWidthHomingBuffer" />
+    <Content Include="resources\buffers\real\ConveyorWidthLifterResetBuffer" />
+    <Content Include="resources\buffers\real\DBuffer" />
+    <Content Include="resources\buffers\real\EmergencyStopBuffer" />
+    <Content Include="resources\buffers\real\FreePanelBuffer" />
+    <Content Include="resources\buffers\real\GantryXHomingBuffer" />
+    <Content Include="resources\buffers\real\GantryYHomingBuffer" />
+    <Content Include="resources\buffers\real\GantryZHomingBuffer" />
+    <Content Include="resources\buffers\real\InternalErrorExitBuffer" />
+    <Content Include="resources\buffers\real\InternalMachineLoadBuffer" />
+    <Content Include="resources\buffers\real\IoInitializationBuffer.prg" />
+    <Content Include="resources\buffers\real\LoadPanelBuffer" />
+    <Content Include="resources\buffers\real\PowerOnRecoverFromEmergencyStopBuffer" />
+    <Content Include="resources\buffers\real\PreReleasePanelBuffer" />
+    <Content Include="resources\buffers\real\ReleasePanelBuffer" />
+    <Content Include="resources\buffers\real\ReloadPanelBuffer.prg" />
+    <Content Include="resources\buffers\real\ScanningBuffer" />
+    <Content Include="resources\buffers\real\SecurePanelBuffer" />
+    <Content Include="resources\buffers\ReleasePanelBuffer" />
+    <Content Include="resources\buffers\simulation\AxisHomingBuffer" />
+    <Content Include="resources\buffers\simulation\BypassModeBuffer" />
+    <Content Include="resources\buffers\simulation\ChangeWidthBuffer" />
+    <Content Include="resources\buffers\simulation\ConveyorAxisResetBuffer" />
+    <Content Include="resources\buffers\simulation\ConveyorLifterHomingBuffer" />
+    <Content Include="resources\buffers\simulation\ConveyorWidthHomingBuffer" />
+    <Content Include="resources\buffers\simulation\ConveyorWidthLifterResetBuffer" />
+    <Content Include="resources\buffers\simulation\DBuffer" />
+    <Content Include="resources\buffers\simulation\EmergencyStopBuffer" />
+    <Content Include="resources\buffers\simulation\FreePanelBuffer" />
+    <Content Include="resources\buffers\simulation\GantryYHomingBuffer" />
+    <Content Include="resources\buffers\simulation\GantryXHomingBuffer" />
+    <Content Include="resources\buffers\simulation\GantryZHomingBuffer" />
+    <Content Include="resources\buffers\simulation\InternalErrorExitBuffer" />
+    <Content Include="resources\buffers\simulation\InternalMachineLoadBuffer" />
+    <Content Include="resources\buffers\simulation\LoadPanelBuffer" />
+    <Content Include="resources\buffers\simulation\IoInitializationBuffer.prg" />
+    <Content Include="resources\buffers\simulation\PowerOnRecoverFromEmergencyStopBuffer" />
+    <Content Include="resources\buffers\simulation\PreReleasePanelBuffer" />
+    <Content Include="resources\buffers\simulation\ReleasePanelBuffer" />
+    <Content Include="resources\buffers\simulation\ReloadPanelBuffer.prg" />
+    <Content Include="resources\buffers\simulation\ScanningBuffer" />
+    <Content Include="resources\buffers\simulation\SecurePanelBuffer" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="resources\Resources.resx">
