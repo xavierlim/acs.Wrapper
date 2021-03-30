@@ -7,11 +7,14 @@ STOP
 
 ErrorExit:
 	CALL TurnOffMotors
+	ENABLE LIFTER_AXIS
+	WAIT 1000
 	CALL LowerLifter
-	CALL Unclamp
-	CALL LowerStopper
-	CALL ClearBoardAvailable
-	CALL ClearMachineReady
+	DISABLE LIFTER_AXIS
+	CALL Unclamp	
+	CALL LowerStopper	
+	CALL ClearBoardAvailable	
+	CALL ClearMachineReady	
 	CURRENT_STATUS = ERROR_STATUS
 RET
 
@@ -20,24 +23,28 @@ TurnOffMotors:
 RET
 
 LowerLifter:
-	JOG LIFTER_AXIS,-
-	TILL IN(LifterLowered_Port).LifterLowered_Bit = 1
-	HALT LIFTER_AXIS
+	Lifter_Lowered = 0
+	ptp/v LIFTER_AXIS,0,10
+	till ^MST(LIFTER_AXIS).#MOVE
+	wait 200
+	Lifter_Lowered = 1
+
+
 RET
 
 Unclamp:
-	OUT(ClampPanel_Port).ClampPanel_Bit = 0
+	ClampPanel_Bit = 0
 RET
 
 LowerStopper:
-	OUT(LockStopper_Port).LockStopper_Bit = 0
-	OUT(RaiseBoardStopStopper_Port).RaiseBoardStopStopper_Bit = 0
+	LockStopper_Bit = 0
+	RaiseBoardStopStopper_Bit = 0
 RET
 
 ClearBoardAvailable:
-	OUT(DownStreamBoardAvailable_Port).DownStreamBoardAvailable_Bit = 0
+	DownStreamBoardAvailable_Bit = 0
 RET
 
 ClearMachineReady:
-	OUT(SmemaUpStreamMachineReady_Port).SmemaUpStreamMachineReady_Bit = 0
+	SmemaUpStreamMachineReady_Bit = 0
 RET

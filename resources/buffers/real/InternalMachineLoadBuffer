@@ -1,37 +1,49 @@
 !InternalMachineLoadBuffer
 
-global int LoadPanelStateError
-LoadPanelStateError = 0
+ERROR_CODE = ERROR_SAFE
 
 global int LoadPanelAlignBeforeSlowSensorError,LoadPanelSecureError,LoadPanelAlignError,LoadPanelSlowSensorError
-LoadPanelSlowSensorError = 4
-LoadPanelAlignBeforeSlowSensorError = 5
-LoadPanelAlignError = 6
-LoadPanelSecureError = 7
 
-int WaitTimeToSlow
-int WaitTimeToAlign
-int SlowDelayTime
+LoadPanelSlowSensorError = 404
+LoadPanelAlignBeforeSlowSensorError = 405
+LoadPanelAlignError = 406
+LoadPanelSecureError = 407
+
+real DistanceBetweenEntryAndStopSensor = 620
 
 real SlowPosition
+real absPosTemp
+SlowPosition = 0
+absPosTemp = 0
 
+TILL EntryOpto_Bit = 0
+if EntryOpto_Bit = 0
+	absPosTemp = RPOS(CONVEYOR_AXIS)
+END
+SlowPosition = DistanceBetweenEntryAndStopSensor-DistanceBetweenSlowPositionAndStopSensor-PanelLength + absPosTemp
+TILL RPOS(CONVEYOR_AXIS) > SlowPosition								
+!TILL RPOS(CONVEYOR_AXIS) < SlowPosition
 
-TILL RPOS(CONVEYOR_AXIS) < SlowPosition
-CALL AdjustConveyorBeltSpeedToSlow
-TILL IN(BoardStopPanelAlignSensor_Port).BoardStopPanelAlignSensor_Bit,WaitTimeToAlign
-if IN(BoardStopPanelAlignSensor_Port).BoardStopPanelAlignSensor_Bit = 1
-	CALL TurnOffConveyorBeltMotor
-	START SecurePanelBufferIndex,1
-	TILL ^ PST(SecurePanelBufferIndex).#RUN
-	if PanelSecured = 1
-		CURRENT_STATUS = LOADED_STATUS
-	else
-		LoadPanelStateError = LoadPanelSecureError
-		CALL ErrorExit
+IF BoardStopPanelAlignSensor_Bit = 1								
+	ERROR_CODE = LoadPanelAlignBeforeSlowSensorError			
+END
+
+CALL AdjustConveyorBeltSpeedToSlow									
+TILL BoardStopPanelAlignSensor_Bit,InternalMachineLoadBuffer_WaitTimeToAlign					
+if BoardStopPanelAlignSensor_Bit = 1								
+	WAIT InternalMachineLoadBuffer_WaitTimeToAlign
+	CALL TurnOffConveyorBeltMotor										
+	START SecurePanelBufferIndex,1										
+	TILL ^ PST(SecurePanelBufferIndex).#RUN								
+	if PanelSecured = 1													
+		CURRENT_STATUS = LOADED_STATUS										
+	else																
+		ERROR_CODE = LoadPanelSecureError							
+		CALL ErrorExit														
 	end
-else
-	LoadPanelStateError = LoadPanelAlignError
-	CALL ErrorExit
+else																
+	ERROR_CODE = LoadPanelAlignError							
+	CALL ErrorExit														
 end
 
 STOP
@@ -44,9 +56,9 @@ ErrorExit:
 RET
 
 AdjustConveyorBeltSpeedToSlow:
-	JOG/v CONVEYOR_AXIS,ConveyorBeltSlowSpeed
+	JOG/v CONVEYOR_AXIS,ConveyorBeltSlowSpeed*ConveyorDirection
 RET
 
 TurnOffConveyorBeltMotor:
-	DISABLE CONVEYOR_AXIS
+	HALT CONVEYOR_AXIS
 RET

@@ -1,40 +1,34 @@
 !EmergencyStopBuffer
 
-AUTOEXEC:
+!AUTOEXEC:
 
-CALL EnableOptos
-CALL LowerLifter
-CALL Unclamp
-CALL LowerStopper
-CALL ClearBoardAvailable
-CALL ClearMachineReady
+CALL EnableOptos	
+CALL Unclamp	
+CALL LowerStopper	
+CALL ClearBoardAvailable	
+CALL ClearMachineReady	
 CURRENT_STATUS = SAFE_STATUS
+ERROR_CODE = ERROR_SAFE
 
 STOP
 
 EnableOptos:
-	OUT(StopSensor_Port).StopSensor_Bit = 1
-RET
-
-LowerLifter:
-	JOG LIFTER_AXIS,-
-	TILL IN(LifterLowered_Port).LifterLowered_Bit = 1
-	HALT LIFTER_AXIS
+	StopSensor_Bit = 1
 RET
 
 Unclamp:
-	OUT(ClampPanel_Port).ClampPanel_Bit = 0
+	ClampPanel_Bit = 0
 RET
 
 LowerStopper:
-	OUT(LockStopper_Port).LockStopper_Bit = 0
-	OUT(RaiseBoardStopStopper_Port).RaiseBoardStopStopper_Bit = 0
+	LockStopper_Bit = 0
+	RaiseBoardStopStopper_Bit = 0
 RET
 
 ClearBoardAvailable:
-	OUT(DownStreamBoardAvailable_Port).DownStreamBoardAvailable_Bit = 0
+	DownStreamBoardAvailable_Bit = 0
 RET
 
 ClearMachineReady:
-	OUT(SmemaUpStreamMachineReady_Port).SmemaUpStreamMachineReady_Bit = 0
+	SmemaUpStreamMachineReady_Bit = 0
 RET

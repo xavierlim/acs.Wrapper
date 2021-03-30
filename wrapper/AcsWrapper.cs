@@ -2249,20 +2249,26 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         public bool HasConveyorError => ErrorCode != ConveyorErrorCode.NoError;
         public bool HasRobotError { get; private set; }
 
+        // start button pressed triggering event
         public event EventHandler OnStartButtonPressed;
 
+        // stop button pressed triggering event
         public event EventHandler OnStopButtonPressed;
 
+        // EStop triggering event
         public event EventHandler OnEStopped;
 
         public void ApplicationError()
         {
-            // throw new NotImplementedException();
+            // application layer trigger error
+            // application layer will call this method to notify ACS controller to handle operation halt accordingly
+
         }
 
         public void ResetError()
         {
-            // throw new NotImplementedException();
+            // reset controller errors
+            // to run buffer 7 for conveyor axes to clear error and enable all gantry axes to clear error.
         }
 
         public int GetCurrentStatus()
@@ -2293,13 +2299,13 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             return lifter;
         }
 
-        public void StartPanelLoad(LoadPanelBufferParameters loadParameters, double panelLength, int timeout)
+        public void StartPanelLoad(LoadPanelBufferParameters parameters, double panelLength, int timeout)
         {
-            InitConveyorBufferParameters(loadParameters);
+            InitConveyorBufferParameters(parameters);
             WritePanelLength(panelLength);
 
-            acsUtils.RunBuffer(ProgramBuffer.ACSC_BUFFER_17);
-            Ch.WaitProgramEnd(ProgramBuffer.ACSC_BUFFER_17, timeout);
+            acsUtils.RunBuffer((ProgramBuffer)AcsBuffers.LoadPanel);
+            Ch.WaitProgramEnd((ProgramBuffer)AcsBuffers.LoadPanel, timeout);
 
             UpdateConveyorStatus();
         }
@@ -2309,8 +2315,8 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             InitConveyorBufferParameters(parameters);
             WritePanelLength(panelLength);
 
-            acsUtils.RunBuffer(ProgramBuffer.ACSC_BUFFER_21);
-            Ch.WaitProgramEnd(ProgramBuffer.ACSC_BUFFER_21, timeout);
+            acsUtils.RunBuffer((ProgramBuffer)AcsBuffers.ReloadPanel);
+            Ch.WaitProgramEnd((ProgramBuffer)AcsBuffers.ReloadPanel, timeout);
 
             UpdateConveyorStatus();
         }
@@ -2322,14 +2328,15 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public void StopPanelLoad()
         {
-            acsUtils.StopBuffer(ProgramBuffer.ACSC_BUFFER_17);
+            acsUtils.StopBuffer((ProgramBuffer)AcsBuffers.LoadPanel);
         }
 
         public void StartPanelPreRelease(PreReleasePanelBufferParameters parameters, int timeout)
         {
             InitConveyorBufferParameters(parameters);
-            acsUtils.RunBuffer(ProgramBuffer.ACSC_BUFFER_19);
-            Ch.WaitProgramEnd(ProgramBuffer.ACSC_BUFFER_19, timeout);
+
+            acsUtils.RunBuffer((ProgramBuffer)AcsBuffers.PreReleasePanel);
+            Ch.WaitProgramEnd((ProgramBuffer)AcsBuffers.PreReleasePanel, timeout);
 
             UpdateConveyorStatus();
         }
@@ -2337,8 +2344,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         public void StartPanelRelease(ReleasePanelBufferParameters parameters, int timeout)
         {
             InitConveyorBufferParameters(parameters);
-            acsUtils.RunBuffer(ProgramBuffer.ACSC_BUFFER_20);
-            Ch.WaitProgramEnd(ProgramBuffer.ACSC_BUFFER_20, timeout);
+
+            acsUtils.RunBuffer((ProgramBuffer)AcsBuffers.ReleasePanel);
+            Ch.WaitProgramEnd((ProgramBuffer)AcsBuffers.ReleasePanel, timeout);
 
             UpdateConveyorStatus();
         }
@@ -2410,27 +2418,32 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public void ChangeConveyorWidth(ChangeWidthBufferParameters parameters, int timeout)
         {
+            // change conveyor width
             InitConveyorBufferParameters(parameters);
-            acsUtils.RunBuffer(ProgramBuffer.ACSC_BUFFER_13);
-            Ch.WaitProgramEnd(ProgramBuffer.ACSC_BUFFER_13, timeout);
+
+            acsUtils.RunBuffer((ProgramBuffer)AcsBuffers.ChangeWidth);
+            Ch.WaitProgramEnd((ProgramBuffer)AcsBuffers.ChangeWidth, timeout);
 
             UpdateConveyorStatus();
         }
 
         private void UpdateConveyorStatus()
         {
-            ConveyorStatus = (ConveyorStatus) Convert.ToInt16(acsUtils.ReadVar("CURRENT_STATUS"));
-            ErrorCode = (ConveyorErrorCode) Convert.ToInt16(acsUtils.ReadVar("ERROR_CODE"));
+            ConveyorStatus = (ConveyorStatus)Convert.ToInt16(acsUtils.ReadVar("CURRENT_STATUS"));
+            ErrorCode = (ConveyorErrorCode)Convert.ToInt16(acsUtils.ReadVar("ERROR_CODE"));
         }
 
         public void PowerOnRecoverFromEmergencyStop(PowerOnRecoverFromEmergencyStopBufferParameters parameter, int timeout)
         {
-            try {
+            try
+            {
                 InitConveyorBufferParameters(parameter);
-                acsUtils.RunBuffer(ProgramBuffer.ACSC_BUFFER_18);
-                Ch.WaitProgramEnd(ProgramBuffer.ACSC_BUFFER_18, timeout);
+
+                acsUtils.RunBuffer((ProgramBuffer)AcsBuffers.PowerOnRecoverFromEmergencyStop);
+                Ch.WaitProgramEnd((ProgramBuffer)AcsBuffers.PowerOnRecoverFromEmergencyStop, timeout);
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 throw new AcsException(ex.Message);
             }
         }
@@ -2465,21 +2478,27 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public void BypassModeOn(BypassModeBufferParameters parameter)
         {
-            try {
+            // activate Bypass mode
+            try
+            {
                 InitConveyorBufferParameters(parameter);
-                acsUtils.RunBuffer(ProgramBuffer.ACSC_BUFFER_12);
+                acsUtils.RunBuffer((ProgramBuffer)AcsBuffers.BypassMode);
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 throw new AcsException(ex.Message);
             }
         }
 
         public void BypassModeOff()
         {
-            try {
-                acsUtils.StopBuffer(ProgramBuffer.ACSC_BUFFER_12);
+            // deactivate Bypass mode
+            try
+            {
+                acsUtils.StopBuffer((ProgramBuffer)AcsBuffers.BypassMode);
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 throw new AcsException(ex.Message);
             }
         }
@@ -2521,21 +2540,23 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public bool IsConveyorAxisEnable()
         {
-            return true;
+            return Enabled(ConveyorAxes.Conveyor);
         }
 
         public bool IsConveyorWidthAxisEnable()
         {
-            return true;
+            return Enabled(ConveyorAxes.Width);
         }
 
         public void HomeConveyorWidthAxis(HomeConveyorWidthParameters parameter)
         {
-            try {
+            try
+            {
                 InitConveyorBufferParameters(parameter);
-                acsUtils.RunBuffer(ProgramBuffer.ACSC_BUFFER_5);
+                acsUtils.RunBuffer((ProgramBuffer)AcsBuffers.WidthHoming);
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 throw new AcsException(ex.Message);
             }
         }
@@ -2567,7 +2588,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public void JogConveyorAxisRightToLeft(double velocity, double acceleration, double deceleration)
         {
-            Jog(ConveyorAxes.Conveyor, velocity * -1, acceleration, deceleration);
+            Jog(ConveyorAxes.Conveyor, -velocity, acceleration, deceleration);
         }
 
         public void StopConveyorAxis()
@@ -2587,10 +2608,12 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public void HomeConveyorLifterAxis()
         {
-            try {
-                acsUtils.RunBuffer(ProgramBuffer.ACSC_BUFFER_6);
+            try
+            {
+                acsUtils.RunBuffer((ProgramBuffer)AcsBuffers.LifterHoming);
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 throw new AcsException(ex.Message);
             }
         }
@@ -2604,5 +2627,6 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         {
             return Enabled(ConveyorAxes.Lifter);
         }
+
     }
 }
