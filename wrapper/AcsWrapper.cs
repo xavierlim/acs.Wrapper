@@ -667,219 +667,222 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public bool InitConveyorBufferParameters(BypassModeBufferParameters parameters)
         {
-            _logger.Info("InitBypassModeBufferParameters()", 798, nameof(InitConveyorBufferParameters),
-                "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
-            if (!IsConnected) {
-                _logger.Info("Controller not connected", 801, nameof(InitConveyorBufferParameters),
-                    "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+            _logger.Info($"InitBypassModeBufferParameters()");
+            if (!IsConnected)
+            {
+                _logger.Info("Controller not connected");
                 return false;
             }
+            int buffer = (int)AcsBuffers.BypassMode;
 
-            int NBuf = 12;
-            acsUtils.WriteVariable(parameters.WaitTimeToSearch, "WaitTimeToSearch", NBuf);
-            acsUtils.WriteVariable(parameters.WaitTimeToAcq, "WaitTimeToAcq", NBuf);
-            acsUtils.WriteVariable(parameters.WaitTimeToCutout, "WaitTimeToCutout", NBuf);
-            acsUtils.WriteVariable(parameters.WaitTimeToExit, "WaitTimeToExit", NBuf);
-            acsUtils.WriteVariable(parameters.WaitTimeToRelease, "WaitTimeToRelease", NBuf);
-            acsUtils.WriteVariable(parameters.WaitTimeToSmema, "WaitTimeToSmema", NBuf);
+            acsUtils.WriteVariable(parameters.WaitTimeToSearch, "BypassModeBuffer_WaitTimeToSearch");
+            acsUtils.WriteVariable(parameters.WaitTimeToAcq, "BypassModeBuffer_WaitTimeToAcq");
+            acsUtils.WriteVariable(parameters.WaitTimeToCutout, "BypassModeBuffer_WaitTimeToCutout");
+            acsUtils.WriteVariable(parameters.WaitTimeToExit, "BypassModeBuffer_WaitTimeToExit");
+            acsUtils.WriteVariable(parameters.WaitTimeToRelease, "BypassModeBuffer_WaitTimeToRelease");
+            acsUtils.WriteVariable(parameters.WaitTimeToSmema, "BypassModeBuffer_WaitTimeToSmema");
+
             return true;
         }
 
         public bool InitConveyorBufferParameters(ChangeWidthBufferParameters parameters)
         {
-            _logger.Info("InitChangeWidthBufferParameters()", 817, nameof(InitConveyorBufferParameters),
-                "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
-            if (!IsConnected) {
-                _logger.Info("Controller not connected", 820, nameof(InitConveyorBufferParameters),
-                    "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+            _logger.Info($"InitChangeWidthBufferParameters()");
+            if (!IsConnected)
+            {
+                _logger.Info("Controller not connected");
                 return false;
             }
+            int buffer = (int)AcsBuffers.ChangeWidth;
 
-            int NBuf = 13;
-            acsUtils.WriteVariable(parameters.ConveyorSpecifiedWidth, "ConveyorSpecifiedWidth", NBuf);
-            acsUtils.WriteVariable(parameters.WaitTimeToSearch, "WaitTimeToSearch", NBuf);
+            acsUtils.WriteVariable(parameters.ConveyorSpecifiedWidth, "ConveyorSpecifiedWidth", buffer);
+            acsUtils.WriteVariable(parameters.WaitTimeToSearch, "ChangeWidthBuffer_WaitTimeToSearch");
+
+
             return true;
         }
 
         public bool InitConveyorBufferParameters(FreePanelBufferParameters parameters)
         {
-            _logger.Info("InitFreePanelBufferParameters()", 833, nameof(InitConveyorBufferParameters),
-                "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
-            if (!IsConnected) {
-                _logger.Info("Controller not connected", 836, nameof(InitConveyorBufferParameters),
-                    "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+            _logger.Info($"InitFreePanelBufferParameters()");
+            if (!IsConnected)
+            {
+                _logger.Info("Controller not connected");
                 return false;
             }
+            int buffer = (int)AcsBuffers.FreePanel;
 
-            int NBuf = 15;
-            acsUtils.WriteVariable(parameters.UnclampLiftDelayTime, "UnclampLiftDelayTime", NBuf);
-            acsUtils.WriteVariable(parameters.WaitTimeToUnlift, "WaitTimeToUnlift", NBuf);
-            acsUtils.WriteVariable(parameters.WaitTimeToUnclamp, "WaitTimeToUnclamp", NBuf);
+            acsUtils.WriteVariable(parameters.UnclampLiftDelayTime, "FreePanelBuffer_UnclampLiftDelayTime");
+            acsUtils.WriteVariable(parameters.WaitTimeToUnlift, "FreePanelBuffer_WaitTimeToUnlift");
+            acsUtils.WriteVariable(parameters.WaitTimeToUnclamp, "FreePanelBuffer_WaitTimeToUnclamp");
+
             return true;
         }
 
         public bool InitConveyorBufferParameters(InternalMachineLoadBufferParameters parameters)
         {
-            _logger.Info("InitInternalMachineLoadBufferParameters()", 850, nameof(InitConveyorBufferParameters),
-                "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
-            if (!IsConnected) {
-                _logger.Info("Controller not connected", 853, nameof(InitConveyorBufferParameters),
-                    "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+            _logger.Info($"InitInternalMachineLoadBufferParameters()");
+            if (!IsConnected)
+            {
+                _logger.Info("Controller not connected");
                 return false;
             }
+            int buffer = (int)AcsBuffers.InternalMachineLoad;
 
-            int NBuf = 16;
-            this.acsUtils.WriteVariable((object) parameters.WaitTimeToSlow, "WaitTimeToSlow", NBuf);
-            this.acsUtils.WriteVariable((object) parameters.WaitTimeToAlign, "WaitTimeToAlign", NBuf);
-            this.acsUtils.WriteVariable((object) parameters.SlowDelayTime, "SlowDelayTime", NBuf);
-            this.acsUtils.WriteVariable((object) parameters.DistanceBetweenEntryAndStopSensor, "DistanceBetweenEntryAndStopSensor", NBuf);
-            this.acsUtils.WriteVariable((object) parameters.DistanceBetweenSlowPositionAndStopSensor, "DistanceBetweenSlowPositionAndStopSensor", NBuf);
+            acsUtils.WriteVariable(parameters.WaitTimeToSlow, "InternalMachineLoadBuffer_WaitTimeToSlow");
+            acsUtils.WriteVariable(parameters.WaitTimeToAlign, "InternalMachineLoadBuffer_WaitTimeToAlign");
+            acsUtils.WriteVariable(parameters.SlowDelayTime, "InternalMachineLoadBuffer_SlowDelayTime");
+
+
+
             return true;
         }
 
         public bool InitConveyorBufferParameters(LoadPanelBufferParameters parameters)
         {
-            _logger.Info("InitLoadPanelBufferParameters()", 867, nameof(InitConveyorBufferParameters),
-                "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
-            if (!IsConnected) {
-                _logger.Info("Controller not connected", 870, nameof(InitConveyorBufferParameters),
-                    "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+            _logger.Info($"InitLoadPanelBufferParameters()");
+            if (!IsConnected)
+            {
+                _logger.Info("Controller not connected");
                 return false;
             }
+            int buffer = (int)AcsBuffers.LoadPanel;
 
-            int NBuf = 17;
-            acsUtils.WriteVariable(parameters.WaitTimeToAcq, "WaitTimeToAcq", NBuf);
+            acsUtils.WriteVariable(parameters.WaitTimeToAcq, "LoadPanelBuffer_WaitTimeToAcq");
+
             return true;
         }
 
-        public bool InitConveyorBufferParameters(
-            PowerOnRecoverFromEmergencyStopBufferParameters parameters)
+        public bool InitConveyorBufferParameters(PowerOnRecoverFromEmergencyStopBufferParameters parameters)
         {
-            _logger.Info("InitPowerOnRecoverFromEmergencyStopBufferParameters()", 881,
-                nameof(InitConveyorBufferParameters),
-                "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
-            if (!IsConnected) {
-                _logger.Info("Controller not connected", 884, nameof(InitConveyorBufferParameters),
-                    "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+            _logger.Info($"InitPowerOnRecoverFromEmergencyStopBufferParameters()");
+            if (!IsConnected)
+            {
+                _logger.Info("Controller not connected");
                 return false;
             }
+            int buffer = (int)AcsBuffers.PowerOnRecoverFromEmergencyStop;
 
-            int NBuf = 18;
-            acsUtils.WriteVariable(parameters.WaitTimeToSearch, "WaitTimeToSearch", NBuf);
-            acsUtils.WriteVariable(parameters.WaitTimeToExit, "WaitTimeToExit", NBuf);
-            acsUtils.WriteVariable(parameters.WaitTimeToReset, "WaitTimeToReset", NBuf);
-            acsUtils.WriteVariable(parameters.WidthToW_0_Position, "WidthToW_0_Position", NBuf);
+            acsUtils.WriteVariable(parameters.WaitTimeToSearch, "PowerOnRecoveryBuffer_WaitTimeToSearch");
+            acsUtils.WriteVariable(parameters.WaitTimeToExit, "PowerOnRecoveryBuffer_WaitTimeToExit");
+            acsUtils.WriteVariable(parameters.WaitTimeToReset, "PowerOnRecoveryBuffer_WaitTimeToReset");
+            acsUtils.WriteVariable(parameters.WidthToW_0_Position, "WidthToW_0_Position", buffer);
+
             return true;
         }
 
         public bool InitConveyorBufferParameters(PreReleasePanelBufferParameters parameters)
         {
-            _logger.Info("InitPreReleasePanelBufferParameters()", 898, nameof(InitConveyorBufferParameters),
-                "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
-            if (!IsConnected) {
-                _logger.Info("Controller not connected", 901, nameof(InitConveyorBufferParameters),
-                    "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+            _logger.Info($"InitPreReleasePanelBufferParameters()");
+            if (!IsConnected)
+            {
+                _logger.Info("Controller not connected");
                 return false;
             }
+            int buffer = (int)AcsBuffers.PreReleasePanel;
 
-            int NBuf = 19;
-            this.acsUtils.WriteVariable((object) parameters.WaitTimeToExit, "WaitTimeToExit", NBuf);
-            this.acsUtils.WriteVariable((object) parameters.DistanceBetweenStopSensorAndExitSensor, "DistanceBetweenStopSensorAndExitSensor", NBuf);
-            this.acsUtils.WriteVariable((object) parameters.DistanceBetweenSlowPositionAndExitSensor, "DistanceBetweenSlowPositionAndExitSensor", NBuf);
+            acsUtils.WriteVariable(parameters.WaitTimeToExit, "PreReleasePanelBuffer_WaitTimeToExit");
+
+
+
             return true;
         }
 
         public bool InitConveyorBufferParameters(ReleasePanelBufferParameters parameters)
         {
-            _logger.Info("InitReleasePanelBufferParameters()", 912, nameof(InitConveyorBufferParameters),
-                "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
-            if (!IsConnected) {
-                _logger.Info("Controller not connected", 915, nameof(InitConveyorBufferParameters),
-                    "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+            _logger.Info($"InitReleasePanelBufferParameters()");
+            if (!IsConnected)
+            {
+                _logger.Info("Controller not connected");
                 return false;
             }
+            int buffer = (int)AcsBuffers.ReleasePanel;
 
-            int NBuf = 20;
-            acsUtils.WriteVariable(parameters.WaitTimeToExit, "WaitTimeToExit", NBuf);
-            acsUtils.WriteVariable(parameters.WaitTimeToRelease, "WaitTimeToRelease", NBuf);
-            acsUtils.WriteVariable(parameters.WaitTimeToSmema, "WaitTimeToSmema", NBuf);
-            acsUtils.WriteVariable(parameters.WaitTimeToCutout, "WaitTimeToCutout", NBuf);
-            acsUtils.WriteVariable(parameters.WaitTimeToBeltVacuum, "WaitTimeToBeltVacuum", NBuf);
+            acsUtils.WriteVariable(parameters.WaitTimeToExit, "ReleasePanelBuffer_WaitTimeToExit");
+            acsUtils.WriteVariable(parameters.WaitTimeToRelease, "ReleasePanelBuffer_WaitTimeToRelease");
+            acsUtils.WriteVariable(parameters.WaitTimeToSmema, "ReleasePanelBuffer_WaitTimeToSmema");
+            acsUtils.WriteVariable(parameters.WaitTimeToCutout, "ReleasePanelBuffer_WaitTimeToCutout");
+            acsUtils.WriteVariable(parameters.WaitTimeToBeltVacuum, "ReleasePanelBuffer_WaitTimeToBeltVacuum");
+
             return true;
         }
 
         public bool InitConveyorBufferParameters(ReloadPanelBufferParameters parameters)
         {
-            _logger.Info("InitReloadPanelBufferParameters()", 931, nameof(InitConveyorBufferParameters),
-                "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
-            if (!IsConnected) {
-                _logger.Info("Controller not connected", 934, nameof(InitConveyorBufferParameters),
-                    "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+            _logger.Info($"InitReloadPanelBufferParameters()");
+            if (!IsConnected)
+            {
+                _logger.Info("Controller not connected");
                 return false;
             }
+            int buffer = (int)AcsBuffers.ReloadPanel;
 
-            int NBuf = 21;
-            acsUtils.WriteVariable(parameters.WaitTimeToSearch, "WaitTimeToSearch", NBuf);
-            acsUtils.WriteVariable(parameters.ReloadDelayTime, "ReloadDelayTime", NBuf);
+            acsUtils.WriteVariable(parameters.WaitTimeToSearch, "ReloadPanelBuffer_WaitTimeToSearch");
+            acsUtils.WriteVariable(parameters.ReloadDelayTime, "ReloadPanelBuffer_ReloadDelayTime");
+
             return true;
         }
 
         public bool InitConveyorBufferParameters(SecurePanelBufferParameters parameters)
         {
-            _logger.Info("InitSecurePanelBufferParameters()", 946, nameof(InitConveyorBufferParameters),
-                "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
-            if (!IsConnected) {
-                _logger.Info("Controller not connected", 949, nameof(InitConveyorBufferParameters),
-                    "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+            _logger.Info($"InitSecurePanelBufferParameters()");
+            if (!IsConnected)
+            {
+                _logger.Info("Controller not connected");
                 return false;
             }
+            int buffer = (int)AcsBuffers.SecurePanel;
 
-            int NBuf = 22;
-            acsUtils.WriteVariable(parameters.ClampLiftDelayTime, "ClampLiftDelayTime", NBuf);
-            acsUtils.WriteVariable(parameters.WaitTimeToPanelClamped, "WaitTimeToPanelClamped", NBuf);
-            acsUtils.WriteVariable(parameters.WaitTimeToLifted, "WaitTimeToLifted", NBuf);
-            acsUtils.WriteVariable(parameters.WaitTimeToUnstop, "WaitTimeToUnstop", NBuf);
-            acsUtils.WriteVariable(parameters.Stage_1_LifterOnlyDistance, "Stage_1_LifterOnlyDistance",
-                NBuf);
-            acsUtils.WriteVariable(parameters.Stage_2_LifterAndClamperDistance,
-                "Stage_2_LifterAndClamperDistance", NBuf);
+            acsUtils.WriteVariable(parameters.ClampLiftDelayTime, "SecurePanelBuffer_ClampLiftDelayTime");
+            acsUtils.WriteVariable(parameters.WaitTimeToPanelClamped, "SecurePanelBuffer_WaitTimeToPanelClamped");
+            acsUtils.WriteVariable(parameters.WaitTimeToLifted, "SecurePanelBuffer_WaitTimeToLifted");
+            acsUtils.WriteVariable(parameters.WaitTimeToUnstop, "SecurePanelBuffer_WaitTimeToUnstop");
+
+            acsUtils.WriteVariable(parameters.Stage_1_LifterOnlyDistance, "Stage_1_LifterOnlyDistance", buffer);
+            acsUtils.WriteVariable(parameters.Stage_2_LifterAndClamperDistance, "Stage_2_LifterAndClamperDistance", buffer);
+
             return true;
         }
 
         public bool InitConveyorBufferParameters(HomeConveyorWidthParameters parameters)
         {
-            _logger.Info("InitHomeConveyorWidthParameters()", 965, nameof(InitConveyorBufferParameters),
-                "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
-            if (!IsConnected) {
-                _logger.Info("Controller not connected", 968, nameof(InitConveyorBufferParameters),
-                    "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+            _logger.Info($"InitHomeConveyorWidthParameters()");
+            if (!IsConnected)
+            {
+                _logger.Info("Controller not connected");
                 return false;
             }
 
-            acsUtils.WriteGlobalReal(parameters.HOME_VEL_IN, "HOME_VEL_IN", 6);
-            acsUtils.WriteGlobalReal(parameters.HOME_VEL_OUT, "HOME_VEL_OUT", 6);
-            acsUtils.WriteGlobalReal(parameters.HOME_OFFSET, "HOME_OFFSET", 6);
+            acsUtils.WriteGlobalReal(parameters.HOME_VEL_IN, "HOME_VEL_IN", (int)ConveyorAxes.Width);
+            acsUtils.WriteGlobalReal(parameters.HOME_VEL_OUT, "HOME_VEL_OUT", (int)ConveyorAxes.Width);
+            acsUtils.WriteGlobalReal(parameters.HOME_OFFSET, "HOME_OFFSET", (int)ConveyorAxes.Width);
+
             return true;
         }
 
         public bool InitConveyorBufferParameters(DBufferParameters parameters)
         {
-            _logger.Info("InitDBufferParameters()", 982, nameof(InitConveyorBufferParameters),
-                "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
-            if (!IsConnected) {
-                _logger.Info("Controller not connected", 985, nameof(InitConveyorBufferParameters),
-                    "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+            _logger.Info($"InitDBufferParameters()");
+            if (!IsConnected)
+            {
+                _logger.Info("Controller not connected");
                 return false;
             }
+            int buffer = acsUtils.GetDBufferIndex();
 
-            int dbufferIndex = this.acsUtils.GetDBufferIndex();
-            this.acsUtils.WriteVariable((object) parameters.ConveyorBeltAcquireSpeed, "ConveyorBeltAcquireSpeed", dbufferIndex);
-            this.acsUtils.WriteVariable((object) parameters.ConveyorBeltLoadingSpeed, "ConveyorBeltLoadingSpeed", dbufferIndex);
-            this.acsUtils.WriteVariable((object) parameters.ConveyorBeltSlowSpeed, "ConveyorBeltSlowSpeed", dbufferIndex);
-            this.acsUtils.WriteVariable((object) parameters.ConveyorBeltReleaseSpeed, "ConveyorBeltReleaseSpeed", dbufferIndex);
-            this.acsUtils.WriteVariable((object) parameters.ConveyorBeltUnloadingSpeed, "ConveyorBeltUnloadingSpeed", dbufferIndex);
-            this.acsUtils.WriteVariable((object) Convert.ToInt32(parameters.PingPongMode), "PingPongMode", dbufferIndex);
-            this.acsUtils.WriteVariable((object) (int) parameters.ConveyorDirection, "ConveyorDirection", dbufferIndex);
+            acsUtils.WriteVariable(parameters.ConveyorBeltAcquireSpeed, "ConveyorBeltAcquireSpeed", buffer);
+            acsUtils.WriteVariable(parameters.ConveyorBeltLoadingSpeed, "ConveyorBeltLoadingSpeed", buffer);
+            acsUtils.WriteVariable(parameters.ConveyorBeltSlowSpeed, "ConveyorBeltSlowSpeed", buffer);
+            acsUtils.WriteVariable(parameters.ConveyorBeltReleaseSpeed, "ConveyorBeltReleaseSpeed", buffer);
+            acsUtils.WriteVariable(parameters.ConveyorBeltUnloadingSpeed, "ConveyorBeltUnloadingSpeed", buffer);
+            acsUtils.WriteVariable(Convert.ToInt32(parameters.PingPongMode), "PingPongMode", buffer);
+            acsUtils.WriteVariable(parameters.ConveyorDirection, "ConveyorDirection", buffer);
+
+            acsUtils.WriteVariable(parameters.DistanceBetweenEntryAndStopSensor, "DistanceBetweenEntryAndStopSensor", buffer);
+            acsUtils.WriteVariable(parameters.DistanceBetweenSlowPositionAndStopSensor, "DistanceBetweenSlowPositionAndStopSensor", buffer);
+            acsUtils.WriteVariable(parameters.DistanceBetweenStopSensorAndExitSensor, "DistanceBetweenStopSensorAndExitSensor", buffer);
+            acsUtils.WriteVariable(parameters.DistanceBetweenSlowPositionAndExitSensor, "DistanceBetweenSlowPositionAndExitSensor", buffer);
+
             return true;
         }
 
