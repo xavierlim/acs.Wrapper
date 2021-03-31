@@ -674,13 +674,12 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 return false;
             }
 
-            int NBuf = 12;
-            acsUtils.WriteVariable(parameters.WaitTimeToSearch, "WaitTimeToSearch", NBuf);
-            acsUtils.WriteVariable(parameters.WaitTimeToAcq, "WaitTimeToAcq", NBuf);
-            acsUtils.WriteVariable(parameters.WaitTimeToCutout, "WaitTimeToCutout", NBuf);
-            acsUtils.WriteVariable(parameters.WaitTimeToExit, "WaitTimeToExit", NBuf);
-            acsUtils.WriteVariable(parameters.WaitTimeToRelease, "WaitTimeToRelease", NBuf);
-            acsUtils.WriteVariable(parameters.WaitTimeToSmema, "WaitTimeToSmema", NBuf);
+            acsUtils.WriteVariable(parameters.WaitTimeToSearch, "WaitTimeToSearch");
+            acsUtils.WriteVariable(parameters.WaitTimeToAcq, "WaitTimeToAcq");
+            acsUtils.WriteVariable(parameters.WaitTimeToCutout, "WaitTimeToCutout");
+            acsUtils.WriteVariable(parameters.WaitTimeToExit, "WaitTimeToExit");
+            acsUtils.WriteVariable(parameters.WaitTimeToRelease, "WaitTimeToRelease");
+            acsUtils.WriteVariable(parameters.WaitTimeToSmema, "WaitTimeToSmema");
             return true;
         }
 
@@ -696,7 +695,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
             int NBuf = 13;
             acsUtils.WriteVariable(parameters.ConveyorSpecifiedWidth, "ConveyorSpecifiedWidth", NBuf);
-            acsUtils.WriteVariable(parameters.WaitTimeToSearch, "WaitTimeToSearch", NBuf);
+            acsUtils.WriteVariable(parameters.WaitTimeToSearch, "WaitTimeToSearch");
             return true;
         }
 
@@ -710,10 +709,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 return false;
             }
 
-            int NBuf = 15;
-            acsUtils.WriteVariable(parameters.UnclampLiftDelayTime, "UnclampLiftDelayTime", NBuf);
-            acsUtils.WriteVariable(parameters.WaitTimeToUnlift, "WaitTimeToUnlift", NBuf);
-            acsUtils.WriteVariable(parameters.WaitTimeToUnclamp, "WaitTimeToUnclamp", NBuf);
+            acsUtils.WriteVariable(parameters.UnclampLiftDelayTime, "UnclampLiftDelayTime");
+            acsUtils.WriteVariable(parameters.WaitTimeToUnlift, "WaitTimeToUnlift");
+            acsUtils.WriteVariable(parameters.WaitTimeToUnclamp, "WaitTimeToUnclamp");
             return true;
         }
 
@@ -727,14 +725,14 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 return false;
             }
 
-            int NBuf = 16;
-            this.acsUtils.WriteVariable((object) parameters.WaitTimeToSlow, "WaitTimeToSlow", NBuf);
-            this.acsUtils.WriteVariable((object) parameters.WaitTimeToAlign, "WaitTimeToAlign", NBuf);
-            this.acsUtils.WriteVariable((object) parameters.SlowDelayTime, "SlowDelayTime", NBuf);
+            int buffer = (int) AcsBuffers.InternalMachineLoad;
+            this.acsUtils.WriteVariable((object) parameters.WaitTimeToSlow, "WaitTimeToSlow");
+            this.acsUtils.WriteVariable((object) parameters.WaitTimeToAlign, "WaitTimeToAlign");
+            this.acsUtils.WriteVariable((object) parameters.SlowDelayTime, "SlowDelayTime");
             this.acsUtils.WriteVariable((object) parameters.DistanceBetweenEntryAndStopSensor,
-                "DistanceBetweenEntryAndStopSensor", NBuf);
+                "DistanceBetweenEntryAndStopSensor", buffer);
             this.acsUtils.WriteVariable((object) parameters.DistanceBetweenSlowPositionAndStopSensor,
-                "DistanceBetweenSlowPositionAndStopSensor", NBuf);
+                "DistanceBetweenSlowPositionAndStopSensor", buffer);
             return true;
         }
 
@@ -748,8 +746,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 return false;
             }
 
-            int NBuf = 17;
-            acsUtils.WriteVariable(parameters.WaitTimeToAcq, "WaitTimeToAcq", NBuf);
+            acsUtils.WriteVariable(parameters.WaitTimeToAcq, "WaitTimeToAcq");
             return true;
         }
 
@@ -766,9 +763,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             }
 
             int NBuf = 18;
-            acsUtils.WriteVariable(parameters.WaitTimeToSearch, "WaitTimeToSearch", NBuf);
-            acsUtils.WriteVariable(parameters.WaitTimeToExit, "WaitTimeToExit", NBuf);
-            acsUtils.WriteVariable(parameters.WaitTimeToReset, "WaitTimeToReset", NBuf);
+            acsUtils.WriteVariable(parameters.WaitTimeToSearch, "WaitTimeToSearch");
+            acsUtils.WriteVariable(parameters.WaitTimeToExit, "WaitTimeToExit");
+            acsUtils.WriteVariable(parameters.WaitTimeToReset, "WaitTimeToReset");
             acsUtils.WriteVariable(parameters.WidthToW_0_Position, "WidthToW_0_Position", NBuf);
             return true;
         }
@@ -784,7 +781,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             }
 
             int NBuf = 19;
-            this.acsUtils.WriteVariable((object) parameters.WaitTimeToExit, "WaitTimeToExit", NBuf);
+            this.acsUtils.WriteVariable((object) parameters.WaitTimeToExit, "WaitTimeToExit");
             this.acsUtils.WriteVariable((object) parameters.DistanceBetweenStopSensorAndExitSensor,
                 "DistanceBetweenStopSensorAndExitSensor", NBuf);
             this.acsUtils.WriteVariable((object) parameters.DistanceBetweenSlowPositionAndExitSensor,
@@ -802,12 +799,11 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 return false;
             }
 
-            int NBuf = 20;
-            acsUtils.WriteVariable(parameters.WaitTimeToExit, "WaitTimeToExit", NBuf);
-            acsUtils.WriteVariable(parameters.WaitTimeToRelease, "WaitTimeToRelease", NBuf);
-            acsUtils.WriteVariable(parameters.WaitTimeToSmema, "WaitTimeToSmema", NBuf);
-            acsUtils.WriteVariable(parameters.WaitTimeToCutout, "WaitTimeToCutout", NBuf);
-            acsUtils.WriteVariable(parameters.WaitTimeToBeltVacuum, "WaitTimeToBeltVacuum", NBuf);
+            acsUtils.WriteVariable(parameters.WaitTimeToExit, "WaitTimeToExit");
+            acsUtils.WriteVariable(parameters.WaitTimeToRelease, "WaitTimeToRelease");
+            acsUtils.WriteVariable(parameters.WaitTimeToSmema, "WaitTimeToSmema");
+            acsUtils.WriteVariable(parameters.WaitTimeToCutout, "WaitTimeToCutout");
+            acsUtils.WriteVariable(parameters.WaitTimeToBeltVacuum, "WaitTimeToBeltVacuum");
             return true;
         }
 
@@ -821,9 +817,8 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 return false;
             }
 
-            int NBuf = 21;
-            acsUtils.WriteVariable(parameters.WaitTimeToSearch, "WaitTimeToSearch", NBuf);
-            acsUtils.WriteVariable(parameters.ReloadDelayTime, "ReloadDelayTime", NBuf);
+            acsUtils.WriteVariable(parameters.WaitTimeToSearch, "WaitTimeToSearch");
+            acsUtils.WriteVariable(parameters.ReloadDelayTime, "ReloadDelayTime");
             return true;
         }
 
@@ -838,14 +833,12 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             }
 
             int NBuf = 22;
-            acsUtils.WriteVariable(parameters.ClampLiftDelayTime, "ClampLiftDelayTime", NBuf);
-            acsUtils.WriteVariable(parameters.WaitTimeToPanelClamped, "WaitTimeToPanelClamped", NBuf);
-            acsUtils.WriteVariable(parameters.WaitTimeToLifted, "WaitTimeToLifted", NBuf);
-            acsUtils.WriteVariable(parameters.WaitTimeToUnstop, "WaitTimeToUnstop", NBuf);
-            acsUtils.WriteVariable(parameters.Stage_1_LifterOnlyDistance, "Stage_1_LifterOnlyDistance",
-                NBuf);
-            acsUtils.WriteVariable(parameters.Stage_2_LifterAndClamperDistance,
-                "Stage_2_LifterAndClamperDistance", NBuf);
+            acsUtils.WriteVariable(parameters.ClampLiftDelayTime, "ClampLiftDelayTime");
+            acsUtils.WriteVariable(parameters.WaitTimeToPanelClamped, "WaitTimeToPanelClamped");
+            acsUtils.WriteVariable(parameters.WaitTimeToLifted, "WaitTimeToLifted");
+            acsUtils.WriteVariable(parameters.WaitTimeToUnstop, "WaitTimeToUnstop");
+            acsUtils.WriteVariable(parameters.Stage_1_LifterOnlyDistance, "Stage_1_LifterOnlyDistance", NBuf);
+            acsUtils.WriteVariable(parameters.Stage_2_LifterAndClamperDistance, "Stage_2_LifterAndClamperDistance", NBuf);
             return true;
         }
 
@@ -875,20 +868,20 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 return false;
             }
 
-            int dbufferIndex = this.acsUtils.GetDBufferIndex();
+            int dBufferIndex = this.acsUtils.GetDBufferIndex();
             this.acsUtils.WriteVariable((object) parameters.ConveyorBeltAcquireSpeed, "ConveyorBeltAcquireSpeed",
-                dbufferIndex);
+                dBufferIndex);
             this.acsUtils.WriteVariable((object) parameters.ConveyorBeltLoadingSpeed, "ConveyorBeltLoadingSpeed",
-                dbufferIndex);
+                dBufferIndex);
             this.acsUtils.WriteVariable((object) parameters.ConveyorBeltSlowSpeed, "ConveyorBeltSlowSpeed",
-                dbufferIndex);
+                dBufferIndex);
             this.acsUtils.WriteVariable((object) parameters.ConveyorBeltReleaseSpeed, "ConveyorBeltReleaseSpeed",
-                dbufferIndex);
+                dBufferIndex);
             this.acsUtils.WriteVariable((object) parameters.ConveyorBeltUnloadingSpeed, "ConveyorBeltUnloadingSpeed",
-                dbufferIndex);
+                dBufferIndex);
             this.acsUtils.WriteVariable((object) Convert.ToInt32(parameters.PingPongMode), "PingPongMode",
-                dbufferIndex);
-            this.acsUtils.WriteVariable((object) (int) parameters.ConveyorDirection, "ConveyorDirection", dbufferIndex);
+                dBufferIndex);
+            this.acsUtils.WriteVariable((object) (int) parameters.ConveyorDirection, "ConveyorDirection", dBufferIndex);
             return true;
         }
 
