@@ -2511,22 +2511,51 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public void SetTowerLightRed(AcsIndicatorState state)
         {
-            acsUtils.WriteVariable(state, "TowerLightRed_Bit");
+            if (state != AcsIndicatorState.Flashing)
+            {
+                acsUtils.WriteVariable((int)state, "TowerLightRed_Bit");
+            }
+            else
+            {
+                acsUtils.WriteVariable((int)state, "TowerLightRedFlashing_Bit");
+            }
         }
 
         public void SetTowerLightYellow(AcsIndicatorState state)
         {
-            acsUtils.WriteVariable(state, "TowerLightYellow_Bit");
+            if (state != AcsIndicatorState.Flashing)
+            {
+                acsUtils.WriteVariable((int)state, "TowerLightYellow_Bit");
+            }
+            else
+            {
+                acsUtils.WriteVariable((int)state, "TowerLightYellowFlashing_Bit");
+            }
         }
 
         public void SetTowerLightGreen(AcsIndicatorState state)
         {
-            acsUtils.WriteVariable(state, "TowerLightGreen_Bit");
+
+            if (state != AcsIndicatorState.Flashing)
+            {
+                acsUtils.WriteVariable((int)state, "TowerLightGreen_Bit");
+            }
+            else
+            {
+                acsUtils.WriteVariable((int)state, "TowerLightGreenFlashing_Bit");
+            }
         }
 
         public void SetTowerLightBlue(AcsIndicatorState state)
         {
-            acsUtils.WriteVariable(state, "TowerLightBlue_Bit");
+            if (state != AcsIndicatorState.Flashing)
+            {
+                acsUtils.WriteVariable((int)state, "TowerLightBlue_Bit");
+            }
+            else
+            {
+                acsUtils.WriteVariable((int)state, "TowerLightBlueFlashing_Bit");
+            }
         }
 
         public void SetTowerLightBuzzer(AcsIndicatorState state)
