@@ -84,6 +84,7 @@ global real PanelLength
 global real DistanceBetweenSlowPositionAndStopSensor = 70
 global real DistanceBetweenSlowPositionAndExitSensor = 50
 
+
 global int TowerLightRedFlashing_Bit
 global int TowerLightYellowFlashing_Bit
 global int TowerLightGreenFlashing_Bit

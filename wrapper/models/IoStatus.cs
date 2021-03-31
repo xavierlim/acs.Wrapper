@@ -85,8 +85,8 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
 
     public enum AcsIndicatorState
     {
-        On,
-        Off,
-        Flashing
+        Off = 0,
+        On = 1,
+        Flashing = 1
     }
 }
