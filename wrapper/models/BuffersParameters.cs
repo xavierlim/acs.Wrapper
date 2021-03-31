@@ -34,18 +34,11 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
 
     public class InternalMachineLoadBufferParameters
     {
-
         public int WaitTimeToSlow { get; set; }
-
         public int WaitTimeToAlign { get; set; }
-
         public int SlowDelayTime { get; set; }
 
-        public double SlowPosition { get; set; }
 
-        public double DistanceBetweenEntryAndStopSensor { get; set; }
-
-        public double DistanceBetweenSlowPositionAndStopSensor { get; set; }
     }
 
     public class LoadPanelBufferParameters
@@ -67,10 +60,6 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
     public class PreReleasePanelBufferParameters
     {
         public int WaitTimeToExit { get; set; }
-
-        public double DistanceBetweenStopSensorAndExitSensor { get; set; }
-
-        public double DistanceBetweenSlowPositionAndExitSensor { get; set; }
     }
 
     public class ReleasePanelBufferParameters
@@ -120,18 +109,20 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
     public class DBufferParameters
     {
         public double ConveyorBeltAcquireSpeed { get; set; }
-
         public double ConveyorBeltLoadingSpeed { get; set; }
-
         public double ConveyorBeltSlowSpeed { get; set; }
-
         public double ConveyorBeltReleaseSpeed { get; set; }
-
         public double ConveyorBeltUnloadingSpeed { get; set; }
-
+        public double PanelLength { get; set; }
         public bool PingPongMode { get; set; }
-
         public ConveyorDirection ConveyorDirection { get; set; }
+
+
+        public double DistanceBetweenEntryAndStopSensor { get; set; }
+        public double DistanceBetweenSlowPositionAndStopSensor { get; set; }
+        public double DistanceBetweenStopSensorAndExitSensor { get; set; }
+        public double DistanceBetweenSlowPositionAndExitSensor { get; set; }
+
     }
 
     public enum ConveyorDirection
