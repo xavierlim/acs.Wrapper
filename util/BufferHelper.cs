@@ -138,7 +138,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
             AcsUtils.WriteVariable(AcsBuffers.BypassMode, "BypassModeBufferIndex", index);
             AcsUtils.WriteVariable(AcsBuffers.WidthHoming, "HomeConveyorBufferIndex", index);
             AcsUtils.WriteVariable(AcsBuffers.LoadPanel, "LoadPanelBufferIndex", index);
-            AcsUtils.WriteVariable(AcsBuffers.ReleasePanel, "ReleasePanelBuffer", index);
+            AcsUtils.WriteVariable(AcsBuffers.ReleasePanel, "ReleasePanelBufferIndex", index);
             AcsUtils.WriteVariable(AcsBuffers.ReloadPanel, "ReloadPanelBufferIndex", index);
             AcsUtils.WriteVariable(AcsBuffers.ConveyorReset, "ConveyorResetBufferIndex", index);
             AcsUtils.WriteVariable(AcsBuffers.WidthHoming, "WidthHomingBufferIndex", index);
