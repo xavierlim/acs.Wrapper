@@ -10,7 +10,6 @@
 using System;
 using System.Collections.Generic;
 using CO.Systems.Services.Acs.AcsWrapper.wrapper.models;
-using CO.Systems.Services.Conveyor.ConveyorBase;
 using CO.Systems.Services.Robot.Interface;
 using CO.Systems.Services.Robot.RobotBase;
 
@@ -148,9 +147,6 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         IoStatus GetIoStatus();
         void SetOutputs(SetOutputParameters outputs);
         void ChangeConveyorWidth(ChangeWidthBufferParameters parameters, int timeout);
-        event EventHandler OnStartButtonPressed;
-        event EventHandler OnStopButtonPressed;
-        event EventHandler OnEStopped;
         void ApplicationError();
         void ResetError();
         double GetConveyorWidthAxisPosition();
@@ -158,9 +154,11 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         void PowerOnRecoverFromEmergencyStop(PowerOnRecoverFromEmergencyStopBufferParameters parameter,
             int timeout);
 
+        PanelButtons GetPanelButtonsStatus();
         ClampSensors GetClampSensorsStatus();
         PresentSensors GetPresentSensorsStatus();
         SmemaIo GetSmemaIoStatus();
+
         bool IsBypassSignalSet();
         void BypassModeOn(BypassModeBufferParameters parameter);
         void BypassModeOff();

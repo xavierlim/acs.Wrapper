@@ -1,11 +1,3 @@
-//===================================================================================
-// Copyright (c) CyberOptics Corporation. All rights reserved. The
-// copyright to the computer program herein is the property of CyberOptics.
-// The program may be used or copied or both only with the written permission
-// of CyberOptics or in accordance with the terms and conditions stipulated
-// in the agreement or contract under which the program has been supplied.
-// This copyright notice must not be removed.
-//===================================================================================
 
 using System;
 using System.Collections.Generic;
@@ -146,7 +138,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
             AcsUtils.WriteVariable(AcsBuffers.BypassMode, "BypassModeBufferIndex", index);
             AcsUtils.WriteVariable(AcsBuffers.WidthHoming, "HomeConveyorBufferIndex", index);
             AcsUtils.WriteVariable(AcsBuffers.LoadPanel, "LoadPanelBufferIndex", index);
-            AcsUtils.WriteVariable(AcsBuffers.ReleasePanel, "ReleasePanelBuffer", index);
+            AcsUtils.WriteVariable(AcsBuffers.ReleasePanel, "ReleasePanelBufferIndex", index);
             AcsUtils.WriteVariable(AcsBuffers.ReloadPanel, "ReloadPanelBufferIndex", index);
             AcsUtils.WriteVariable(AcsBuffers.ConveyorReset, "ConveyorResetBufferIndex", index);
             AcsUtils.WriteVariable(AcsBuffers.WidthHoming, "WidthHomingBufferIndex", index);

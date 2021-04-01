@@ -1,11 +1,3 @@
-//===================================================================================
-// Copyright (c) CyberOptics Corporation. All rights reserved. The
-// copyright to the computer program herein is the property of CyberOptics.
-// The program may be used or copied or both only with the written permission
-// of CyberOptics or in accordance with the terms and conditions stipulated
-// in the agreement or contract under which the program has been supplied.
-// This copyright notice must not be removed.
-//===================================================================================
 
 namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
 {
@@ -55,6 +47,14 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
         public bool SmemaDownStreamFailedBoardAvailable;
     }
 
+    public class PanelButtons
+    {
+        public bool StartButton;
+        public bool StopButton;
+        public bool ResetButton;
+        public bool EStopButton;
+    }
+
     public class PresentSensors
     {
         public bool EntryOpto;
@@ -87,6 +87,6 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
     {
         Off = 0,
         On = 1,
-        Flashing = 1
+        Flashing = 2
     }
 }

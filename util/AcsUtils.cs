@@ -10,7 +10,7 @@ using System.Threading;
 using ACS.SPiiPlusNET;
 using CO.Common.Logger;
 
-namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
+namespace CO.Systems.Services.Acs.AcsWrapper.util
 {
   internal class AcsUtils
   {
@@ -309,7 +309,7 @@ label_12:
     {
       if (!this.Ch.IsConnected)
       {
-        this._logger.Info("Controller not connected", 313, nameof (WriteVariable), "C:\\TruckProject\\trunk\\ExternalHardware\\AcsWrapper\\AcsUtils.cs");
+        _logger.Info("Controller not connected", 313, nameof (WriteVariable), "C:\\TruckProject\\trunk\\ExternalHardware\\AcsWrapper\\AcsUtils.cs");
       }
       else
       {
@@ -319,7 +319,7 @@ label_12:
         }
         catch (Exception ex)
         {
-          this._logger.Info("WriteVariable error " + ex.Message, 322, nameof (WriteVariable), "C:\\TruckProject\\trunk\\ExternalHardware\\AcsWrapper\\AcsUtils.cs");
+          _logger.Info($"WriteVariable '{Variable}' error " + ex.Message);
         }
       }
     }

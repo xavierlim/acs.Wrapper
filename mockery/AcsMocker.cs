@@ -1,20 +1,11 @@
-//===================================================================================
-// Copyright (c) CyberOptics Corporation. All rights reserved. The
-// copyright to the computer program herein is the property of CyberOptics.
-// The program may be used or copied or both only with the written permission
-// of CyberOptics or in accordance with the terms and conditions stipulated
-// in the agreement or contract under which the program has been supplied.
-// This copyright notice must not be removed.
-//===================================================================================
-
 using System;
 using System.Collections.Generic;
+using CO.Systems.Services.Acs.AcsWrapper.wrapper;
 using CO.Systems.Services.Acs.AcsWrapper.wrapper.models;
-using CO.Systems.Services.Conveyor.ConveyorBase;
 using CO.Systems.Services.Robot.Interface;
 using CO.Systems.Services.Robot.RobotBase;
 
-namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
+namespace CO.Systems.Services.Acs.AcsWrapper.mockery
 {
     internal class AcsMocker : IAcsWrapper
     {
@@ -338,9 +329,6 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             throw new NotImplementedException();
         }
 
-        public event EventHandler OnStartButtonPressed;
-        public event EventHandler OnStopButtonPressed;
-        public event EventHandler OnEStopped;
         public void ApplicationError()
         {
             throw new NotImplementedException();
@@ -357,6 +345,11 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         }
 
         public void PowerOnRecoverFromEmergencyStop(PowerOnRecoverFromEmergencyStopBufferParameters parameter, int timeout)
+        {
+            throw new NotImplementedException();
+        }
+
+        public PanelButtons GetPanelButtonsStatus()
         {
             throw new NotImplementedException();
         }
