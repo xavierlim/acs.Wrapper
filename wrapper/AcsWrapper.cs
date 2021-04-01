@@ -2366,8 +2366,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 StopButton = Convert.ToBoolean(acsUtils.ReadVar("Stop_Button_Bit")),
                 AlarmCancelPushButton = Convert.ToBoolean(acsUtils.ReadVar("AlarmCancelPushButton_Bit")),
                 UpstreamBoardAvailableSignal = Convert.ToBoolean(acsUtils.ReadVar("UpstreamBoardAvailableSignal_Bit")),
-                UpstreamFailedBoardAvailableSignal =
-                    Convert.ToBoolean(acsUtils.ReadVar("UpstreamFailedBoardAvailableSignal_Bit")),
+                UpstreamFailedBoardAvailableSignal = Convert.ToBoolean(acsUtils.ReadVar("UpstreamFailedBoardAvailableSignal_Bit")),
                 DownstreamMachineReadySignal = Convert.ToBoolean(acsUtils.ReadVar("DownstreamMachineReadySignal_Bit")),
                 BypassNormal = Convert.ToBoolean(acsUtils.ReadVar("BypassNormal_Bit")),
                 EstopAndDoorOpenFeedback = Convert.ToBoolean(acsUtils.ReadVar("EstopAndDoorOpenFeedback_Bit")),
@@ -2387,8 +2386,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 StopSensor = Convert.ToBoolean(acsUtils.ReadVar("StopSensor_Bit")),
                 SmemaUpStreamMachineReady = Convert.ToBoolean(acsUtils.ReadVar("SmemaUpStreamMachineReady_Bit")),
                 DownStreamBoardAvailable = Convert.ToBoolean(acsUtils.ReadVar("DownStreamBoardAvailable_Bit")),
-                SmemaDownStreamFailedBoardAvailable =
-                    Convert.ToBoolean(acsUtils.ReadVar("SmemaDownStreamFailedBoardAvailable_Bit")),
+                SmemaDownStreamFailedBoardAvailable = Convert.ToBoolean(acsUtils.ReadVar("SmemaDownStreamFailedBoardAvailable_Bit")),
             };
         }
 
@@ -2478,7 +2476,16 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public SmemaIo GetSmemaIoStatus()
         {
-            return new SmemaIo();
+            return new SmemaIo
+            {
+                UpstreamBoardAvailableSignal = Convert.ToBoolean(acsUtils.ReadVar("UpstreamBoardAvailableSignal_Bit")),
+                UpstreamFailedBoardAvailableSignal = Convert.ToBoolean(acsUtils.ReadVar("UpstreamFailedBoardAvailableSignal_Bit")),
+                DownstreamMachineReadySignal = Convert.ToBoolean(acsUtils.ReadVar("DownstreamMachineReadySignal_Bit")),
+
+                SmemaUpStreamMachineReady = Convert.ToBoolean(acsUtils.ReadVar("SmemaUpStreamMachineReady_Bit")),
+                DownStreamBoardAvailable = Convert.ToBoolean(acsUtils.ReadVar("DownStreamBoardAvailable_Bit")),
+                SmemaDownStreamFailedBoardAvailable = Convert.ToBoolean(acsUtils.ReadVar("SmemaDownStreamFailedBoardAvailable_Bit")),
+            };
         }
 
         public bool IsBypassSignalSet()
