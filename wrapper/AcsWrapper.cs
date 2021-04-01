@@ -77,7 +77,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public uint NETLibraryVersion => Ch.GetNETLibraryVersion();
 
-        public ConveyorStatus ConveyorStatus { get; private set; }
+        public ConveyorStatusCode ConveyorStatus { get; private set; }
 
         public ConveyorErrorCode ErrorCode { get; private set; }
 
@@ -2250,7 +2250,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         }
 
         public bool HasError => HasConveyorError || HasRobotError;
-        public bool HasConveyorError => ErrorCode != ConveyorErrorCode.NoError;
+        public bool HasConveyorError => ErrorCode != ConveyorErrorCode.Error_Safe;
         public bool HasRobotError { get; private set; }
 
         public void ApplicationError()
@@ -2426,7 +2426,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         private void UpdateConveyorStatus()
         {
-            ConveyorStatus = (ConveyorStatus) Convert.ToInt16(acsUtils.ReadVar("CURRENT_STATUS"));
+            ConveyorStatus = (ConveyorStatusCode) Convert.ToInt16(acsUtils.ReadVar("CURRENT_STATUS"));
             ErrorCode = (ConveyorErrorCode) Convert.ToInt16(acsUtils.ReadVar("ERROR_CODE"));
         }
 

@@ -24,7 +24,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         /// <summary>
         /// State of Conveyor Operation
         /// </summary>
-        ConveyorStatus ConveyorStatus { get; }
+        ConveyorStatusCode ConveyorStatus { get; }
 
         /// <summary>
         /// true when there's any error in the ACS controller

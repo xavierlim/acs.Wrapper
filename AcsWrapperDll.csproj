@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
   <PropertyGroup>
@@ -93,7 +93,7 @@
     <Compile Include="wrapper\models\BuffersParameters.cs" />
     <Compile Include="wrapper\models\ConveyorAxes.cs" />
     <Compile Include="wrapper\models\ConveyorErrorCode.cs" />
-    <Compile Include="wrapper\models\ConveyorStatus.cs" />
+    <Compile Include="wrapper\models\ConveyorStatusCode.cs" />
     <Compile Include="wrapper\models\CurrentandErrorStatusfromACS.cs" />
     <Compile Include="wrapper\models\IoStatus.cs" />
     <Compile Include="wrapper\models\SetOutputParameters.cs" />
