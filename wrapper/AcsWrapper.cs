@@ -2509,68 +2509,90 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             }
         }
 
+        private void SetIndicatorState(AcsIndicatorState state, string flashingVariable, string outputVariable)
+        {
+            switch (state) {
+                case AcsIndicatorState.Flashing:
+                    acsUtils.WriteVariable(1, flashingVariable);
+                    break;
+                default:
+                case AcsIndicatorState.Off:
+                    acsUtils.WriteVariable(0, flashingVariable);
+                    acsUtils.WriteVariable(0, outputVariable);
+                    break;
+                case AcsIndicatorState.On:
+                    acsUtils.WriteVariable(1, outputVariable);
+                    break;
+            }
+        }
+
         public void SetTowerLightRed(AcsIndicatorState state)
         {
-            if (state != AcsIndicatorState.Flashing)
-            {
-                acsUtils.WriteVariable((int)state, "TowerLightRed_Bit");
-            }
-            else
-            {
-                acsUtils.WriteVariable((int)state, "TowerLightRedFlashing_Bit");
-            }
+            _logger.Info($"SetTowerLightRed flash state {state}");
+            SetIndicatorState(state, "TowerLightRedFlashing_Bit", "TowerLightRed_Bit");
         }
 
         public void SetTowerLightYellow(AcsIndicatorState state)
         {
-            if (state != AcsIndicatorState.Flashing)
-            {
-                acsUtils.WriteVariable((int)state, "TowerLightYellow_Bit");
-            }
-            else
-            {
-                acsUtils.WriteVariable((int)state, "TowerLightYellowFlashing_Bit");
-            }
+            _logger.Info($"SetTowerLightYellow flash state {state}");
+            SetIndicatorState(state, "TowerLightYellowFlashing_Bit", "TowerLightYellow_Bit");
         }
 
         public void SetTowerLightGreen(AcsIndicatorState state)
         {
-
-            if (state != AcsIndicatorState.Flashing)
-            {
-                acsUtils.WriteVariable((int)state, "TowerLightGreen_Bit");
-            }
-            else
-            {
-                acsUtils.WriteVariable((int)state, "TowerLightGreenFlashing_Bit");
-            }
+            _logger.Info($"SetTowerLightGreen flash state {state}");
+            SetIndicatorState(state, "TowerLightGreenFlashing_Bit", "TowerLightGreen_Bit");
         }
 
         public void SetTowerLightBlue(AcsIndicatorState state)
         {
-            if (state != AcsIndicatorState.Flashing)
-            {
-                acsUtils.WriteVariable((int)state, "TowerLightBlue_Bit");
-            }
-            else
-            {
-                acsUtils.WriteVariable((int)state, "TowerLightBlueFlashing_Bit");
-            }
+            _logger.Info($"SetTowerLightBlue flash state {state}");
+            SetIndicatorState(state, "TowerLightBlueFlashing_Bit", "TowerLightBlue_Bit");
         }
 
         public void SetTowerLightBuzzer(AcsIndicatorState state)
         {
-            acsUtils.WriteVariable(state, "TowerLightBuzzer_Bit");
+            _logger.Info($"SetTowerLightBuzzer flash state {state}");
+            switch (state) {
+                default:
+                case AcsIndicatorState.Off:
+                    acsUtils.WriteVariable(0, "TowerLightBuzzer_Bit");
+                    break;
+                case AcsIndicatorState.Flashing:
+                case AcsIndicatorState.On:
+                    acsUtils.WriteVariable(1, "TowerLightBuzzer_Bit");
+                    break;
+            }
         }
 
         public void SetStartButtonIndicator(AcsIndicatorState state)
         {
-            acsUtils.WriteVariable(state, "StartPushButtonLight_Bit");
+            _logger.Info($"SetStartButtonIndicator state {state}");
+            switch (state) {
+                default:
+                case AcsIndicatorState.Off:
+                    acsUtils.WriteVariable(0, "StartPushButtonLight_Bit");
+                    break;
+                case AcsIndicatorState.Flashing:
+                case AcsIndicatorState.On:
+                    acsUtils.WriteVariable(1, "StartPushButtonLight_Bit");
+                    break;
+            }
         }
 
         public void SetStopButtonIndicator(AcsIndicatorState state)
         {
-            acsUtils.WriteVariable(state, "StopPushButtonLight_Bit");
+            _logger.Info($"SetStopButtonIndicator state {state}");
+            switch (state) {
+                default:
+                case AcsIndicatorState.Off:
+                    acsUtils.WriteVariable(0, "StopPushButtonLight_Bit");
+                    break;
+                case AcsIndicatorState.Flashing:
+                case AcsIndicatorState.On:
+                    acsUtils.WriteVariable(1, "StopPushButtonLight_Bit");
+                    break;
+            }
         }
 
         public bool IsConveyorAxisEnable()

@@ -87,6 +87,6 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
     {
         Off = 0,
         On = 1,
-        Flashing = 1
+        Flashing = 2
     }
 }
