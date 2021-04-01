@@ -14,7 +14,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.mockery
         public bool IsConnected { get; }
         public string FirmwareVersion { get; }
         public uint NETLibraryVersion { get; }
-        public ConveyorStatus ConveyorStatus { get; }
+        public ConveyorStatusCode ConveyorStatus { get; }
         public bool HasError { get; }
         public bool HasConveyorError { get; set; }
         public bool HasRobotError { get; set; }
