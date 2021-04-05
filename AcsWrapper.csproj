@@ -82,7 +82,7 @@
     <Compile Include="wrapper\models\BuffersParameters.cs" />
     <Compile Include="wrapper\models\ConveyorAxes.cs" />
     <Compile Include="wrapper\models\ConveyorErrorCode.cs" />
-    <Compile Include="wrapper\models\ConveyorStatus.cs" />
+    <Compile Include="wrapper\models\ConveyorStatusCode.cs" />
     <Compile Include="wrapper\models\CurrentandErrorStatusfromACS.cs" />
     <Compile Include="wrapper\models\IoStatus.cs" />
     <Compile Include="wrapper\models\SetOutputParameters.cs" />
