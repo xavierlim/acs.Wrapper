@@ -2250,7 +2250,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         }
 
         public bool HasError => HasConveyorError || HasRobotError;
-        public bool HasConveyorError => ErrorCode != ConveyorErrorCode.Error_Safe;
+        public bool HasConveyorError => ErrorCode != ConveyorErrorCode.ErrorSafe;
         public bool HasRobotError { get; private set; }
 
         public void ApplicationError()
