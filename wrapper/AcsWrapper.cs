@@ -1699,7 +1699,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             this.axesCache.Clear();
             for (GantryAxes gantryAxes = GantryAxes.Z; gantryAxes < GantryAxes.All; ++gantryAxes) {
                 ACSAxis acsAxis = new ACSAxis(this.Ch, this.acsUtils, gantryAxes, this.GetAcsAxisIndex(gantryAxes),
-                    this._robotSettings, this.isSimulation);
+                    this._robotSettings, false);
                 this.axesCache[gantryAxes] = acsAxis;
                 acsAxis.IdleChanged += new Action<int, bool>(this.axisIdleChanged);
                 acsAxis.EnabledChanged += new Action<int, bool>(this.axisEnabledChanged);
