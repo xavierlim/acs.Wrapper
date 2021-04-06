@@ -50,5 +50,4 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
 
         PowerOnRecoveryWidthNotHomed = 901
     }
-
 }
