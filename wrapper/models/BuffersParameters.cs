@@ -44,6 +44,8 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
     public class LoadPanelBufferParameters
     {
         public int WaitTimeToAcq { get; set; }
+        public double Stage_1_LifterOnlyDistance { get; set; }
+        public double Stage_2_LifterAndClamperDistance { get; set; }
     }
 
     public class PowerOnRecoverFromEmergencyStopBufferParameters
@@ -78,8 +80,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
     public class ReloadPanelBufferParameters
     {
         public int WaitTimeToSearch { get; set; }
-
         public int ReloadDelayTime { get; set; }
+        public double Stage_1_LifterOnlyDistance { get; set; }
+        public double Stage_2_LifterAndClamperDistance { get; set; }
     }
 
     public class SecurePanelBufferParameters
@@ -91,10 +94,6 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
         public int WaitTimeToLifted { get; set; }
 
         public int WaitTimeToUnstop { get; set; }
-
-        public double Stage_1_LifterOnlyDistance { get; set; }
-
-        public double Stage_2_LifterAndClamperDistance { get; set; }
     }
 
     public class HomeConveyorWidthParameters
@@ -117,12 +116,14 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
         public bool PingPongMode { get; set; }
         public ConveyorDirection ConveyorDirection { get; set; }
 
-
         public double DistanceBetweenEntryAndStopSensor { get; set; }
         public double DistanceBetweenSlowPositionAndStopSensor { get; set; }
         public double DistanceBetweenStopSensorAndExitSensor { get; set; }
         public double DistanceBetweenSlowPositionAndExitSensor { get; set; }
 
+        public double Stage_1_LifterSpeed { get; set; }
+        public double Stage_2_LifterSpeed { get; set; }
+        public double LifterDownSpeed { get; set; }
     }
 
     public enum ConveyorDirection
