@@ -200,7 +200,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
         {
             if (!IsSimulation) return;
 
-            var buffer = ReadBuffer("DBuffer");
+            var buffer = ReadBuffer("d_buffer");
 
             var index = (ProgramBuffer) bufferNumber;
             if (!CompareBuffer(index, buffer)) return;

@@ -127,6 +127,7 @@
     <Content Include="resources\buffers\real\BypassModeBuffer.prg" />
     <Content Include="resources\buffers\real\ChangeWidthBuffer.prg" />
     <Content Include="resources\buffers\real\ConveyorHomingBuffer.prg" />
+    <Content Include="resources\buffers\real\d_buffer.prg" />
     <Content Include="resources\buffers\real\EmergencyStopBuffer.prg" />
     <Content Include="resources\buffers\real\FreePanelBuffer.prg" />
     <Content Include="resources\buffers\real\Gantry_X_Homing.prg" />
@@ -149,6 +150,7 @@
     <Content Include="resources\buffers\simulation\BypassModeBuffer.prg" />
     <Content Include="resources\buffers\simulation\ChangeWidthBuffer.prg" />
     <Content Include="resources\buffers\simulation\ConveyorHomingBuffer.prg" />
+    <Content Include="resources\buffers\simulation\d_buffer.prg" />
     <Content Include="resources\buffers\simulation\EmergencyStopBuffer.prg" />
     <Content Include="resources\buffers\simulation\FreePanelBuffer.prg" />
     <Content Include="resources\buffers\simulation\Gantry_X_Homing.prg" />
