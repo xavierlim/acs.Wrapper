@@ -155,4 +155,21 @@ ON TowerLightRedFlashing_Bit = 1 | TowerLightYellowFlashing_Bit = 1 | TowerLight
 		wait 500
 
 	End
+
+RET
+
+ON TowerLightRedFlashing_Bit = 0
+TowerLightRed_Bit = 0
+RET
+
+ON TowerLightYellowFlashing_Bit = 0
+TowerLightYellow_Bit = 0
+RET
+
+ON TowerLightGreenFlashing_Bit = 0
+TowerLightGreen_Bit = 0
+RET
+
+ON TowerLightBlueFlashing_Bit = 0
+TowerLightBlue_Bit = 0
 RET
