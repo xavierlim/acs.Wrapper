@@ -2571,11 +2571,11 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             switch (state) {
                 default:
                 case AcsIndicatorState.Off:
-                    acsUtils.WriteVariable(0, "StartPushButtonLight_Bit");
+                    acsUtils.WriteVariable(0, "StartButtonLight_Bit");
                     break;
                 case AcsIndicatorState.Flashing:
                 case AcsIndicatorState.On:
-                    acsUtils.WriteVariable(1, "StartPushButtonLight_Bit");
+                    acsUtils.WriteVariable(1, "StartButtonLight_Bit");
                     break;
             }
         }
@@ -2586,11 +2586,11 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             switch (state) {
                 default:
                 case AcsIndicatorState.Off:
-                    acsUtils.WriteVariable(0, "StopPushButtonLight_Bit");
+                    acsUtils.WriteVariable(0, "StopButtonLight_Bit");
                     break;
                 case AcsIndicatorState.Flashing:
                 case AcsIndicatorState.On:
-                    acsUtils.WriteVariable(1, "StopPushButtonLight_Bit");
+                    acsUtils.WriteVariable(1, "StopButtonLight_Bit");
                     break;
             }
         }
