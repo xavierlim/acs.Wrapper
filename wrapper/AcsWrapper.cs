@@ -1817,6 +1817,8 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             bufferHelper.InitConveyorResetBuffers();
 
             bufferHelper.FlashAllBuffers();
+
+            acsUtils.RunBuffer((ProgramBuffer) AcsBuffers.initIO);
         }
 
         private void createCommutationBuffer()
