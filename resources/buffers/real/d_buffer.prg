@@ -88,6 +88,9 @@ global real DistanceBetweenSlowPositionAndExitSensor = 50
 global real DistanceBetweenEntryAndStopSensor = 620
 global real DistanceBetweenStopSensorAndExitSensor = 620
 
+global real Stage_1_LifterOnlyDistance
+global real Stage_2_LifterAndClamperDistance
+
 
 global int TowerLightRedFlashing_Bit
 global int TowerLightYellowFlashing_Bit
