@@ -1,80 +1,99 @@
-!ConveyorWidthHomingBuffer
+!Homing WIDTH
 
-int AXIS
+int Axis
+int Slave_Number
 
+Axis= 6
+Slave_Number = 3
 
-FDEF(AXIS).#LL=0       ! Disable the axis left limit default response
-FDEF(AXIS).#RL=0       ! Disable the axis left limit default response
-FDEF(AXIS).#SLL=0
-FDEF(AXIS).#SRL=0
-
-
-
-
-HALT(AXIS)
-MFLAGS(AXIS).#DEFCON = 1 !just in case
-MFLAGS(AXIS).#HOME = 0
 ConveyorWidthHomed = 0
+MFLAGS(Axis).#HOME = 0
 
-!the motion is
-!	1) in fast
-!	2) out fast
-!	3) in slow
-!	4) out slow
+!******Motion parameters for homing***********
+VEL(Axis)=10
+ACC(Axis)=1000
+DEC(Axis)=1000
+KDEC(Axis)=10000
+JERK(Axis)=10000
 
-! 1) in fast
-JOG/v(AXIS), -HOME_VEL_IN(AXIS) !Move to the left limit switch
-!TILL STOP_CONDITION   ! Wait for the left limit switch activation
-WAIT(2000)
-KILL(AXIS)
-TILL ^AST(AXIS).#MOVE
+int EC_Offset, V_Limit_Search, V_Index_Search
 
-! 2) out fast
-JOG/v(AXIS), HOME_VEL_IN(AXIS) !Move to the left limit switch
-!TILL ^STOP_CONDITION   ! Wait for the left limit switch activation
-WAIT(2000)
-KILL(AXIS)
-TILL ^AST(AXIS).#MOVE
+V_Limit_Search = -50
+V_Index_Search = 5
+EC_Offset = 364
+!*********************************************
 
-! 3) in slow
-JOG/v(AXIS), -HOME_VEL_OUT(AXIS) !Move to the left limit switch
-!TILL STOP_CONDITION   ! Wait for the left limit switch activation
-WAIT(2000)
-KILL(AXIS)
-TILL ^AST(AXIS).#MOVE
+disable Axis
+till ^MST(Axis).#ENABLED
+wait 200
 
-! 4) out slow
-JOG/v(AXIS),HOME_VEL_OUT(AXIS) !Move out of the left limit
-!TILL ^STOP_CONDITION  !Wait for the left limit release
-WAIT(2000)
-KILL(AXIS)
-TILL ^AST(AXIS).#MOVE
+!*********Unmapping ethercat offset for control word******
+ecunmapin(EC_Offset)
+ecunmapout(EC_Offset)
+!***************************************
 
-SET APOS(AXIS) = HOME_OFFSET(AXIS)
+!***********Fault Clear***********
+ecout(EC_Offset,ControlWord_Width)
+ControlWord_Width = 0x8F
+wait 500
+ControlWord_Width = 0x0F
+coewrite/1(Slave_Number,0x6060,0,8)
+ecunmapin(EC_Offset)
+ecunmapout(EC_Offset)
+!***********Fault Clear***********
 
-MFLAGS(AXIS).#HOME = 1
+
+!*****Disable default limit response******
+FDEF(Axis).#LL=0
+FDEF(Axis).#RL=0
+!*****************************************
+
+!********Search for the negetive limit******
+enable Axis
+wait 100
+jog/v Axis , V_Limit_Search
+till SAFINI(Axis).#LL=1
+halt Axis
+till ^MST(Axis).#MOVE
+wait 10
+!*******************************************
+
+int Touch_Probe_Status
+real Index_Position
+
+!********Initiating touch probe******************
+coewrite/2 (Slave_Number,0x60B8,0,0)
+wait 200
+coewrite/2 (Slave_Number,0x60B8,0,21)
+Touch_Probe_Status=coeread/2 (Slave_Number,0x60B9,0)
+!**********************************************************
+
+!*************Looking for index*****************
+jog/v Axis,V_Index_Search
+while (Touch_Probe_Status=65)
+Touch_Probe_Status=coeread/2 (Slave_Number,0x60B9,0)
+if ^(Touch_Probe_Status = 65 )
+end
+end
+kill Axis
+wait 200
+!************************************************
+
+ecin (366, ActualPos_Width)
+set FPOS(Axis)=ActualPos_Width/1000
+Index_Position=(coeread/4 (Slave_Number,0x60BA,0))/1000
+set FPOS(Axis)=(FPOS(Axis)-Index_Position)
+
+ptp/v Axis,0,10
+till ^MST(Axis).#MOVE
+wait 200
+
+!*****Enable default limit response******
+FDEF(Axis).#LL=1
+FDEF(Axis).#RL=1
+!*****************************************
+
+
+MFLAGS(Axis).#HOME = 1
 ConveyorWidthHomed = 1
-STOP
-
-RESTORE_SETTINGS:
-	FDEF(AXIS).#LL=1       ! enable the axis left limit default response
-	FDEF(AXIS).#RL=1
-STOP
-
-on ^PST(buffNR).#RUN
-	call RESTORE_SETTINGS
-ret
-
-on MFLAGS(AXIS).#HOME
-	block; if MFLAGS(AXIS).#HOME
-		FDEF(AXIS).#SLL=1
-		FDEF(AXIS).#SRL=1
-	end; end
-ret
-
-on ^MFLAGS(AXIS).#HOME
-	block; if ^MFLAGS(AXIS).#HOME
-		FDEF(AXIS).#SLL=0
-		FDEF(AXIS).#SRL=0
-	end; end
-ret
+stop

@@ -8,7 +8,6 @@ PreReleaseNotLoadedError = 501
 PreReleasePanelNotFreedError = 502
 PreReleaseWaitTOError = 503
 
-real DistanceBetweenStopSensorAndExitSensor = 620
 
 real SlowPosition
 real absPosTemp
@@ -28,13 +27,13 @@ if CURRENT_STATUS = LOADED_STATUS
 
 	if PanelFreed = 0
 		ERROR_CODE = PreReleasePanelNotFreedError
-		CALL ErrorExit	
+		CALL ErrorExit
 		CURRENT_STATUS = ERROR_STATUS
 	else
-	    ReleaseCommandReceived = 0							
+	    ReleaseCommandReceived = 0
 		CALL StartConveyorBeltsDownstream
-		
-		TILL RPOS(CONVEYOR_AXIS) > SlowPosition	
+
+		TILL RPOS(CONVEYOR_AXIS) > SlowPosition
 		CALL AdjustConveyorBeltSpeedToSlow
 		TILL ExitOpto_Bit = 1 | ReleaseCommandReceived <> 0	 ,PreReleasePanelBuffer_WaitTimeToExit					!wait until exit opto blocked or timeout
 

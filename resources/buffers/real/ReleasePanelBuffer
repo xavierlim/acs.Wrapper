@@ -10,7 +10,6 @@ ReleasePanelExitError = 603
 ReleasePanelReleaseError = 604
 ReleasePanelSmemaError = 605
 
-real DistanceBetweenStopSensorAndExitSensor = 620
 
 real SlowPosition
 real absPosTemp
@@ -43,11 +42,11 @@ if (PingPongMode = 0)	!if not pingpong mode
 					CALL ContinueFrom_SetDownstreamSmemaBoardAvailable
 				else
 					ERROR_CODE = ReleasePanelFreeError
-					CALL ErrorExit	
+					CALL ErrorExit
 				end
 			else
 				ERROR_CODE = ReleasePanelStateError
-				CALL ErrorExit	
+				CALL ErrorExit
 			end
 		end
 	end
@@ -56,9 +55,9 @@ else																							!if pingpong mode
 		CURRENT_STATUS = RELEASING_STATUS
 		CALL ContinueFrom_SetConveyorBeltsDownstreamSpeedToRelease
 
-	else 
+	else
 		if 	CURRENT_STATUS = PRERELEASING_STATUS
-			CURRENT_STATUS = RELEASING_STATUS					
+			CURRENT_STATUS = RELEASING_STATUS
 		else
 			if 	CURRENT_STATUS = LOADED_STATUS
 				CURRENT_STATUS = RELEASING_STATUS
@@ -68,7 +67,7 @@ else																							!if pingpong mode
 						CALL ContinueFrom_SetConveyorBeltsDownstreamSpeedToRelease_PingPongMode	!call pingpong mode version of release label
 					else
 						ERROR_CODE = ReleasePanelFreeError
-						CALL ErrorExit	
+						CALL ErrorExit
 					end
 			else
 				ERROR_CODE = ReleasePanelStateError
@@ -86,7 +85,7 @@ RET
 
 ContinueFrom_SetConveyorBeltsDownstreamSpeedToRelease:
 		CALL SetConveyorBeltsDownstreamSpeedToRelease
-		TILL RPOS(CONVEYOR_AXIS) > SlowPosition	
+		TILL RPOS(CONVEYOR_AXIS) > SlowPosition
 		CALL AdjustConveyorBeltSpeedToSlow
 RET3:	TILL ExitOpto_Bit = 0,ReleasePanelBuffer_WaitTimeToRelease
 		if ExitOpto_Bit = 0
@@ -98,7 +97,7 @@ RET3:	TILL ExitOpto_Bit = 0,ReleasePanelBuffer_WaitTimeToRelease
 				TILL DownstreamMachineReadySignal_Bit = 0,ReleasePanelBuffer_WaitTimeToSmema
 				if DownstreamMachineReadySignal_Bit = 1
 					ERROR_CODE = ReleasePanelSmemaError
-					CALL ErrorExit	
+					CALL ErrorExit
 				else
 					CALL TurnOffConveyorBelts
 					BeltShroudVaccumON_Bit = 1
@@ -109,7 +108,7 @@ RET3:	TILL ExitOpto_Bit = 0,ReleasePanelBuffer_WaitTimeToRelease
 			end
 		else
 			ERROR_CODE = ReleasePanelReleaseError
-			CALL ErrorExit	
+			CALL ErrorExit
 		end
 RET
 
@@ -127,7 +126,7 @@ RET
 
 ContinueFrom_SetDownstreamSmemaBoardAvailable:
 	CALL SetDownstreamSmemaBoardAvailable
-	TILL RPOS(CONVEYOR_AXIS) > SlowPosition	
+	TILL RPOS(CONVEYOR_AXIS) > SlowPosition
 	CALL AdjustConveyorBeltSpeedToSlow
 	TILL ExitOpto_Bit = 1,ReleasePanelBuffer_WaitTimeToExit
 	if ExitOpto_Bit = 1
@@ -140,7 +139,7 @@ ContinueFrom_SetDownstreamSmemaBoardAvailable:
 		end
 	else
 		ERROR_CODE = ReleasePanelExitError
-		CALL ErrorExit	
+		CALL ErrorExit
 	end
 RET
 
@@ -174,7 +173,7 @@ ContinueFrom_SetConveyorBeltsDownstreamSpeedToRelease_PingPongMode:
 			SlowPosition = absPosTemp + (DistanceBetweenStopSensorAndExitSensor - DistanceBetweenSlowPositionAndExitSensor)
 
 		CALL SetConveyorBeltsDownstreamSpeedToRelease
-		TILL RPOS(CONVEYOR_AXIS) > SlowPosition	
+		TILL RPOS(CONVEYOR_AXIS) > SlowPosition
 		CALL AdjustConveyorBeltSpeedToSlow
 		TILL ExitOpto_Bit = 1,ReleasePanelBuffer_WaitTimeToRelease
 

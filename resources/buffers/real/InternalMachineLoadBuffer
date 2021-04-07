@@ -9,7 +9,6 @@ LoadPanelAlignBeforeSlowSensorError = 405
 LoadPanelAlignError = 406
 LoadPanelSecureError = 407
 
-real DistanceBetweenEntryAndStopSensor = 620
 
 real SlowPosition
 real absPosTemp
@@ -21,7 +20,7 @@ if EntryOpto_Bit = 0
 	absPosTemp = RPOS(CONVEYOR_AXIS)
 END
 SlowPosition = DistanceBetweenEntryAndStopSensor-DistanceBetweenSlowPositionAndStopSensor-PanelLength + absPosTemp
-TILL RPOS(CONVEYOR_AXIS) > SlowPosition								
+TILL RPOS(CONVEYOR_AXIS) > SlowPosition
 !TILL RPOS(CONVEYOR_AXIS) < SlowPosition
 
 IF BoardStopPanelAlignSensor_Bit = 1								
