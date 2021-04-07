@@ -208,7 +208,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
                 // when there's any 'compiled' buffer exist in the controller, it does not allow modification to D-Buffer.
                 // compiling D-Buffer will change all the other buffers' status to 'not compiled', hence allowing
                 // modification to the D-Buffer
-                Api.CompileBuffer(index);
+                if (!IsBufferEmpty(index)) {
+                    Api.CompileBuffer(index);
+                }
                 Api.LoadBuffer(index, buffer);
                 Api.CompileBuffer(ProgramBuffer.ACSC_NONE);
 
@@ -246,6 +248,19 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
             catch (Exception e) {
                 throw new AcsException($"Failed to load and compile buffer {index}. Exception: " + e.Message);
             }
+        }
+
+        private bool IsBufferEmpty(ProgramBuffer bufferIndex)
+        {
+            string buffer;
+            try {
+                buffer = Api.UploadBuffer(bufferIndex);
+            }
+            catch (Exception e) {
+                throw new AcsException("Failed to upload buffer. Exception: " + e.Message);
+            }
+
+            return buffer == null;
         }
 
         private bool CompareBuffer(ProgramBuffer bufferIndex, string toWrite)

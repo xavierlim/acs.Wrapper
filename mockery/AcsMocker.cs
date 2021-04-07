@@ -499,6 +499,11 @@ namespace CO.Systems.Services.Acs.AcsWrapper.mockery
             throw new NotImplementedException();
         }
 
+        public void SetAdditionalSettlingTime(int settlingTime)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
     }
 }

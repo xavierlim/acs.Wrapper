@@ -2293,6 +2293,11 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             return lifter;
         }
 
+        public void SetAdditionalSettlingTime(int settlingTime)
+        {
+            acsUtils.WriteVariable(settlingTime, "MotionSettlingTimeBeforeScan");
+        }
+
         public void StartPanelLoad(LoadPanelBufferParameters parameters, double panelLength, int timeout)
         {
             InitConveyorBufferParameters(parameters);
