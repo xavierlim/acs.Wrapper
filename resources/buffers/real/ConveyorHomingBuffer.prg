@@ -1,4 +1,4 @@
-!Reset CONVEYOR
+﻿!Reset CONVEYOR
 
 int Axis
 int Slave_Number
@@ -35,7 +35,7 @@ enable Axis
 till MST(Axis).#ENABLED
 wait 100
 
-set FPOS(Axis)= 0
+set FPOS(Axis)= 0 
 
 MFLAGS(Axis).#HOME = 1
 
