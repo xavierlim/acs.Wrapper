@@ -9,7 +9,6 @@ LoadPanelAlignBeforeSlowSensorError = 405
 LoadPanelAlignError = 406
 LoadPanelSecureError = 407
 
-real DistanceBetweenEntryAndStopSensor = 620
 
 real SlowPosition
 real absPosTemp

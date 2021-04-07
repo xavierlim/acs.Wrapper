@@ -113,6 +113,8 @@ RET
 
 RaiseBoardStop:
 	RaiseBoardStopStopper_Bit = 1
+	Till StopperArmUp_Bit
+	LockStopper_Bit = 1
 RET
 
 StartConveyorBeltsDownstream:

@@ -39,7 +39,7 @@ OUT(_TRIGGER_PORT_TO_CAMERA_START_)._TRIGGER_BIT_TO_CAMERA_START_ = 1
 		lastIndex = _NR_SCAN_POINTS_
 	end
 
-	while ii <= lastIndex
+	while ii < lastIndex=
 		MOVE_MOTION_COMPLETE_RECVD = 0
 		MOVE_PSX_ACK_RECVD = 0
 

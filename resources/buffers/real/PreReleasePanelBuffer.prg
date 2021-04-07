@@ -8,7 +8,6 @@ PreReleaseNotLoadedError = 501
 PreReleasePanelNotFreedError = 502
 PreReleaseWaitTOError = 503
 
-real DistanceBetweenStopSensorAndExitSensor = 620
 
 real SlowPosition
 real absPosTemp

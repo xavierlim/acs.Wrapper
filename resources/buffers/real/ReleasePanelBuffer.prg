@@ -10,7 +10,6 @@ ReleasePanelExitError = 603
 ReleasePanelReleaseError = 604
 ReleasePanelSmemaError = 605
 
-real DistanceBetweenStopSensorAndExitSensor = 620
 
 real SlowPosition
 real absPosTemp

@@ -1,4 +1,4 @@
-WidthLifterConveyor_Reset_Completed = 0
+﻿WidthLifterConveyor_Reset_Completed = 0
 
 !TURN OFF CONVEYOR BELT SOFT LIMIT
 FMASK5.#SRL = 0

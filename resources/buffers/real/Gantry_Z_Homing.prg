@@ -1,5 +1,7 @@
 !Gantry Z Homing
 
+!Gantry Y homing
+
 int Axis_Z
 
 Axis_Z = 4
@@ -31,10 +33,10 @@ wait 1000
 
 enable Axis_Z
 
-IST(Axis_Z).#IND=0
+IST(Axis_Z).#IND=0 
 jog/v Axis_Z,5
 wait 100
-TILL IST(Axis_Z).#IND
+TILL IST(Axis_Z).#IND 
 kill Axis_Z
 wait 100
 
@@ -58,4 +60,4 @@ FDEF(Axis_Z).#LL = 1
 
 MFLAGS(Axis_Z).#HOME = 1
 
-stop
+stop 
