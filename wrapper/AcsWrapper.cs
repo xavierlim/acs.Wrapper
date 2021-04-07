@@ -837,9 +837,6 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             acsUtils.WriteVariable(parameters.WaitTimeToLifted, "SecurePanelBuffer_WaitTimeToLifted");
             acsUtils.WriteVariable(parameters.WaitTimeToUnstop, "SecurePanelBuffer_WaitTimeToUnstop");
 
-            acsUtils.WriteVariable(parameters.Stage_1_LifterOnlyDistance, "Stage_1_LifterOnlyDistance", buffer);
-            acsUtils.WriteVariable(parameters.Stage_2_LifterAndClamperDistance, "Stage_2_LifterAndClamperDistance", buffer);
-
             return true;
         }
 
@@ -877,10 +874,15 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             acsUtils.WriteVariable(Convert.ToInt32(parameters.PingPongMode), "PingPongMode", buffer);
             acsUtils.WriteVariable(parameters.ConveyorDirection, "ConveyorDirection", buffer);
 
+            // TODO: enable?
             // acsUtils.WriteVariable(parameters.DistanceBetweenEntryAndStopSensor, "DistanceBetweenEntryAndStopSensor", buffer);
             acsUtils.WriteVariable(parameters.DistanceBetweenSlowPositionAndStopSensor, "DistanceBetweenSlowPositionAndStopSensor", buffer);
             // acsUtils.WriteVariable(parameters.DistanceBetweenStopSensorAndExitSensor, "DistanceBetweenStopSensorAndExitSensor", buffer);
             // acsUtils.WriteVariable(parameters.DistanceBetweenSlowPositionAndExitSensor, "DistanceBetweenSlowPositionAndExitSensor", buffer);
+
+            acsUtils.WriteVariable(parameters.Stage_1_LifterSpeed, "Stage_1_LifterSpeed", buffer);
+            acsUtils.WriteVariable(parameters.Stage_2_LifterSpeed, "Stage_2_LifterSpeed", buffer);
+            acsUtils.WriteVariable(parameters.LifterDownSpeed, "LifterDownSpeed", buffer);
 
             return true;
         }
@@ -2297,6 +2299,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         {
             InitConveyorBufferParameters(parameters);
             WritePanelLength(panelLength);
+            WriteLifterDistances(parameters.Stage_1_LifterOnlyDistance, parameters.Stage_2_LifterAndClamperDistance);
 
             acsUtils.RunBuffer((ProgramBuffer) AcsBuffers.LoadPanel);
             Ch.WaitProgramEnd((ProgramBuffer) AcsBuffers.LoadPanel, timeout);
@@ -2308,6 +2311,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         {
             InitConveyorBufferParameters(parameters);
             WritePanelLength(panelLength);
+            WriteLifterDistances(parameters.Stage_1_LifterOnlyDistance, parameters.Stage_2_LifterAndClamperDistance);
 
             acsUtils.RunBuffer((ProgramBuffer) AcsBuffers.ReloadPanel);
             Ch.WaitProgramEnd((ProgramBuffer) AcsBuffers.ReloadPanel, timeout);
@@ -2318,6 +2322,12 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         private void WritePanelLength(double panelLength)
         {
             acsUtils.WriteVariable(panelLength, "PanelLength");
+        }
+
+        private void WriteLifterDistances(double lifterOnlyDistance, double lifterAndClamperDistance)
+        {
+            acsUtils.WriteVariable(lifterOnlyDistance, "Stage_1_LifterOnlyDistance");
+            acsUtils.WriteVariable(lifterAndClamperDistance, "Stage_2_LifterAndClamperDistance");
         }
 
         public void StopPanelLoad()
