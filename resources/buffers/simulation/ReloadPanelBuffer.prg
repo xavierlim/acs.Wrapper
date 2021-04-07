@@ -1,35 +1,54 @@
 !ReloadPanelBuffer
 
-global int ReloadPanelError
-ReloadPanelError = 0
+ERROR_CODE = ERROR_SAFE
 
-global int ReloadPanelStateError,ReloadPanelFreeError,ReloadPanelSearchError,ReloadPanelSlowSensorError
+global int ReloadPanelStateError,ReloadPanelFreeError,ReloadPanelSearchError,ReloadPanelSlowSensorError,FreePanelToUnliftError,FreePanelToUnclampError
 
-ReloadPanelStateError = 1
-ReloadPanelFreeError = 2
-ReloadPanelSearchError = 3
-ReloadPanelSlowSensorError = 4
+FreePanelToUnliftError = 303
+FreePanelToUnclampError = 304
 
-int WaitTimeToSearch
-int ReloadDelayTime
+ReloadPanelStateError = 701
+ReloadPanelFreeError = 702
+ReloadPanelSearchError = 703
+ReloadPanelSlowSensorError = 704
+
 
 if CURRENT_STATUS = LOADED_STATUS								!IF CURRENT STATE = LOADED STATE
 	CURRENT_STATUS = RELOADING_STATUS								!SET STATE = RELOADING STATUS
 	START FreePanelBufferIndex,1									!START FREE PANEL BUFFER
 	TILL ^ PST(FreePanelBufferIndex).#RUN							!UNTIL FREE PANEL COMPLETE
+
 	if PanelFreed = 1												!IF PANEL IS FREED
 		CALL ContinueReloading											!CALL CONTINUERELOADING
+
 	else															!ELSE IF PANEL IS NOT FREED
-		ReloadPanelError = ReloadPanelFreeError							!SET RELOAD PANEL FREE ERROR
+		ERROR_CODE = ReloadPanelFreeError							!SET RELOAD PANEL FREE ERROR
 		CALL ErrorExit														!CALL ERROR EXIT
+
 	end
-else															!ELSE IF CURRENT STATE IS NOT = LOADED STATE
-	if CURRENT_STATUS = PRERELEASED_STATUS							!IF CURRENT STATUS = PRERELEASED STATUS
-		CURRENT_STATUS = RELOADING_STATUS								!SET CURRENT STATUS = RELOADING STATUS
-		CALL ContinueReloading											!CALL CONTINUERELOADING
-	else															!ELSE IF CURRENT STATE IS NOT PRELEASED STATUS
-		ReloadPanelError = ReloadPanelStateError						!SET RELOAD PANEL FREE ERROR
-		CALL ErrorExit														!CALL ERROR EXIT
+
+else																	!ELSE IF CURRENT STATE IS NOT = LOADED STATE
+
+	if CURRENT_STATUS = PRERELEASED_STATUS	& ExitOpto_Bit = 1			!IF CURRENT STATUS = PRERELEASED STATUS AND EXIT OPTO BLOCKED
+		CURRENT_STATUS = RELOADING_STATUS									!SET CURRENT STATUS = RELOADING STATUS
+		CALL ContinueReloading												!CALL CONTINUERELOADING 
+
+	elseif 	CURRENT_STATUS = PRERELEASED_STATUS	& ExitOpto_Bit = 0		!ELSE IF CURRENT STATE IS PRELEASED STATUS AND EXIT OPTO NOT BLOCKED	
+		CURRENT_STATUS = RELEASED_STATUS									!SET CURRENT_STATUS = RELEASED_STATUS TO PREPARE FOR LOADPANELBUFFER
+		START LoadPanelBufferIndex,1										!CALL LOADPANELBUFFER
+		TILL ^ PST(LoadPanelBufferIndex).#RUN								!UNTIL FREE PANEL COMPLETE
+
+	else																!!!!!!!!!!!!!!!ELSE IF NONE OF THE CURRENT STATE CONDITIONS MET!!!!!!!!!!!!!!!!!		
+		CALL LowerBoardStop												!CALL LOWERBOARDSTOPPER
+		CALL ReloadPanel_FreePanelSeq									!START FREE PANEL BUFFER
+		TILL PanelFreed = 1												!UNTIL FREE PANEL COMPLETE
+
+		if PanelFreed = 1												!IF PANEL IS FREED
+			CALL ContinueReloading											!CALL CONTINUERELOADING
+			!COMMENTED BELOW FOR TESTING WHETHER BELOW STATEMENT IS REDUNDANT
+			!CURRENT_STATUS = RELEASED_STATUS								!SET CURRENT_STATUS = RELEASED_STATUS TO PREPARE FOR LOADPANELBUFFER
+			!START LoadPanelBufferIndex,1									!CALL LOADPANELBUFFER
+		end
 	end
 
 end
@@ -39,30 +58,39 @@ STOP
 
 ContinueReloading:
 	CALL StartConveyorBeltsUpstreamInternalSpeed				!START CONVEYOR BELT UPSTREAM
-	TILL EntryOpto_Bit = 1,WaitTimeToSearch						!UNTIL ENTRY OPTO BLOCKED OR TIMEOUT
+	TILL EntryOpto_Bit = 1,ReloadPanelBuffer_WaitTimeToSearch						!UNTIL ENTRY OPTO BLOCKED OR TIMEOUT
+
 	if EntryOpto_Bit = 1										!IF ENTRY OPTO BLOCKED
 		CALL StopConveyorBelts										!STOP CONVEYOR BELT
-		WAIT ReloadDelayTime										!WAIT UNTIL RELOAD DELAY TIME EXPIRES
+		WAIT ReloadPanelBuffer_ReloadDelayTime										!WAIT UNTIL RELOAD DELAY TIME EXPIRES
 		CALL RaiseBoardStop											!RAISE STOPPER THEN LOCK STOPPER
 		CALL StartConveyorBeltsDownstreamInternalSpeed				!START CONVEYOR BELT DOWNSTREAM
 		START InternalMachineLoadBufferIndex,1						!START INTERNAL MACHINE LOAD BUFFER
 		TILL ^ PST(InternalMachineLoadBufferIndex).#RUN				!UNTIL INTERNAL MACHINE LOAD BUFFER END
 	else														!ELSE IF ENTRY OPTO NOT BLOCKED
-		ReloadPanelError = ReloadPanelSearchError					!SET RELOAD PANEL FREE ERROR
-		CALL ErrorExit												!CAL ERROR EXIT
+		CURRENT_STATUS = RELEASED_STATUS							!SET CURRENT_STATUS = RELEASED_STATUS TO PREPARE FOR LOADPANELBUFFER
+		START LoadPanelBufferIndex,1								!CALL LOADPANELBUFFER
 	end
 RET
 
 
 StartConveyorBeltsDownstreamInternalSpeed:
-	JOG/v CONVEYOR_AXIS,ConveyorBeltLoadingSpeed
+	JOG/v CONVEYOR_AXIS,ConveyorBeltLoadingSpeed*ConveyorDirection
 RET
 
 RaiseBoardStop:
 	RaiseBoardStopStopper_Bit = 1
-	IF StopperArmUp_Bit = 1
-		LockStopper_Bit = 1
-	END
+	TILL StopperArmUp_Bit = 1
+		 LockStopper_Bit = 1
+	TILL StopperLocked_Bit = 1
+	
+RET
+
+LowerBoardStop:	
+	LockStopper_Bit = 0
+	TILL StopperUnlocked_Bit = 1
+	RaiseBoardStopStopper_Bit = 0
+	TILL StopperArmDown_Bit = 1
 RET
 
 StopConveyorBelts:
@@ -70,11 +98,44 @@ StopConveyorBelts:
 RET
 
 StartConveyorBeltsUpstreamInternalSpeed:
-	JOG/v CONVEYOR_AXIS,-ConveyorBeltLoadingSpeed
+	JOG/v CONVEYOR_AXIS,-ConveyorBeltLoadingSpeed*ConveyorDirection
 RET
 
 
 ErrorExit:
 	START InternalErrorExitBufferIndex,1
 	TILL ^ PST(InternalErrorExitBufferIndex).#RUN
+RET
+
+ReloadPanel_FreePanelSeq:
+		CALL UnclampPanel
+		TILL RearClampDown_Bit & FrontClampDown_Bit,5000
+		CALL LowerLifter 
+		TILL Lifter_Lowered = 1, 10000
+
+		if Lifter_Lowered <> 1
+			ERROR_CODE = FreePanelToUnliftError
+		else
+			TILL RearClampDown_Bit & FrontClampDown_Bit, 5000
+			if(RearClampDown_Bit & FrontClampDown_Bit)
+				PanelFreed = 1
+			else
+				ERROR_CODE = FreePanelToUnclampError
+			end
+		end
+RET
+
+LowerLifter:
+	Lifter_Lowered = 0
+	ptp/v LIFTER_AXIS,0,10
+	till ^MST(LIFTER_AXIS).#MOVE
+	wait 200
+	LockStopper_Bit = 0
+	RaiseBoardStopStopper_Bit = 0
+	Lifter_Lowered = 1
+RET
+
+
+UnclampPanel:
+	ClampPanel_Bit = 0
 RET

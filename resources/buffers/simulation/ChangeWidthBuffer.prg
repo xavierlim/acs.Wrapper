@@ -24,7 +24,7 @@ if ERROR_CODE <> ChangeWidthPanelPresent						!Only Execute change width buffer 
 		if ConveyorWidthHomed = 1
 			CURRENT_STATUS = CHANGING_WIDTH_STATUS
 			CALL MoveConveyorToSpecifiedWidth
-			if (^AST(CONVEYOR_WIDTH_AXIS).#MOVE)
+			if (^AST(CONVEYOR_WIDTH_AXIS).#MOVE) 
 				CURRENT_STATUS = RELEASED_STATUS
 			else
 				ERROR_CODE = ChangeWidthToNotAtSpecifiedError
@@ -54,10 +54,10 @@ PanelSearch:
 
 	ELSE																										!ELSE IF SENSORS BLOCKED
 		HALT CONVEYOR_AXIS																							!STOP CONVEYOR BELT
-		TILL ^MST(CONVEYOR_AXIS).#MOVE																				!TILL CONVEYOR BELT STOP MOVING
+		TILL ^MST(CONVEYOR_AXIS).#MOVE																				!TILL CONVEYOR BELT STOP MOVING																						
 		ERROR_CODE = ChangeWidthPanelPresent																		!SET ERROR CODE CHANGEWIDTHPANELPRESENT
 
-	END
+	END 
 RET
 
 StartConveyorBeltsDownstreamInternalSpeed:

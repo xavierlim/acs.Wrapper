@@ -2,12 +2,13 @@
 
 !AUTOEXEC:
 
-CALL EnableOptos
-CALL Unclamp
-CALL LowerStopper
-CALL ClearBoardAvailable
-CALL ClearMachineReady
+CALL EnableOptos	
+CALL Unclamp	
+CALL LowerStopper	
+CALL ClearBoardAvailable	
+CALL ClearMachineReady	
 CURRENT_STATUS = SAFE_STATUS
+ERROR_CODE = ERROR_SAFE
 
 STOP
 

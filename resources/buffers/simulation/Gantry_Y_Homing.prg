@@ -29,10 +29,6 @@ JERK (Axis_Y) = 10000
 
 enable Axis_Y
 
-WAIT 5000
-MFLAGS(Axis_Y).#HOME = 1
-STOP
-
 XCURV(Axis_Y) = 10
 XCURI(Axis_Y) = 5
 
@@ -42,10 +38,10 @@ kill Axis_Y
 TILL ^AST(Axis_Y).#MOVE
 wait 100
 
-IST(Axis_Y).#IND=0
+IST(Axis_Y).#IND=0 
 jog/v Axis_Y,20
 wait 100
-TILL IST(Axis_Y).#IND
+TILL IST(Axis_Y).#IND 
 kill Axis_Y
 TILL ^AST(Axis_Y).#MOVE
 wait 100
@@ -82,7 +78,7 @@ CnvTY(0)= 0*0.5;      CnvAY(0)= 27207/1e5
 CnvTY(1)= 46*0.5;     CnvAY(1)= 9289/1e5
 CnvTY(2)= 58*0.5;     CnvAY(2)= 41417/1e5
 CnvTY(3)= 111*0.5;    CnvAY(3)= 3093/1e5
-CnvTY(4)= 112*0.5;    CnvAY(4)= 18994/1e5
+CnvTY(4)= 112*0.5;    CnvAY(4)= 18994/1e5  
 !--------------------------------------------
 
 InShapeOn 1, CnvTY, CnvAY
@@ -107,7 +103,7 @@ RESTORE_TUNING_PARA:
 	SLVNFRQ(Axis_Y) = 200
 	SLVNWID(Axis_Y) = 50
 
-!Velocity BQF 1
+!Velocity BQF 1 
 	MFLAGS(Axis_Y).16 = 1
 	SLVB0DD(Axis_Y) = 0.8
 	SLVB0DF(Axis_Y) = 700
@@ -120,8 +116,8 @@ RESTORE_TUNING_PARA:
 	SLVB1DF(Axis_Y) = 70
 	SLVB1ND(Axis_Y) = 0.5
 	SLVB1NF(Axis_Y) = 70
-
-!Current limit restoration
+	
+!Current limit restoration 
 	XCURV(Axis_Y) = 100
 	XCURI(Axis_Y) = 50
 
@@ -129,4 +125,4 @@ RESTORE_TUNING_PARA:
 	SLSBORD(Axis_Y) = 1
 RET
 
-stop
+stop 

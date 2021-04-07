@@ -1,20 +1,16 @@
 !SecurePanelBuffer
 
-int ClampLiftDelayTime
-int WaitTimeToPanelClamped
-int WaitTimeToLifted
-int WaitTimeToUnstop
 real Stage_1_LifterOnlyDistance
 real Stage_2_LifterAndClamperDistance
 
-global int SecurePanelStateError
-SecurePanelStateError = 0
+ERROR_CODE = ERROR_SAFE
 
 global int SecurePanelToClampedError,SecurePanelToLiftedError,SecurePanelToUnstopError
 
-SecurePanelToClampedError=1
-SecurePanelToLiftedError=2
-SecurePanelToUnstopError=3
+
+SecurePanelToClampedError = 801
+SecurePanelToLiftedError = 802
+SecurePanelToUnstopError = 803
 
 int StageLifterResult
 real absPosTemp
@@ -29,11 +25,11 @@ if StageLifterResult = 1
 	CALL Stage_2_LifterAndClamper
 	if StageLifterResult = 1
 		CALL LowerPanelStopper
-		TILL (StopperUnlocked_Bit & StopperArmDown_Bit),WaitTimeToUnstop
+		TILL (StopperUnlocked_Bit & StopperArmDown_Bit),SecurePanelBuffer_WaitTimeToUnstop
 		if (StopperUnlocked_Bit & StopperArmDown_Bit)
 			PanelSecured = 1
 		else
-			SecurePanelStateError = SecurePanelToUnstopError
+			ERROR_CODE = SecurePanelToUnstopError
 		end
 	end
 end
@@ -46,15 +42,15 @@ RET
 
 Stage_1_LifterOnly:
 	absPosTemp = RPOS(LIFTER_AXIS)+Stage_1_LifterOnlyDistance
-	ptp (LIFTER_AXIS), absPosTemp
-	till ^AST(LIFTER_AXIS).#MOVE,WaitTimeToLifted
-
+	ptp (LIFTER_AXIS), absPosTemp	
+	till ^AST(LIFTER_AXIS).#MOVE,SecurePanelBuffer_WaitTimeToLifted
+	
 	if (AST(LIFTER_AXIS).#MOVE)
 		HALT LIFTER_AXIS
-		SecurePanelStateError = SecurePanelToLiftedError
+		ERROR_CODE = SecurePanelToLiftedError
 		StageLifterResult = 0
 
-
+		
 	else
 		StageLifterResult = 1
 	end
@@ -65,13 +61,13 @@ Stage_2_LifterAndClamper:
 	CALL ClampPanel
 	absPosTemp = RPOS(LIFTER_AXIS)+Stage_2_LifterAndClamperDistance
 	ptp (LIFTER_AXIS), absPosTemp
-	TILL (RearClampUp_Bit & FrontClampUp_Bit),ClampLiftDelayTime
+	TILL (RearClampUp_Bit & FrontClampUp_Bit),SecurePanelBuffer_ClampLiftDelayTime
 	if (RearClampUp_Bit & FrontClampUp_Bit)
-		till ^AST(LIFTER_AXIS).#MOVE,WaitTimeToLifted
+		till ^AST(LIFTER_AXIS).#MOVE,SecurePanelBuffer_WaitTimeToLifted
 
 		if (AST(LIFTER_AXIS).#MOVE)
 			HALT LIFTER_AXIS
-			SecurePanelStateError = SecurePanelToLiftedError
+			ERROR_CODE = SecurePanelToLiftedError
 			StageLifterResult = 0
 
 		else
@@ -79,7 +75,7 @@ Stage_2_LifterAndClamper:
 		end
 	else
 		HALT LIFTER_AXIS
-		SecurePanelStateError = SecurePanelToClampedError
+		ERROR_CODE = SecurePanelToClampedError
 		StageLifterResult = 0
 	end
 

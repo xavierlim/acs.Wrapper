@@ -294,11 +294,11 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
         {
             switch (bufferNumber) {
                 case AcsBuffers.GantryHomeX:
-                    return "GantryXHomingBuffer";
+                    return "Gantry_X_Homing";
                 case AcsBuffers.GantryHomeY:
-                    return "GantryYHomingBuffer";
+                    return "Gantry_Y_Homing";
                 case AcsBuffers.GantryHomeZ:
-                    return "GantryZHomingBuffer";
+                    return "Gantry_Z_Homing";
                 case AcsBuffers.HomeX:
                     return "";
                 case AcsBuffers.HomeY:
@@ -332,15 +332,15 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
                 case AcsBuffers.InternalErrorExit:
                     return "InternalErrorExitBuffer";
                 case AcsBuffers.ConveyorHoming:
-                    return "ConveyorAxisResetBuffer";
+                    return "ConveyorHomingBuffer";
                 case AcsBuffers.WidthHoming:
-                    return "ConveyorWidthHomingBuffer";
+                    return "WidthHoming";
                 case AcsBuffers.LifterHoming:
-                    return "ConveyorLifterHomingBuffer";
+                    return "LifterHoming";
                 case AcsBuffers.ConveyorReset:
-                    return "ConveyorWidthLifterResetBuffer";
+                    return "WidthLifterConveyorReset";
                 case AcsBuffers.initIO:
-                    return "IoInitializationBuffer";
+                    return "IO_InitializationBuffer";
                 default:
                     throw new ArgumentOutOfRangeException(nameof(bufferNumber), bufferNumber, null);
             }

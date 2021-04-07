@@ -11,10 +11,6 @@ LoadPanelSensorBlockedError = 402
 LoadPanelAcqError = 403
 LoadPanelSlowSensorError = 404
 
-WAIT 3000
-!ERROR_CODE = 402
-CURRENT_STATUS = LOADED_STATUS
-STOP
 
 !Sequence only commence when status is RELEASED_STATUS
 REPANEL_LOADING:
@@ -32,7 +28,7 @@ if CURRENT_STATUS = RELEASED_STATUS
 		CALL StartConveyorBeltsDownstream
 		TILL EntryOpto_Bit = 1,LoadPanelBuffer_WaitTimeToAcq
 		if EntryOpto_Bit = 1
-
+		
 			IfSlowDown:	TILL EntryOpto_Bit = 0,LoadPanelBuffer_WaitTimeToAcq
 				if EntryOpto_Bit = 0 !Unblocked
 
@@ -43,9 +39,9 @@ if CURRENT_STATUS = RELEASED_STATUS
 				CALL AdjustConveyorBeltSpeedToInternalSpeed
 				START InternalMachineLoadBufferIndex,1
 				TILL ^ PST(InternalMachineLoadBufferIndex).#RUN
-
+				
 				else
-
+				
 			   		GOTO IfSlowDown
 				end
 		else
@@ -63,7 +59,7 @@ elseif 	CURRENT_STATUS = LOADING_STATUS
 			CURRENT_STATUS = RELEASED_STATUS
 			goto REPANEL_LOADING
 
-!if panel already loaded, and stop button is press regardless inspection started or not
+!if panel already loaded, and stop button is press regardless inspection started or not	
 elseif 	CURRENT_STATUS = LOADED_STATUS
 			!DO NOTHING, SQ WILL REINSPECT PANEL
 
@@ -72,28 +68,28 @@ elseif 	CURRENT_STATUS = PRERELEASED_STATUS & ExitOpto_Bit = 0
 			CURRENT_STATUS = RELEASED_STATUS
 			GOTO REPANEL_LOADING
 
-!after panel is at PreReleased state and stop button is pressed. When panel is at exit opto and start button is pressed.
+!after panel is at PreReleased state and stop button is pressed. When panel is at exit opto and start button is pressed.		
 elseif 	CURRENT_STATUS = PRERELEASED_STATUS & ExitOpto_Bit = 1
-			START ReloadPanelBufferIndex,1
+			START ReloadPanelBufferIndex,1 
 			TILL ^ PST(ReloadPanelBufferIndex).#RUN
-
+			
 !after panel is at Releasing state and stop button is pressed. When panel was removed from exit opto and start button is pressed.
 elseif CURRENT_STATUS = RELEASING_STATUS & ExitOpto_Bit = 0
 		if PST(ReleasePanelBufferIndex).#RUN
 			STOP ReleasePanelBufferIndex
-		end
+		end	
 			CURRENT_STATUS = RELEASED_STATUS
 			GOTO REPANEL_LOADING
 
-!after panel is at Releasing state and stop button is pressed. When panel is at exit opto and start button is pressed.
+!after panel is at Releasing state and stop button is pressed. When panel is at exit opto and start button is pressed.		
 elseif CURRENT_STATUS = RELEASING_STATUS & ExitOpto_Bit = 1
 		if PST(ReleasePanelBufferIndex).#RUN
 			STOP ReleasePanelBufferIndex
-		end
-			START ReloadPanelBufferIndex,1
+		end	
+			START ReloadPanelBufferIndex,1 
 			TILL ^ PST(ReloadPanelBufferIndex).#RUN
-
-else
+			
+else			
 	ERROR_CODE = LoadPanelNotReleasedError
 	CALL ErrorExit
 
@@ -117,6 +113,8 @@ RET
 
 RaiseBoardStop:
 	RaiseBoardStopStopper_Bit = 1
+	Till StopperArmUp_Bit
+	LockStopper_Bit = 1
 RET
 
 StartConveyorBeltsDownstream:
