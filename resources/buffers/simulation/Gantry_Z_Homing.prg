@@ -1,7 +1,5 @@
 !Gantry Z Homing
 
-!Gantry Y homing
-
 int Axis_Z
 
 Axis_Z = 4
@@ -20,6 +18,10 @@ KDEC(Axis_Z) = 3000
 JERK (Axis_Z) = 10000
 
 enable Axis_Z
+
+WAIT 5000
+MFLAGS(Axis_Z).#HOME = 1
+STOP
 
 XCURV(Axis_Z) = 20
 XCURI(Axis_Z) = 10

@@ -29,6 +29,10 @@ JERK (Axis_Y) = 10000
 
 enable Axis_Y
 
+WAIT 5000
+MFLAGS(Axis_Y).#HOME = 1
+STOP
+
 XCURV(Axis_Y) = 10
 XCURI(Axis_Y) = 5
 

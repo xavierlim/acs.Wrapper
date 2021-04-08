@@ -94,6 +94,7 @@ StopConveyorBelts:
 	HALT CONVEYOR_AXIS
 RET
 StartConveyorBeltsDownstreamInternalSpeed:
+    ENABLE CONVEYOR_AXIS
 	JOG/v CONVEYOR_AXIS,ConveyorBeltLoadingSpeed*ConveyorDirection
 RET
 
