@@ -45,7 +45,7 @@ RET
 
 LowerLifter:
 	Lifter_Lowered = 0
-	ptp/v LIFTER_AXIS,0,50
+	ptp/v LIFTER_AXIS,0,LifterDownSpeed
 	till ^MST(LIFTER_AXIS).#MOVE
 	wait 200
 	Lifter_Lowered = 1

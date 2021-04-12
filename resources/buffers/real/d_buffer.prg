@@ -17,6 +17,8 @@ global int LIFTER_AXIS
 global int ECOFFSETM(3)
 
 global int MotionSettlingTimeBeforeScan
+global int BeforeMoveDelay
+
 
 global int SAFE_STATUS = 0,LOADED_STATUS = 1,ERROR_STATUS = 2
 global int PRERELEASED_STATUS = 3 ,RELEASED_STATUS = 4,CHANGING_WIDTH_STATUS = 5
@@ -85,11 +87,15 @@ global int ChangeWidthPanelPresent
 global real PanelLength
 global real DistanceBetweenSlowPositionAndStopSensor = 70
 global real DistanceBetweenSlowPositionAndExitSensor = 50
+global real DistanceBetweenSlowPositionAndEntrySensor = 50
 global real DistanceBetweenEntryAndStopSensor = 620
 global real DistanceBetweenStopSensorAndExitSensor = 620
 
 global real Stage_1_LifterOnlyDistance
 global real Stage_2_LifterAndClamperDistance
+global real Stage_1_LifterSpeed
+global real Stage_2_LifterSpeed
+global real LifterDownSpeed
 
 
 global int TowerLightRedFlashing_Bit
