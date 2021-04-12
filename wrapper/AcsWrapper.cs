@@ -877,6 +877,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             // TODO: enable?
             // acsUtils.WriteVariable(parameters.DistanceBetweenEntryAndStopSensor, "DistanceBetweenEntryAndStopSensor", buffer);
             acsUtils.WriteVariable(parameters.DistanceBetweenSlowPositionAndStopSensor, "DistanceBetweenSlowPositionAndStopSensor", buffer);
+            acsUtils.WriteVariable(parameters.DistanceBetweenSlowPositionAndEntrySensor, "DistanceBetweenSlowPositionAndEntrySensor", buffer);
             // acsUtils.WriteVariable(parameters.DistanceBetweenStopSensorAndExitSensor, "DistanceBetweenStopSensorAndExitSensor", buffer);
             // acsUtils.WriteVariable(parameters.DistanceBetweenSlowPositionAndExitSensor, "DistanceBetweenSlowPositionAndExitSensor", buffer);
 
@@ -2689,6 +2690,16 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         public bool IsConveyorLifterAxisEnabled()
         {
             return Enabled(ConveyorAxes.Lifter);
+        }
+
+        public void SetAdditionalSettlingTime(int addtionalmotionsettlingTime)
+        {
+            acsUtils.WriteVariable((int)addtionalmotionsettlingTime, "MotionSettlingTimeBeforeScan");
+        }
+
+        public void SetBeforeMoveDelay(int beforemovedelay)
+        {
+            acsUtils.WriteVariable((int)beforemovedelay, "BeforeMoveDelay ");
         }
     }
 }

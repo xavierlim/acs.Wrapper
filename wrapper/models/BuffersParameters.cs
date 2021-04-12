@@ -120,6 +120,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
         public double DistanceBetweenSlowPositionAndStopSensor { get; set; }
         public double DistanceBetweenStopSensorAndExitSensor { get; set; }
         public double DistanceBetweenSlowPositionAndExitSensor { get; set; }
+        public double DistanceBetweenSlowPositionAndEntrySensor { get; set; }
 
         public double Stage_1_LifterSpeed { get; set; }
         public double Stage_2_LifterSpeed { get; set; }
