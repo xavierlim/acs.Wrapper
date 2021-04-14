@@ -29,9 +29,13 @@ JERK (Axis_Y) = 10000
 
 enable Axis_Y
 
+
+!Simulation
 WAIT 5000
+ptp/ve Axis_Y,0,100
 MFLAGS(Axis_Y).#HOME = 1
 STOP
+
 
 XCURV(Axis_Y) = 10
 XCURI(Axis_Y) = 5
