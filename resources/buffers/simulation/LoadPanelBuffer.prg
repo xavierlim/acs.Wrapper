@@ -12,6 +12,13 @@ LoadPanelAcqError = 403
 LoadPanelSlowSensorError = 404
 
 
+!Simulation
+WAIT 3000
+ERROR_CODE = ERROR_SAFE
+CURRENT_STATUS = LOADED_STATUS
+STOP
+
+
 !Sequence only commence when status is RELEASED_STATUS
 REPANEL_LOADING:
 

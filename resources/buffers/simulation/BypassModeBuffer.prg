@@ -11,6 +11,10 @@ BypassReleaseError = 104
 BypassSmemaError = 105
 
 
+!Simulation
+STOP
+
+
 if 	(EntryOpto_Bit = 1 & ExitOpto_Bit = 1 & BoardStopPanelAlignSensor_Bit = 1)								!IF ALL SENSORS BLOCKED
 	ERROR_CODE = BypassSensorBlockedError																	!ERROR
 	CALL TurnOnAllLightAndSoundTheHom																			!ALARM AND LIGHT

@@ -9,6 +9,14 @@ PreReleasePanelNotFreedError = 502
 PreReleaseWaitTOError = 503
 
 
+!Simulation
+WAIT 3000
+ERROR_CODE = ERROR_SAFE
+CURRENT_STATUS = PRERELEASED_STATUS
+PanelFreed = 1
+STOP
+
+
 real SlowPosition
 real absPosTemp
 SlowPosition = 0

@@ -11,6 +11,14 @@ ReleasePanelReleaseError = 604
 ReleasePanelSmemaError = 605
 
 
+!Simulation
+WAIT 3000
+ERROR_CODE = ERROR_SAFE
+CURRENT_STATUS = RELEASED_STATUS
+PanelFreed = 1
+STOP
+
+
 real SlowPosition
 real absPosTemp
 SlowPosition = 0
