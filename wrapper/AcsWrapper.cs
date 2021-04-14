@@ -2706,11 +2706,6 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             return Enabled(ConveyorAxes.Lifter);
         }
 
-        public void SetAdditionalSettlingTime(int addtionalmotionsettlingTime)
-        {
-            acsUtils.WriteVariable((int)addtionalmotionsettlingTime, "MotionSettlingTimeBeforeScan");
-        }
-
         public void SetBeforeMoveDelay(int beforemovedelay)
         {
             acsUtils.WriteVariable((int)beforemovedelay, "BeforeMoveDelay ");
