@@ -2303,6 +2303,12 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             acsUtils.WriteVariable(settlingTime, "MotionSettlingTimeBeforeScan");
         }
 
+        public void SetBeforeMoveDelay(int beforeMoveDelay)
+        {
+            acsUtils.WriteVariable(beforeMoveDelay, "BeforeMoveDelay ");
+        }
+
+
         public void StartPanelLoad(LoadPanelBufferParameters parameters, double panelLength, int timeout)
         {
             InitConveyorBufferParameters(parameters);
@@ -2704,11 +2710,6 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         public bool IsConveyorLifterAxisEnabled()
         {
             return Enabled(ConveyorAxes.Lifter);
-        }
-
-        public void SetBeforeMoveDelay(int beforemovedelay)
-        {
-            acsUtils.WriteVariable((int)beforemovedelay, "BeforeMoveDelay ");
         }
     }
 }

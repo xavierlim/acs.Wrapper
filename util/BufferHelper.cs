@@ -56,7 +56,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
 
         public void FlashAllBuffers()
         {
-            if (!IsSimulation || !changesMadeToBuffer) return;
+            if (!changesMadeToBuffer) return;
             try {
                 Api.ControllerSaveToFlash(null, new[] {ProgramBuffer.ACSC_BUFFER_ALL}, null, null);
             }
@@ -67,8 +67,6 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
 
         public void InitGantryHomingBuffers()
         {
-            if (!IsSimulation) return;
-
             WriteBuffer(AcsBuffers.GantryHomeX);
             WriteBuffer(AcsBuffers.GantryHomeY);
             WriteBuffer(AcsBuffers.GantryHomeZ);
@@ -76,8 +74,6 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
 
         public void InitConveyorHomingBuffers()
         {
-            if (!IsSimulation) return;
-
             WriteBuffer(AcsBuffers.ConveyorHoming);
             WriteBuffer(AcsBuffers.WidthHoming);
             WriteBuffer(AcsBuffers.LifterHoming);
@@ -85,13 +81,11 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
 
         public void InitConveyorResetBuffers()
         {
-            if (!IsSimulation) return;
             WriteBuffer(AcsBuffers.ConveyorReset);
         }
 
         public void InitIoBuffer()
         {
-            if (!IsSimulation) return;
             WriteBuffer(AcsBuffers.initIO);
         }
 
@@ -100,8 +94,6 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
         /// </summary>
         public void InitConveyorBuffers()
         {
-            if (!IsSimulation) return;
-
             WriteBuffer(AcsBuffers.BypassMode);
             WriteBuffer(AcsBuffers.ChangeWidth);
             WriteBuffer(AcsBuffers.EmergencyStop);
@@ -198,8 +190,6 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
 
         private void WriteDBuffer(int bufferNumber)
         {
-            if (!IsSimulation) return;
-
             var buffer = ReadBuffer("d_buffer");
 
             var index = (ProgramBuffer) bufferNumber;

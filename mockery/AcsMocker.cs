@@ -504,6 +504,11 @@ namespace CO.Systems.Services.Acs.AcsWrapper.mockery
             throw new NotImplementedException();
         }
 
+        public void SetBeforeMoveDelay(int beforeMoveDelay)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
     }
 }

@@ -186,5 +186,6 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         bool IsConveyorLifterAxisEnabled();
         double GetConveyorLifterAxisPosition();
         void SetAdditionalSettlingTime(int settlingTime);
+        void SetBeforeMoveDelay(int beforeMoveDelay);
     }
 }
