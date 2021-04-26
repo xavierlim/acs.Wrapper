@@ -181,7 +181,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 EnableAcsEvents();
                 bufferHelper.InitDBuffer();
                 initAxesCache();
-                this.initConveyorAxesCache();
+                initConveyorAxesCache();
                 initAxisNumbersAtController();
                 ReadAxesSettignsFromConfig();
                 enableAllBlocking();
@@ -204,7 +204,8 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                     Ch.CloseComm();
                     IsConnected = Ch.IsConnected;
                 }
-                catch (Exception ex) {
+                catch (Exception e) {
+                    _logger.Error($"AcsWrapper: Disconnect Exception. {e.Message}");
                 }
 
                 IscanLoopRun = false;
