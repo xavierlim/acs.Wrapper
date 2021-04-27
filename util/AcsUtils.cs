@@ -1,8 +1,3 @@
-// Decompiled with JetBrains decompiler
-// Type: AcsWrapperImpl.AcsUtils
-// Assembly: AcsWrapper, Version=1.0.0.8, Culture=neutral, PublicKeyToken=null
-// MVID: DC1EDF75-AE0E-403A-BB79-8497514E3B04
-// Assembly location: D:\git\tfs\NextGen.UI\SQDev.complete\CO.Phoenix\Source\CO.Systems\CO.Systems\TestApps\Acs\AcsPlatform\lib\AcsWrapper.dll
 
 using System;
 using System.IO;
@@ -14,7 +9,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
 {
   internal class AcsUtils
   {
-    private Api Ch = (Api) null;
+    private Api Ch;
     private readonly ILogger _logger = LoggersManager.SystemLogger;
     public bool anyBufferChanged = false;
     private const int ACSC_MAX_LINE = 100000;

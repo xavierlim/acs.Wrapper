@@ -9,8 +9,10 @@ FreePanelOptoBlockedError = 302
 FreePanelToUnliftError = 303
 FreePanelToUnclampError = 304
 
-
-PanelFreed = 0
+!Simulation
+WAIT 1000
+PanelFreed = 1
+STOP
 
 if StopperArmDown_Bit = 1
 	CALL TurnOnPanelSensingOptos	

@@ -61,6 +61,7 @@ PanelSearch:
 RET
 
 StartConveyorBeltsDownstreamInternalSpeed:
+    ENABLE CONVEYOR_AXIS
 	JOG/v CONVEYOR_AXIS,ConveyorBeltAcquireSpeed*ConveyorDirection
 RET
 

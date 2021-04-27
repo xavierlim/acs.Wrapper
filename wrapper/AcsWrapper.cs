@@ -1,8 +1,3 @@
-// Decompiled with JetBrains decompiler
-// Type: AcsWrapperImpl.AcsWrapper
-// Assembly: AcsWrapper, Version=1.0.0.9, Culture=neutral, PublicKeyToken=null
-// MVID: 1AE830F3-83DA-46CC-8B8A-D7CB7D22A02B
-// Assembly location: D:\user\Documents\CyberOptics\tasks\acs platform\source\AcsWrapper - 11Mar2021\NewWrapper\NewWrapper\lib\AcsWrapper.dll
 
 using System;
 using System.Collections.Generic;
