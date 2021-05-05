@@ -344,17 +344,8 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
         private string ReadBuffer(string bufferName)
         {
             try {
-                var path = Path.Combine(buffersDirectory, bufferName);
-                if (!File.Exists(path)) {
-                    do {
-                        if (!path.EndsWith(BufferExtension)) {
-                            path += BufferExtension;
-                            if (File.Exists(path)) break;
-                        }
-
-                        throw new AcsException("Failed to read buffer file. File not exist");
-                    } while (false);
-                }
+                var path = GetBufferPath(bufferName);
+                if (path == null) throw new AcsException("Failed to read buffer file. File not exist");
 
                 var buffer = File.ReadAllText(path);
 
@@ -375,6 +366,35 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
             catch (Exception e) {
                 throw new AcsException("Failed to read buffer file. Exception: " + e.Message);
             }
+        }
+
+        private string GetBufferPath(string bufferName)
+        {
+            var path = GetBufferPath(buffersDirectory, bufferName);
+            if (path == null) {
+                if (!bufferName.EndsWith(BufferExtension)) {
+                    bufferName += BufferExtension;
+                    path = GetBufferPath(buffersDirectory, bufferName);
+                }
+            }
+
+            return path;
+        }
+
+        private string GetBufferPath(string directory, string bufferName)
+        {
+            var path = Path.Combine(directory, bufferName);
+            if (!File.Exists(path)) {
+                var subDirectories = Directory.GetDirectories(directory);
+                foreach (var subDirectory in subDirectories) {
+                    path = GetBufferPath(subDirectory, bufferName);
+                    if (path != null) return path;
+                }
+
+                return null;
+            }
+
+            return path;
         }
     }
 }

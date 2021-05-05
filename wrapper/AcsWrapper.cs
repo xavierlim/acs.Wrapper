@@ -1808,18 +1808,24 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         private void initBuffers()
         {
-            bufferHelper.StopAllBuffers();
-            createCommutationBuffer();
-            bufferHelper.InitGantryHomingBuffers();
-            bufferHelper.InitIoBuffer();
+            try {
+                bufferHelper.StopAllBuffers();
+                createCommutationBuffer();
+                bufferHelper.InitGantryHomingBuffers();
+                bufferHelper.InitIoBuffer();
 
-            bufferHelper.InitConveyorBuffers();
-            bufferHelper.InitConveyorHomingBuffers();
-            bufferHelper.InitConveyorResetBuffers();
+                bufferHelper.InitConveyorBuffers();
+                bufferHelper.InitConveyorHomingBuffers();
+                bufferHelper.InitConveyorResetBuffers();
 
-            bufferHelper.FlashAllBuffers();
+                bufferHelper.FlashAllBuffers();
 
-            acsUtils.RunBuffer((ProgramBuffer) AcsBuffers.initIO);
+                acsUtils.RunBuffer((ProgramBuffer) AcsBuffers.initIO);
+            }
+            catch (Exception e) {
+                _logger.Error("AcsWrapper: initBuffers Exception: " + e.Message);
+                throw;
+            }
         }
 
         private void createCommutationBuffer()
@@ -1881,9 +1887,6 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         private void axisPositionUpdated(int axis, double pos)
         {
-            this._logger.Info(string.Format("axisPositionUpdated {0} {1}", (object) (GantryAxes) axis, (object) pos),
-                3068, nameof(axisPositionUpdated),
-                "C:\\Users\\Garry\\Desktop\\ExternalHardware - 19032021\\AcsWrapper\\AcsWrapper.cs");
             Action<GantryAxes, double> positionUpdated = this.PositionUpdated;
             if (positionUpdated == null)
                 return;
@@ -1892,9 +1895,6 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         private void axisVelocityUpdated(int axis, double vel)
         {
-            this._logger.Info(string.Format("axisVelocityUpdated {0} {1}", (object) (GantryAxes) axis, (object) vel),
-                3074, nameof(axisVelocityUpdated),
-                "C:\\Users\\Garry\\Desktop\\ExternalHardware - 19032021\\AcsWrapper\\AcsWrapper.cs");
             Action<GantryAxes, double> velocityUpdated = this.VelocityUpdated;
             if (velocityUpdated == null)
                 return;

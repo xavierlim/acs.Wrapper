@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props"/>
+  <Import Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -54,10 +54,10 @@
     <Reference Include="Configurator.Util, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>lib\Configurator.Util.dll</HintPath>
     </Reference>
-    <Reference Include="System"/>
-    <Reference Include="System.Core"/>
-    <Reference Include="System.Data"/>
-    <Reference Include="System.Xml"/>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
     <ProjectReference Include="..\..\..\..\..\..\CO.Common\Source\Logger\Logger.csproj">
       <Project>{874C8B95-1F2B-4D6A-970A-E122987570AE}</Project>
       <Name>CO.Common.Logger</Name>
@@ -68,32 +68,27 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="config\AcsSimConfig.cs"/>
-    <Compile Include="config\AcsSimHelper.cs"/>
-    <Compile Include="mockery\AcsMocker.cs"/>
-    <Compile Include="Properties\AssemblyInfo.cs"/>
-    <Compile Include="resources\Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="util\AcsUtils.cs"/>
-    <Compile Include="util\BufferHelper.cs"/>
-    <Compile Include="wrapper\AcsWrapper.cs"/>
-    <Compile Include="wrapper\AcsWrapperFactory.cs"/>
-    <Compile Include="wrapper\exceptions\AcsException.cs"/>
-    <Compile Include="wrapper\exceptions\IAcsException.cs"/>
-    <Compile Include="wrapper\IAcsWrapper.cs"/>
-    <Compile Include="wrapper\models\AcsAxis.cs"/>
-    <Compile Include="wrapper\models\AcsBuffers.cs"/>
-    <Compile Include="wrapper\models\AxisParameters.cs"/>
-    <Compile Include="wrapper\models\BuffersParameters.cs"/>
-    <Compile Include="wrapper\models\ConveyorAxes.cs"/>
-    <Compile Include="wrapper\models\ConveyorErrorCode.cs"/>
-    <Compile Include="wrapper\models\ConveyorStatusCode.cs"/>
-    <Compile Include="wrapper\models\CurrentandErrorStatusfromACS.cs"/>
-    <Compile Include="wrapper\models\IoStatus.cs"/>
-    <Compile Include="wrapper\models\SetOutputParameters.cs"/>
+    <Compile Include="config\AcsSimConfig.cs" />
+    <Compile Include="config\AcsSimHelper.cs" />
+    <Compile Include="mockery\AcsMocker.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="util\AcsUtils.cs" />
+    <Compile Include="util\BufferHelper.cs" />
+    <Compile Include="wrapper\AcsWrapper.cs" />
+    <Compile Include="wrapper\AcsWrapperFactory.cs" />
+    <Compile Include="wrapper\exceptions\AcsException.cs" />
+    <Compile Include="wrapper\exceptions\IAcsException.cs" />
+    <Compile Include="wrapper\IAcsWrapper.cs" />
+    <Compile Include="wrapper\models\AcsAxis.cs" />
+    <Compile Include="wrapper\models\AcsBuffers.cs" />
+    <Compile Include="wrapper\models\AxisParameters.cs" />
+    <Compile Include="wrapper\models\BuffersParameters.cs" />
+    <Compile Include="wrapper\models\ConveyorAxes.cs" />
+    <Compile Include="wrapper\models\ConveyorErrorCode.cs" />
+    <Compile Include="wrapper\models\ConveyorStatusCode.cs" />
+    <Compile Include="wrapper\models\CurrentandErrorStatusfromACS.cs" />
+    <Compile Include="wrapper\models\IoStatus.cs" />
+    <Compile Include="wrapper\models\SetOutputParameters.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Configuration\Configuration.csproj">
@@ -118,64 +113,53 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="README.md"/>
-    <Content Include="resources\buffers\LoadPanelBuffer"/>
-    <Content Include="resources\buffers\original_all.prg"/>
-    <Content Include="resources\buffers\original_xHoming.prg"/>
-    <Content Include="resources\buffers\original_yHoming.prg"/>
-    <Content Include="resources\buffers\real\BypassModeBuffer.prg"/>
-    <Content Include="resources\buffers\real\ChangeWidthBuffer.prg"/>
-    <Content Include="resources\buffers\real\ConveyorHomingBuffer.prg"/>
-    <Content Include="resources\buffers\real\d_buffer.prg"/>
-    <Content Include="resources\buffers\real\EmergencyStopBuffer.prg"/>
-    <Content Include="resources\buffers\real\FreePanelBuffer.prg"/>
-    <Content Include="resources\buffers\real\Gantry_X_Homing.prg"/>
-    <Content Include="resources\buffers\real\Gantry_Y_Homing.prg"/>
-    <Content Include="resources\buffers\real\Gantry_Z_Homing.prg"/>
-    <Content Include="resources\buffers\real\InternalErrorExitBuffer.prg"/>
-    <Content Include="resources\buffers\real\InternalMachineLoadBuffer.prg"/>
-    <Content Include="resources\buffers\real\IO_InitializationBuffer.prg"/>
-    <Content Include="resources\buffers\real\LifterHoming.prg"/>
-    <Content Include="resources\buffers\real\LoadPanelBuffer.prg"/>
-    <Content Include="resources\buffers\real\PowerOnRecoverFromEmergencyStopBuffer.prg"/>
-    <Content Include="resources\buffers\real\PreReleasePanelBuffer.prg"/>
-    <Content Include="resources\buffers\real\ReleasePanelBuffer.prg"/>
-    <Content Include="resources\buffers\real\ReloadPanelBuffer.prg"/>
-    <Content Include="resources\buffers\real\ScanningBuffer.prg"/>
-    <Content Include="resources\buffers\real\SecurePanelBuffer.prg"/>
-    <Content Include="resources\buffers\real\WidthHoming.prg"/>
-    <Content Include="resources\buffers\real\WidthLifterConveyorReset.prg"/>
-    <Content Include="resources\buffers\ReleasePanelBuffer"/>
-    <Content Include="resources\buffers\simulation\BypassModeBuffer.prg"/>
-    <Content Include="resources\buffers\simulation\ChangeWidthBuffer.prg"/>
-    <Content Include="resources\buffers\simulation\ConveyorHomingBuffer.prg"/>
-    <Content Include="resources\buffers\simulation\d_buffer.prg"/>
-    <Content Include="resources\buffers\simulation\EmergencyStopBuffer.prg"/>
-    <Content Include="resources\buffers\simulation\FreePanelBuffer.prg"/>
-    <Content Include="resources\buffers\simulation\Gantry_X_Homing.prg"/>
-    <Content Include="resources\buffers\simulation\Gantry_Y_Homing.prg"/>
-    <Content Include="resources\buffers\simulation\Gantry_Z_Homing.prg"/>
-    <Content Include="resources\buffers\simulation\InternalErrorExitBuffer.prg"/>
-    <Content Include="resources\buffers\simulation\InternalMachineLoadBuffer.prg"/>
-    <Content Include="resources\buffers\simulation\IO_InitializationBuffer.prg"/>
-    <Content Include="resources\buffers\simulation\LifterHoming.prg"/>
-    <Content Include="resources\buffers\simulation\LoadPanelBuffer.prg"/>
-    <Content Include="resources\buffers\simulation\PowerOnRecoverFromEmergencyStopBuffer.prg"/>
-    <Content Include="resources\buffers\simulation\PreReleasePanelBuffer.prg"/>
-    <Content Include="resources\buffers\simulation\ReleasePanelBuffer.prg"/>
-    <Content Include="resources\buffers\simulation\ReloadPanelBuffer.prg"/>
-    <Content Include="resources\buffers\simulation\ScanningBuffer.prg"/>
-    <Content Include="resources\buffers\simulation\SecurePanelBuffer.prg"/>
-    <Content Include="resources\buffers\simulation\WidthHoming.prg"/>
-    <Content Include="resources\buffers\simulation\WidthLifterConveyorReset.prg"/>
+    <Content Include="README.md" />
+    <Content Include="resources\buffers\real\BypassModeBuffer.prg" />
+    <Content Include="resources\buffers\real\ChangeWidthBuffer.prg" />
+    <Content Include="resources\buffers\real\ConveyorHomingBuffer.prg" />
+    <Content Include="resources\buffers\real\d_buffer.prg" />
+    <Content Include="resources\buffers\real\EmergencyStopBuffer.prg" />
+    <Content Include="resources\buffers\real\FreePanelBuffer.prg" />
+    <Content Include="resources\buffers\real\Gantry_X_Homing.prg" />
+    <Content Include="resources\buffers\real\Gantry_Y_Homing.prg" />
+    <Content Include="resources\buffers\real\Gantry_Z_Homing.prg" />
+    <Content Include="resources\buffers\real\InternalErrorExitBuffer.prg" />
+    <Content Include="resources\buffers\real\InternalMachineLoadBuffer.prg" />
+    <Content Include="resources\buffers\real\IO_InitializationBuffer.prg" />
+    <Content Include="resources\buffers\real\LifterHoming.prg" />
+    <Content Include="resources\buffers\real\LoadPanelBuffer.prg" />
+    <Content Include="resources\buffers\real\PowerOnRecoverFromEmergencyStopBuffer.prg" />
+    <Content Include="resources\buffers\real\PreReleasePanelBuffer.prg" />
+    <Content Include="resources\buffers\real\ReleasePanelBuffer.prg" />
+    <Content Include="resources\buffers\real\ReloadPanelBuffer.prg" />
+    <Content Include="resources\buffers\real\ScanningBuffer.prg" />
+    <Content Include="resources\buffers\real\SecurePanelBuffer.prg" />
+    <Content Include="resources\buffers\real\WidthHoming.prg" />
+    <Content Include="resources\buffers\real\WidthLifterConveyorReset.prg" />
+    <Content Include="resources\buffers\simulation\BypassModeBuffer.prg" />
+    <Content Include="resources\buffers\simulation\ChangeWidthBuffer.prg" />
+    <Content Include="resources\buffers\simulation\ConveyorHomingBuffer.prg" />
+    <Content Include="resources\buffers\simulation\d_buffer.prg" />
+    <Content Include="resources\buffers\simulation\EmergencyStopBuffer.prg" />
+    <Content Include="resources\buffers\simulation\FreePanelBuffer.prg" />
+    <Content Include="resources\buffers\simulation\Gantry_X_Homing.prg" />
+    <Content Include="resources\buffers\simulation\Gantry_Y_Homing.prg" />
+    <Content Include="resources\buffers\simulation\Gantry_Z_Homing.prg" />
+    <Content Include="resources\buffers\simulation\InternalErrorExitBuffer.prg" />
+    <Content Include="resources\buffers\simulation\InternalMachineLoadBuffer.prg" />
+    <Content Include="resources\buffers\simulation\IO_InitializationBuffer.prg" />
+    <Content Include="resources\buffers\simulation\LifterHoming.prg" />
+    <Content Include="resources\buffers\simulation\LoadPanelBuffer.prg" />
+    <Content Include="resources\buffers\simulation\PowerOnRecoverFromEmergencyStopBuffer.prg" />
+    <Content Include="resources\buffers\simulation\PreReleasePanelBuffer.prg" />
+    <Content Include="resources\buffers\simulation\ReleasePanelBuffer.prg" />
+    <Content Include="resources\buffers\simulation\ReloadPanelBuffer.prg" />
+    <Content Include="resources\buffers\simulation\ScanningBuffer.prg" />
+    <Content Include="resources\buffers\simulation\SecurePanelBuffer.prg" />
+    <Content Include="resources\buffers\simulation\WidthHoming.prg" />
+    <Content Include="resources\buffers\simulation\WidthLifterConveyorReset.prg" />
   </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="resources\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy /Y /Q /R /S /D /i $(ProjectDir)resources\buffers\*.* $(TargetDir)AppData\acs\buffers</PostBuildEvent>
   </PropertyGroup>
