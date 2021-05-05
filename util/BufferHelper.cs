@@ -56,7 +56,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
 
         public void FlashAllBuffers()
         {
-            if (!IsSimulation || !changesMadeToBuffer) return;
+            if (!changesMadeToBuffer) return;
             try {
                 Api.ControllerSaveToFlash(null, new[] {ProgramBuffer.ACSC_BUFFER_ALL}, null, null);
             }
@@ -67,8 +67,6 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
 
         public void InitGantryHomingBuffers()
         {
-            if (!IsSimulation) return;
-
             WriteBuffer(AcsBuffers.GantryHomeX);
             WriteBuffer(AcsBuffers.GantryHomeY);
             WriteBuffer(AcsBuffers.GantryHomeZ);
@@ -76,8 +74,6 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
 
         public void InitConveyorHomingBuffers()
         {
-            if (!IsSimulation) return;
-
             WriteBuffer(AcsBuffers.ConveyorHoming);
             WriteBuffer(AcsBuffers.WidthHoming);
             WriteBuffer(AcsBuffers.LifterHoming);
@@ -85,13 +81,11 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
 
         public void InitConveyorResetBuffers()
         {
-            if (!IsSimulation) return;
             WriteBuffer(AcsBuffers.ConveyorReset);
         }
 
         public void InitIoBuffer()
         {
-            if (!IsSimulation) return;
             WriteBuffer(AcsBuffers.initIO);
         }
 
@@ -100,8 +94,6 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
         /// </summary>
         public void InitConveyorBuffers()
         {
-            if (!IsSimulation) return;
-
             WriteBuffer(AcsBuffers.BypassMode);
             WriteBuffer(AcsBuffers.ChangeWidth);
             WriteBuffer(AcsBuffers.EmergencyStop);
@@ -198,9 +190,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
 
         private void WriteDBuffer(int bufferNumber)
         {
-            if (!IsSimulation) return;
-
-            var buffer = ReadBuffer("DBuffer");
+            var buffer = ReadBuffer("d_buffer");
 
             var index = (ProgramBuffer) bufferNumber;
             if (!CompareBuffer(index, buffer)) return;
@@ -208,7 +198,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
                 // when there's any 'compiled' buffer exist in the controller, it does not allow modification to D-Buffer.
                 // compiling D-Buffer will change all the other buffers' status to 'not compiled', hence allowing
                 // modification to the D-Buffer
-                Api.CompileBuffer(index);
+                if (!IsBufferEmpty(index)) {
+                    Api.CompileBuffer(index);
+                }
                 Api.LoadBuffer(index, buffer);
                 Api.CompileBuffer(ProgramBuffer.ACSC_NONE);
 
@@ -248,6 +240,19 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
             }
         }
 
+        private bool IsBufferEmpty(ProgramBuffer bufferIndex)
+        {
+            string buffer;
+            try {
+                buffer = Api.UploadBuffer(bufferIndex);
+            }
+            catch (Exception e) {
+                throw new AcsException("Failed to upload buffer. Exception: " + e.Message);
+            }
+
+            return buffer == null;
+        }
+
         private bool CompareBuffer(ProgramBuffer bufferIndex, string toWrite)
         {
             string toCompare;
@@ -279,11 +284,11 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
         {
             switch (bufferNumber) {
                 case AcsBuffers.GantryHomeX:
-                    return "GantryXHomingBuffer";
+                    return "Gantry_X_Homing";
                 case AcsBuffers.GantryHomeY:
-                    return "GantryYHomingBuffer";
+                    return "Gantry_Y_Homing";
                 case AcsBuffers.GantryHomeZ:
-                    return "GantryZHomingBuffer";
+                    return "Gantry_Z_Homing";
                 case AcsBuffers.HomeX:
                     return "";
                 case AcsBuffers.HomeY:
@@ -317,15 +322,15 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
                 case AcsBuffers.InternalErrorExit:
                     return "InternalErrorExitBuffer";
                 case AcsBuffers.ConveyorHoming:
-                    return "ConveyorAxisResetBuffer";
+                    return "ConveyorHomingBuffer";
                 case AcsBuffers.WidthHoming:
-                    return "ConveyorWidthHomingBuffer";
+                    return "WidthHoming";
                 case AcsBuffers.LifterHoming:
-                    return "ConveyorLifterHomingBuffer";
+                    return "LifterHoming";
                 case AcsBuffers.ConveyorReset:
-                    return "ConveyorWidthLifterResetBuffer";
+                    return "WidthLifterConveyorReset";
                 case AcsBuffers.initIO:
-                    return "IoInitializationBuffer";
+                    return "IO_InitializationBuffer";
                 default:
                     throw new ArgumentOutOfRangeException(nameof(bufferNumber), bufferNumber, null);
             }
@@ -339,17 +344,8 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
         private string ReadBuffer(string bufferName)
         {
             try {
-                var path = Path.Combine(buffersDirectory, bufferName);
-                if (!File.Exists(path)) {
-                    do {
-                        if (!path.EndsWith(BufferExtension)) {
-                            path += BufferExtension;
-                            if (File.Exists(path)) break;
-                        }
-
-                        throw new AcsException("Failed to read buffer file. File not exist");
-                    } while (false);
-                }
+                var path = GetBufferPath(bufferName);
+                if (path == null) throw new AcsException("Failed to read buffer file. File not exist");
 
                 var buffer = File.ReadAllText(path);
 
@@ -370,6 +366,35 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
             catch (Exception e) {
                 throw new AcsException("Failed to read buffer file. Exception: " + e.Message);
             }
+        }
+
+        private string GetBufferPath(string bufferName)
+        {
+            var path = GetBufferPath(buffersDirectory, bufferName);
+            if (path == null) {
+                if (!bufferName.EndsWith(BufferExtension)) {
+                    bufferName += BufferExtension;
+                    path = GetBufferPath(buffersDirectory, bufferName);
+                }
+            }
+
+            return path;
+        }
+
+        private string GetBufferPath(string directory, string bufferName)
+        {
+            var path = Path.Combine(directory, bufferName);
+            if (!File.Exists(path)) {
+                var subDirectories = Directory.GetDirectories(directory);
+                foreach (var subDirectory in subDirectories) {
+                    path = GetBufferPath(subDirectory, bufferName);
+                    if (path != null) return path;
+                }
+
+                return null;
+            }
+
+            return path;
         }
     }
 }

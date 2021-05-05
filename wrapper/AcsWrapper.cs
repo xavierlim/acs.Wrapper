@@ -1,8 +1,3 @@
-// Decompiled with JetBrains decompiler
-// Type: AcsWrapperImpl.AcsWrapper
-// Assembly: AcsWrapper, Version=1.0.0.9, Culture=neutral, PublicKeyToken=null
-// MVID: 1AE830F3-83DA-46CC-8B8A-D7CB7D22A02B
-// Assembly location: D:\user\Documents\CyberOptics\tasks\acs platform\source\AcsWrapper - 11Mar2021\NewWrapper\NewWrapper\lib\AcsWrapper.dll
 
 using System;
 using System.Collections.Generic;
@@ -181,7 +176,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 EnableAcsEvents();
                 bufferHelper.InitDBuffer();
                 initAxesCache();
-                this.initConveyorAxesCache();
+                initConveyorAxesCache();
                 initAxisNumbersAtController();
                 ReadAxesSettignsFromConfig();
                 enableAllBlocking();
@@ -204,7 +199,8 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                     Ch.CloseComm();
                     IsConnected = Ch.IsConnected;
                 }
-                catch (Exception ex) {
+                catch (Exception e) {
+                    _logger.Error($"AcsWrapper: Disconnect Exception. {e.Message}");
                 }
 
                 IscanLoopRun = false;
@@ -872,7 +868,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             acsUtils.WriteVariable(parameters.ConveyorBeltReleaseSpeed, "ConveyorBeltReleaseSpeed", buffer);
             acsUtils.WriteVariable(parameters.ConveyorBeltUnloadingSpeed, "ConveyorBeltUnloadingSpeed", buffer);
             acsUtils.WriteVariable(Convert.ToInt32(parameters.PingPongMode), "PingPongMode", buffer);
+
             acsUtils.WriteVariable(parameters.ConveyorDirection, "ConveyorDirection", buffer);
+            acsUtils.WriteVariable(parameters.ConveyorWaitTimeToAlign, "InternalMachineLoadBuffer_WaitTimeToAlign", buffer);
 
             // TODO: enable?
             // acsUtils.WriteVariable(parameters.DistanceBetweenEntryAndStopSensor, "DistanceBetweenEntryAndStopSensor", buffer);
@@ -1702,7 +1700,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             this.axesCache.Clear();
             for (GantryAxes gantryAxes = GantryAxes.Z; gantryAxes < GantryAxes.All; ++gantryAxes) {
                 ACSAxis acsAxis = new ACSAxis(this.Ch, this.acsUtils, gantryAxes, this.GetAcsAxisIndex(gantryAxes),
-                    this._robotSettings, this.isSimulation);
+                    this._robotSettings, false);
                 this.axesCache[gantryAxes] = acsAxis;
                 acsAxis.IdleChanged += new Action<int, bool>(this.axisIdleChanged);
                 acsAxis.EnabledChanged += new Action<int, bool>(this.axisEnabledChanged);
@@ -1810,16 +1808,24 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         private void initBuffers()
         {
-            bufferHelper.StopAllBuffers();
-            createCommutationBuffer();
-            bufferHelper.InitGantryHomingBuffers();
-            bufferHelper.InitIoBuffer();
+            try {
+                bufferHelper.StopAllBuffers();
+                createCommutationBuffer();
+                bufferHelper.InitGantryHomingBuffers();
+                bufferHelper.InitIoBuffer();
 
-            bufferHelper.InitConveyorBuffers();
-            bufferHelper.InitConveyorHomingBuffers();
-            bufferHelper.InitConveyorResetBuffers();
+                bufferHelper.InitConveyorBuffers();
+                bufferHelper.InitConveyorHomingBuffers();
+                bufferHelper.InitConveyorResetBuffers();
 
-            bufferHelper.FlashAllBuffers();
+                bufferHelper.FlashAllBuffers();
+
+                acsUtils.RunBuffer((ProgramBuffer) AcsBuffers.initIO);
+            }
+            catch (Exception e) {
+                _logger.Error("AcsWrapper: initBuffers Exception: " + e.Message);
+                throw;
+            }
         }
 
         private void createCommutationBuffer()
@@ -1881,9 +1887,6 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         private void axisPositionUpdated(int axis, double pos)
         {
-            this._logger.Info(string.Format("axisPositionUpdated {0} {1}", (object) (GantryAxes) axis, (object) pos),
-                3068, nameof(axisPositionUpdated),
-                "C:\\Users\\Garry\\Desktop\\ExternalHardware - 19032021\\AcsWrapper\\AcsWrapper.cs");
             Action<GantryAxes, double> positionUpdated = this.PositionUpdated;
             if (positionUpdated == null)
                 return;
@@ -1892,9 +1895,6 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         private void axisVelocityUpdated(int axis, double vel)
         {
-            this._logger.Info(string.Format("axisVelocityUpdated {0} {1}", (object) (GantryAxes) axis, (object) vel),
-                3074, nameof(axisVelocityUpdated),
-                "C:\\Users\\Garry\\Desktop\\ExternalHardware - 19032021\\AcsWrapper\\AcsWrapper.cs");
             Action<GantryAxes, double> velocityUpdated = this.VelocityUpdated;
             if (velocityUpdated == null)
                 return;
@@ -2253,7 +2253,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         }
 
         public bool HasError => HasConveyorError || HasRobotError;
-        public bool HasConveyorError => ErrorCode != ConveyorErrorCode.Error_Safe;
+        public bool HasConveyorError => ErrorCode != ConveyorErrorCode.ErrorSafe;
         public bool HasRobotError { get; private set; }
 
         public void ApplicationError()
@@ -2295,6 +2295,17 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             var lifter = Position(ConveyorAxes.Lifter);
             return lifter;
         }
+
+        public void SetAdditionalSettlingTime(int settlingTime)
+        {
+            acsUtils.WriteVariable(settlingTime, "MotionSettlingTimeBeforeScan");
+        }
+
+        public void SetBeforeMoveDelay(int beforeMoveDelay)
+        {
+            acsUtils.WriteVariable(beforeMoveDelay, "BeforeMoveDelay ");
+        }
+
 
         public void StartPanelLoad(LoadPanelBufferParameters parameters, double panelLength, int timeout)
         {
@@ -2377,8 +2388,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 StopButton = Convert.ToBoolean(acsUtils.ReadVar("Stop_Button_Bit")),
                 AlarmCancelPushButton = Convert.ToBoolean(acsUtils.ReadVar("AlarmCancelPushButton_Bit")),
                 UpstreamBoardAvailableSignal = Convert.ToBoolean(acsUtils.ReadVar("UpstreamBoardAvailableSignal_Bit")),
-                UpstreamFailedBoardAvailableSignal =
-                    Convert.ToBoolean(acsUtils.ReadVar("UpstreamFailedBoardAvailableSignal_Bit")),
+                UpstreamFailedBoardAvailableSignal = Convert.ToBoolean(acsUtils.ReadVar("UpstreamFailedBoardAvailableSignal_Bit")),
                 DownstreamMachineReadySignal = Convert.ToBoolean(acsUtils.ReadVar("DownstreamMachineReadySignal_Bit")),
                 BypassNormal = Convert.ToBoolean(acsUtils.ReadVar("BypassNormal_Bit")),
                 EstopAndDoorOpenFeedback = Convert.ToBoolean(acsUtils.ReadVar("EstopAndDoorOpenFeedback_Bit")),
@@ -2398,8 +2408,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 StopSensor = Convert.ToBoolean(acsUtils.ReadVar("StopSensor_Bit")),
                 SmemaUpStreamMachineReady = Convert.ToBoolean(acsUtils.ReadVar("SmemaUpStreamMachineReady_Bit")),
                 DownStreamBoardAvailable = Convert.ToBoolean(acsUtils.ReadVar("DownStreamBoardAvailable_Bit")),
-                SmemaDownStreamFailedBoardAvailable =
-                    Convert.ToBoolean(acsUtils.ReadVar("SmemaDownStreamFailedBoardAvailable_Bit")),
+                SmemaDownStreamFailedBoardAvailable = Convert.ToBoolean(acsUtils.ReadVar("SmemaDownStreamFailedBoardAvailable_Bit")),
             };
         }
 
@@ -2489,7 +2498,16 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public SmemaIo GetSmemaIoStatus()
         {
-            return new SmemaIo();
+            return new SmemaIo
+            {
+                UpstreamBoardAvailableSignal = Convert.ToBoolean(acsUtils.ReadVar("UpstreamBoardAvailableSignal_Bit")),
+                UpstreamFailedBoardAvailableSignal = Convert.ToBoolean(acsUtils.ReadVar("UpstreamFailedBoardAvailableSignal_Bit")),
+                DownstreamMachineReadySignal = Convert.ToBoolean(acsUtils.ReadVar("DownstreamMachineReadySignal_Bit")),
+
+                SmemaUpStreamMachineReady = Convert.ToBoolean(acsUtils.ReadVar("SmemaUpStreamMachineReady_Bit")),
+                DownStreamBoardAvailable = Convert.ToBoolean(acsUtils.ReadVar("DownStreamBoardAvailable_Bit")),
+                SmemaDownStreamFailedBoardAvailable = Convert.ToBoolean(acsUtils.ReadVar("SmemaDownStreamFailedBoardAvailable_Bit")),
+            };
         }
 
         public bool IsBypassSignalSet()
@@ -2690,16 +2708,6 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         public bool IsConveyorLifterAxisEnabled()
         {
             return Enabled(ConveyorAxes.Lifter);
-        }
-
-        public void SetAdditionalSettlingTime(int addtionalmotionsettlingTime)
-        {
-            acsUtils.WriteVariable((int)addtionalmotionsettlingTime, "MotionSettlingTimeBeforeScan");
-        }
-
-        public void SetBeforeMoveDelay(int beforemovedelay)
-        {
-            acsUtils.WriteVariable((int)beforemovedelay, "BeforeMoveDelay ");
         }
     }
 }

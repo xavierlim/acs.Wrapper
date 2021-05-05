@@ -1,12 +1,11 @@
-!Homing WIDTH
+﻿!Homing LIFTER
 
 int Axis
 int Slave_Number
 
-Axis= 6
-Slave_Number = 3
+Axis= 7
+Slave_Number = 4
 
-ConveyorWidthHomed = 0
 MFLAGS(Axis).#HOME = 0
 
 !******Motion parameters for homing***********
@@ -18,9 +17,9 @@ JERK(Axis)=10000
 
 int EC_Offset, V_Limit_Search, V_Index_Search
 
-V_Limit_Search = -5
+V_Limit_Search = -25
 V_Index_Search = 2
-EC_Offset = 364
+EC_Offset = 378
 !*********************************************
 
 disable Axis
@@ -33,10 +32,10 @@ ecunmapout(EC_Offset)
 !***************************************
 
 !***********Fault Clear***********
-ecout(EC_Offset,ControlWord_Width)
-ControlWord_Width = 0x8F
+ecout(EC_Offset,ControlWord_Lifter)
+ControlWord_Lifter = 0x8F
 wait 500
-ControlWord_Width = 0x0F
+ControlWord_Lifter = 0x0F
 coewrite/1(Slave_Number,0x6060,0,8)
 ecunmapin(EC_Offset)
 ecunmapout(EC_Offset)
@@ -52,8 +51,7 @@ FDEF(Axis).#RL=0
 enable Axis
 wait 100
 jog/v Axis , V_Limit_Search
-wait 300
-!till SAFINI(Axis).#LL=1
+till SAFINI(Axis).#LL=1
 halt Axis
 till ^MST(Axis).#MOVE
 wait 10
@@ -80,8 +78,8 @@ kill Axis
 wait 200
 !************************************************
 
-ecin (366, ActualPos_Width)
-set FPOS(Axis)=ActualPos_Width/1000
+ecin (380, ActualPos_Lifter)
+set FPOS(Axis)=ActualPos_Lifter/1000
 Index_Position=(coeread/4 (Slave_Number,0x60BA,0))/1000
 set FPOS(Axis)=(FPOS(Axis)-Index_Position)
 
@@ -94,7 +92,5 @@ FDEF(Axis).#LL=1
 FDEF(Axis).#RL=1
 !*****************************************
 
-
 MFLAGS(Axis).#HOME = 1
-ConveyorWidthHomed = 1
 stop

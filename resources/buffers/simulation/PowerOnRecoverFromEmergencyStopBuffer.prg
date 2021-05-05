@@ -1,16 +1,18 @@
 !PowerOnRecoverFromEmergencyStopBuffer
 
+global int FreePanelToUnliftError, FreePanelToUnclampError, PowerOnRecoveryWidthNotHomed
 
-int WaitTimeToSearch
-int WaitTimeToExit
-int WaitTimeToReset
+FreePanelToUnliftError = 303
+FreePanelToUnclampError = 304
+PowerOnRecoveryWidthNotHomed = 900
+
 
 int WidthToW_0_Position
 
 CALL InitializeACS
-TILL Reset_Button_Bit = 1 ,WaitTimeToReset
-START 7, 1
-TILL ^ PST(7).#RUN
+TILL Reset_Button_Bit = 1 ,PowerOnRecoveryBuffer_WaitTimeToReset
+START ConveyorResetBufferIndex, 1
+TILL ^ PST(ConveyorResetBufferIndex).#RUN
 WAIT 5000
 CALL InitializeMotors
 
@@ -23,16 +25,21 @@ if EstopAndDoorOpenFeedback_Bit = 0																				!IF SAFETY NOT ENGAGED
 
 else
 	EMO_RECOVERY:
-		CURRENT_STATUS = SAFE_STATUS																					!SET CURRENT STATUS = SAFE STATUS
+	CALL EMO_Recovery_FreePanelSeq
+	TILL PanelFreed = 1
+
+		CURRENT_STATUS = SAFE_STATUS																					!SET CURRENT STATUS = SAFE STATUS		
+		
 	if BypassNormal_Bit = 1																						!IF BYPASS MODE = 1
 		START BypassModeBufferIndex,1																				!START BYPASS MODE BUFFER
-	else																										!ELSE
+	else																										!ELSE 
 		CURRENT_STATUS = SEARGING_STATUS																			!SET CURRENT STATUS = SEARCHING STATUS
-		if (EntryOpto_Bit = 1 & ExitOpto_Bit = 1 & BoardStopPanelAlignSensor_Bit = 1)								!IF ANY SENSORS BLOCKED
+		if (EntryOpto_Bit = 1 | ExitOpto_Bit = 1 | BoardStopPanelAlignSensor_Bit = 1)								!IF ANY SENSORS BLOCKED
+			CALL StartConveyorBeltsDownstream																			!START CONVEYOR BELT DOWNSTREAM
 			CALL ContinueFindPanel																						!START FIND PANEL BUFFER
 		else																										!ELSE
 			CALL StartConveyorBeltsDownstream																			!START CONVEYOR BELT DOWNSTREAM
-			TILL (EntryOpto_Bit = 1 | ExitOpto_Bit = 1 | BoardStopPanelAlignSensor_Bit = 1) ,WaitTimeToSearch			!TIL ANY SENSORS BLOCKED OR TIMEOUT
+			TILL (EntryOpto_Bit = 1 | ExitOpto_Bit = 1 | BoardStopPanelAlignSensor_Bit = 1) ,PowerOnRecoveryBuffer_WaitTimeToSearch			!TIL ANY SENSORS BLOCKED OR TIMEOUT
 			if (EntryOpto_Bit = 1 | ExitOpto_Bit = 1 | BoardStopPanelAlignSensor_Bit = 1)									!IF ANY SENSORS BLOCKED
 				CALL ContinueFindPanel																							!START FIND PANEL BUFFER
 			else																											!ELSE IF TIMEOUT
@@ -46,10 +53,10 @@ end
 STOP
 
 
-ContinueFindPanel:
+ContinueFindPanel:																									
 	if ConveyorWidthHomed = 1																						!IF WIDTH HOMED
-	    TILL ExitOpto_Bit = 1,WaitTimeToExit																			!WAIT UNTIL EXIT OPTO BLOCKED OR TIMEOUT
-		if ExitOpto_Bit = 1																								!IF EXIT OPTO BLOCKED
+	    TILL ExitOpto_Bit = 1,PowerOnRecoveryBuffer_WaitTimeToExit																			!WAIT UNTIL EXIT OPTO BLOCKED OR TIMEOUT
+		if ExitOpto_Bit = 1																								!IF EXIT OPTO BLOCKED	
 			CALL StopConveyorBelts																							!STOP CONVEYOR BELT
 			CURRENT_STATUS = PRERELEASED_STATUS																				!SET STATUS = PRERELEASED STATE
 		else																											!ELSE IF TIMEOUT
@@ -57,7 +64,8 @@ ContinueFindPanel:
 			CURRENT_STATUS = ERROR_STATUS																				!SET STATUS = ERROR STATUS
 		end
 	else																											!IF WIDTH NOT HOMED
-		CALL ErrorExit																									!CALL ERROR EXIT
+		ERROR_CODE = PowerOnRecoveryWidthNotHomed																		!PowerOnRecoveryWidthNotHomed error code 900
+		CALL ErrorExit																								!CALL ERROR EXIT
 		CURRENT_STATUS = ERROR_STATUS																					!SET CURRENT STATUS = ERROR STATUS
 	end
 
@@ -74,15 +82,16 @@ HomeWidth:
 			CALL AdjustConveyorWidthToW_0																					!CALL CHANGE WIDTH BUFFER
 			CURRENT_STATUS = RELEASED_STATUS																				!SET CURRENT STATUS = RELEASED STATUS
 		else																											!ELSE
+			ERROR_CODE = PowerOnRecoveryWidthNotHomed																		!PowerOnRecoveryWidthNotHomed error code 900
 			CALL ErrorExit																									!CALL ERROR EXIT
 			CURRENT_STATUS = ERROR_STATUS																					!SET CURRENT STATUS = ERROR STATUS
 		end
 	end
 RET
 
-HomeConveyorWidthMotor:
-	START 5, 1																											!START WIDTH HOMING BUFFER
-	TILL ^ PST(5).#RUN																									!UNTIL BUFFER ENDS
+HomeConveyorWidthMotor:																								
+	START WidthHomingBufferIndex, 1																											!START WIDTH HOMING BUFFER
+	TILL ^ PST(WidthHomingBufferIndex).#RUN																									!UNTIL BUFFER ENDS
 RET
 
 AdjustConveyorWidthToW_0:																							!START CHANGE WIDTH BUFFER
@@ -124,10 +133,43 @@ EnableOptos:
 RET
 
 StartConveyorBeltsDownstream:
-	JOG/v CONVEYOR_AXIS,ConveyorBeltLoadingSpeed
-
+	JOG/v CONVEYOR_AXIS,ConveyorBeltLoadingSpeed*ConveyorDirection
+	
 RET
 
 StopConveyorBelts:
 	HALT CONVEYOR_AXIS
+RET
+
+EMO_Recovery_FreePanelSeq:
+		CALL UnclampPanel
+		TILL RearClampDown_Bit & FrontClampDown_Bit,5000
+		CALL LowerLifter 
+		TILL Lifter_Lowered = 1, 10000
+
+		if Lifter_Lowered <> 1
+			ERROR_CODE = FreePanelToUnliftError
+		else
+			TILL RearClampDown_Bit & FrontClampDown_Bit, 5000
+			if(RearClampDown_Bit & FrontClampDown_Bit)
+				PanelFreed = 1
+			else
+				ERROR_CODE = FreePanelToUnclampError
+			end
+		end
+RET
+
+LowerLifter:
+	Lifter_Lowered = 0
+	ptp/v LIFTER_AXIS,0,10
+	till ^MST(LIFTER_AXIS).#MOVE
+	wait 200
+	LockStopper_Bit = 0
+	RaiseBoardStopStopper_Bit = 0
+	Lifter_Lowered = 1
+RET
+
+
+UnclampPanel:
+	ClampPanel_Bit = 0
 RET

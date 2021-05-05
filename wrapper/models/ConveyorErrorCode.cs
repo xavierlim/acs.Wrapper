@@ -3,7 +3,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
 {
     public enum ConveyorErrorCode
     {
-        Error_Safe = 0,
+        ErrorSafe = 0,
 
         BypassSensorBlockedError = 101,
         BypassAcqError = 102,
@@ -14,7 +14,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
         ChangeWidthToError = 201,
         ChangeWidthToHomedError = 202,
         ChangeWidthToNotAtSpecifiedError = 203,
-        ChangewidthPanelPresent = 204,
+        ChangeWidthPanelPresent = 204,
 
         FreePanelStopUpError = 301,
         FreePanelOptoBlockedError = 302,
@@ -31,7 +31,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
 
         PreReleaseNotLoadedError = 501,
         PreReleasePanelNotFreedError = 502,
-        PreReleaseWaitTOError = 503,
+        PreReleaseWaitToError = 503,
 
         ReleasePanelStateError = 601,
         ReleasePanelFreeError = 602,
@@ -50,5 +50,4 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
 
         PowerOnRecoveryWidthNotHomed = 901
     }
-
 }

@@ -16,6 +16,22 @@ disable Axis_X1, Axis_X2
 CALL INPUTSHAPING_OFF
 CALL NONGANTRY_SETTINGS
 CALL NONGANTRY_PARAMTERS
+
+
+!Simulation
+WAIT 5000
+enable Axis_X1
+enable Axis_X2
+ptp/ve Axis_X1,0,100
+ptp/ve Axis_X2,0,100
+MFLAGS(Axis_X1).#HOME = 1
+MFLAGS(Axis_X2).#HOME = 1
+MFLAGS(5).#HOME = 1
+MFLAGS(6).#HOME = 1
+MFLAGS(7).#HOME = 1
+STOP
+
+
 Gantry_Mode = 0
 CALL X1_IND_HOMING
 CALL X2_IND_HOMING
@@ -64,7 +80,7 @@ NONGANTRY_SETTINGS:
 	FDEF(Axis_X1).#RL = 0
 	FDEF(Axis_X1).#LL = 0
 	FDEF(Axis_X2).#RL = 0
-	FDEF(Axis_X2).#LL = 0
+	FDEF(Axis_X2).#LL = 0	
 RET
 
 GANTRY_SETTINGS:
@@ -157,7 +173,7 @@ GANTRY_PARAMETERS:
 	SLVNFRQ(Axis_X1) = 17
 	SLVNWID(Axis_X1) = 10
 
-!Velocity BQF 1
+!Velocity BQF 1 
 	MFLAGS(Axis_X1).16 = 0
 	SLVB0DD(Axis_X1) = 0.8
 	SLVB0DF(Axis_X1) = 180
@@ -171,7 +187,7 @@ GANTRY_PARAMETERS:
 	SLVB1ND(Axis_X1) = 0.6
 	SLVB1NF(Axis_X1) = 60
 
-!Current limit restoration
+!Current limit restoration 
 	XCURV(Axis_X1) = 100
 	XCURI(Axis_X1) = 50
 
@@ -203,10 +219,10 @@ X1_IND_HOMING:
 	kill Axis_X1
 	TILL ^AST(Axis_X1).#MOVE
 
-	IST(Axis_X1).#IND=0
+	IST(Axis_X1).#IND=0 
 	jog/v Axis_X1,20
 	wait 100
-	TILL IST(Axis_X1).#IND
+	TILL IST(Axis_X1).#IND 
 	kill Axis_X1
 	TILL ^AST(Axis_X1).#MOVE
 	wait 100
@@ -223,10 +239,10 @@ X2_IND_HOMING:
 	kill Axis_X2
 	TILL ^AST(Axis_X2).#MOVE
 
-	IST(Axis_X2).#IND=0
+	IST(Axis_X2).#IND=0 
 	jog/v Axis_X2,20
 	wait 100
-	TILL IST(Axis_X2).#IND
+	TILL IST(Axis_X2).#IND 
 	kill Axis_X2
 	TILL ^AST(Axis_X2).#MOVE
 	wait 100
@@ -234,3 +250,5 @@ X2_IND_HOMING:
 
 	disable Axis_X2
 RET
+
+

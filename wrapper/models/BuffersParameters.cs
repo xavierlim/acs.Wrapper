@@ -114,7 +114,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
         public double ConveyorBeltUnloadingSpeed { get; set; }
         public double PanelLength { get; set; }
         public bool PingPongMode { get; set; }
+
         public ConveyorDirection ConveyorDirection { get; set; }
+        public ushort ConveyorWaitTimeToAlign { get; set; }
 
         public double DistanceBetweenEntryAndStopSensor { get; set; }
         public double DistanceBetweenSlowPositionAndStopSensor { get; set; }

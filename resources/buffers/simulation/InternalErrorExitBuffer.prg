@@ -11,10 +11,10 @@ ErrorExit:
 	WAIT 1000
 	CALL LowerLifter
 	DISABLE LIFTER_AXIS
-	CALL Unclamp
-	CALL LowerStopper
-	CALL ClearBoardAvailable
-	CALL ClearMachineReady
+	CALL Unclamp	
+	CALL LowerStopper	
+	CALL ClearBoardAvailable	
+	CALL ClearMachineReady	
 	CURRENT_STATUS = ERROR_STATUS
 RET
 
