@@ -578,6 +578,12 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
       }
     }
 
+    public void UpdateScanningProfiles(AxisScanParameters parameters)
+    {
+      CurrentAccel = parameters.Acceleration;
+      CurrentDecel = parameters.Deceleration;
+    }
+
     public bool MoveAbsolute(
       double targetPos,
       bool waitProgramEnd,

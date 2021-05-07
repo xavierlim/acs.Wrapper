@@ -90,7 +90,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             int triggerFromCameraContinueBit,
             int triggerFromCameraTimeOut);
 
-        bool StartScanning();
+        bool StartScanning(AxesScanParameters scanParameters);
         bool StartConveyorBuffer(AcsBuffers buffer);
         bool SetReleaseCommandReceived(bool commandReceived);
         bool InitConveyorBufferParameters(BypassModeBufferParameters parameters);

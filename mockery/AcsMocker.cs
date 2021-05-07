@@ -112,7 +112,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.mockery
             throw new NotImplementedException();
         }
 
-        public bool StartScanning()
+        public bool StartScanning(AxesScanParameters scanParameters)
         {
             throw new NotImplementedException();
         }

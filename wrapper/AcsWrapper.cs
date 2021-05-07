@@ -602,15 +602,18 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             return true;
         }
 
-        public bool StartScanning()
+        public bool StartScanning(AxesScanParameters scanParameters)
         {
-            _logger.Info("StartScanning()", 736, nameof(StartScanning),
-                "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+            _logger.Info("StartScanning");
+
             if (!IsConnected) {
-                _logger.Info("Controller not connected", 739, nameof(StartScanning),
-                    "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+                _logger.Info("Controller not connected");
                 return false;
             }
+
+            axesCache[GantryAxes.X].UpdateScanningProfiles(scanParameters.AxisX);
+            axesCache[GantryAxes.Y].UpdateScanningProfiles(scanParameters.AxisY);
+            axesCache[GantryAxes.Z].UpdateScanningProfiles(scanParameters.AxisZ);
 
             CurrentScanningIndex = -1;
             CurrentMotionCompleteRecvd = 0;
