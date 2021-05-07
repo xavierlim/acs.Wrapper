@@ -999,11 +999,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public bool Init(bool forZOnly = false)
         {
-            _logger.Info(string.Format("Init(forZOnly = {0})", forZOnly), 1130, nameof(Init),
-                "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+            _logger.Info(string.Format("Init(forZOnly = {0})", forZOnly));
             if (!IsConnected) {
-                _logger.Info("Controller not connected", 1133, nameof(Init),
-                    "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+                _logger.Info("Controller not connected");
                 return false;
             }
 
@@ -1021,13 +1019,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public bool Init(List<AxisInitParameters> initParameters, bool forZOnly = false)
         {
-            _logger.Info(
-                string.Format("Init(List<AxisInitParameters> initParameters,forZOnly = {0})", forZOnly), 1169,
-                nameof(Init),
-                "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+            _logger.Info($"Init(List<AxisInitParameters> initParameters,forZOnly = {forZOnly})");
             if (!IsConnected) {
-                _logger.Info("Controller not connected", 1172, nameof(Init),
-                    "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+                _logger.Info("Controller not connected");
                 return false;
             }
 
@@ -1070,11 +1064,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public bool Init(GantryAxes axis)
         {
-            _logger.Info(string.Format("Init(axis = {0})", axis), 1232, nameof(Init),
-                "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+            _logger.Info(string.Format("Init(axis = {0})", axis));
             if (!IsConnected) {
-                _logger.Info("Controller not connected", 1235, nameof(Init),
-                    "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+                _logger.Info("Controller not connected");
                 return false;
             }
 
@@ -1086,11 +1078,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public bool Init(AxisInitParameters initParameters)
         {
-            _logger.Info("Init(AxisInitParameters initParameters)", 1257, nameof(Init),
-                "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+            _logger.Info("Init(AxisInitParameters initParameters)");
             if (!IsConnected) {
-                _logger.Info("Controller not connected", 1260, nameof(Init),
-                    "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+                _logger.Info("Controller not connected");
                 return false;
             }
 
@@ -1385,11 +1375,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public bool Init(ConveyorAxes axis)
         {
-            this._logger.Info(string.Format("Init(axis = {0})", (object) axis), 2008, nameof(Init),
-                "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
+            this._logger.Info(string.Format("Init(axis = {0})", (object) axis));
             if (!this.IsConnected) {
-                this._logger.Info("Controller not connected", 2011, nameof(Init),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
+                this._logger.Info("Controller not connected");
                 return false;
             }
 
