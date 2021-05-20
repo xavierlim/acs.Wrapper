@@ -102,7 +102,8 @@ RET
 RaiseBoardStop:
 	RaiseBoardStopStopper_Bit = 1
 	TILL StopperArmUp_Bit = 1
-		 LockStopper_Bit = 1
+	wait 1000
+	LockStopper_Bit = 1
 	TILL StopperLocked_Bit = 1
 	
 RET

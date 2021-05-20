@@ -21,8 +21,8 @@ JERK (Axis_Z) = 10000
 
 enable Axis_Z
 
-XCURV(Axis_Z) = 20
-XCURI(Axis_Z) = 10
+XCURV(Axis_Z) = 45
+XCURI(Axis_Z) = 16
 
 jog/v Axis_Z, -1
 till FAULT(Axis_Z).#LL = 1

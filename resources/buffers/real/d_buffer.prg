@@ -162,7 +162,7 @@ global int TowerLightGreen_Bit ! done 0 0.6
 global int TowerLightBlue_Bit ! done 0 0.7
 
 global int TowerLightBuzzer_Bit ! done 0 1.0
-!global int SensorPowerOnOff_Bit !done O 1.1
+global int SensorPowerOnOff_Bit !done O 1.1
 global int StopSensor_Bit ! done 0 1.2
 global int SmemaUpStreamMachineReady_Bit ! done 0 1.3
 global int DownStreamBoardAvailable_Bit ! done 0 1.4

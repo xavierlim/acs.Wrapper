@@ -64,7 +64,7 @@ VEL (Axis_Y) = 100
 ACC (Axis_Y) = 6000
 DEC (Axis_Y) = 6000
 KDEC(Axis_Y) = 10000
-JERK (Axis_Y) = 500000
+JERK (Axis_Y) = 200000
 
 CALL INPUTSHAPING_ON
 MFLAGS(Axis_Y).#HOME = 1
@@ -111,11 +111,11 @@ RESTORE_TUNING_PARA:
 	SLVB0NF(Axis_Y) = 700
 
 !Velocity BQF 2
-	MFLAGS(Axis_Y).26 = 0
-	SLVB1DD(Axis_Y) = 0.3
-	SLVB1DF(Axis_Y) = 70
-	SLVB1ND(Axis_Y) = 0.5
-	SLVB1NF(Axis_Y) = 70
+	MFLAGS(Axis_Y).26 = 1
+	SLVB1DD(Axis_Y) = 0.1
+	SLVB1DF(Axis_Y) = 1000
+	SLVB1ND(Axis_Y) = 0.4
+	SLVB1NF(Axis_Y) = 1000
 	
 !Current limit restoration 
 	XCURV(Axis_Y) = 100
