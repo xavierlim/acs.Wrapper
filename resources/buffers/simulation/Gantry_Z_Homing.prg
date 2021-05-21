@@ -1,5 +1,7 @@
 !Gantry Z Homing
 
+!Gantry Y homing
+
 int Axis_Z
 
 Axis_Z = 4
@@ -27,8 +29,8 @@ MFLAGS(Axis_Z).#HOME = 1
 STOP
 
 
-XCURV(Axis_Z) = 20
-XCURI(Axis_Z) = 10
+XCURV(Axis_Z) = 45
+XCURI(Axis_Z) = 16
 
 jog/v Axis_Z, -1
 till FAULT(Axis_Z).#LL = 1

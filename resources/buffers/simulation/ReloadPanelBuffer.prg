@@ -20,12 +20,23 @@ CURRENT_STATUS = LOADED_STATUS
 STOP
 
 
+real SlowPosition
+real absPosTemp
+SlowPosition = 0
+absPosTemp = 0
+
+
+
 if CURRENT_STATUS = LOADED_STATUS								!IF CURRENT STATE = LOADED STATE
 	CURRENT_STATUS = RELOADING_STATUS								!SET STATE = RELOADING STATUS
 	START FreePanelBufferIndex,1									!START FREE PANEL BUFFER
 	TILL ^ PST(FreePanelBufferIndex).#RUN							!UNTIL FREE PANEL COMPLETE
 
 	if PanelFreed = 1												!IF PANEL IS FREED
+
+	absPosTemp = RPOS(CONVEYOR_AXIS)
+	SlowPosition = absPosTemp - (DistanceBetweenEntryAndStopSensor-DistanceBetweenSlowPositionAndEntrySensor-PanelLength)
+
 		CALL ContinueReloading											!CALL CONTINUERELOADING
 
 	else															!ELSE IF PANEL IS NOT FREED
@@ -38,6 +49,10 @@ else																	!ELSE IF CURRENT STATE IS NOT = LOADED STATE
 
 	if CURRENT_STATUS = PRERELEASED_STATUS	& ExitOpto_Bit = 1			!IF CURRENT STATUS = PRERELEASED STATUS AND EXIT OPTO BLOCKED
 		CURRENT_STATUS = RELOADING_STATUS									!SET CURRENT STATUS = RELOADING STATUS
+
+		absPosTemp = RPOS(CONVEYOR_AXIS)
+		SlowPosition = absPosTemp - ((DistanceBetweenEntryAndStopSensor + DistanceBetweenStopSensorAndExitSensor )-DistanceBetweenSlowPositionAndEntrySensor-PanelLength )
+
 		CALL ContinueReloading												!CALL CONTINUERELOADING 
 
 	elseif 	CURRENT_STATUS = PRERELEASED_STATUS	& ExitOpto_Bit = 0		!ELSE IF CURRENT STATE IS PRELEASED STATUS AND EXIT OPTO NOT BLOCKED	
@@ -51,10 +66,12 @@ else																	!ELSE IF CURRENT STATE IS NOT = LOADED STATE
 		TILL PanelFreed = 1												!UNTIL FREE PANEL COMPLETE
 
 		if PanelFreed = 1												!IF PANEL IS FREED
+			
+			absPosTemp = RPOS(CONVEYOR_AXIS)
+			SlowPosition = absPosTemp - (DistanceBetweenEntryAndStopSensor-DistanceBetweenSlowPositionAndEntrySensor-PanelLength)
+
 			CALL ContinueReloading											!CALL CONTINUERELOADING
-			!COMMENTED BELOW FOR TESTING WHETHER BELOW STATEMENT IS REDUNDANT
-			!CURRENT_STATUS = RELEASED_STATUS								!SET CURRENT_STATUS = RELEASED_STATUS TO PREPARE FOR LOADPANELBUFFER
-			!START LoadPanelBufferIndex,1									!CALL LOADPANELBUFFER
+
 		end
 	end
 
@@ -65,6 +82,10 @@ STOP
 
 ContinueReloading:
 	CALL StartConveyorBeltsUpstreamInternalSpeed				!START CONVEYOR BELT UPSTREAM
+
+	TILL RPOS(CONVEYOR_AXIS) < SlowPosition , ReloadPanelBuffer_WaitTimeToSearch	!UNTIL sLOW POSITION REACHED OR TIMEOUT
+	CALL AdjustConveyorBeltsUpstreamInternalSpeedToSlow								!ADJUST CONVEYOR BELT SPEED TO SLOW
+
 	TILL EntryOpto_Bit = 1,ReloadPanelBuffer_WaitTimeToSearch						!UNTIL ENTRY OPTO BLOCKED OR TIMEOUT
 
 	if EntryOpto_Bit = 1										!IF ENTRY OPTO BLOCKED
@@ -88,7 +109,8 @@ RET
 RaiseBoardStop:
 	RaiseBoardStopStopper_Bit = 1
 	TILL StopperArmUp_Bit = 1
-		 LockStopper_Bit = 1
+	wait 1000
+	LockStopper_Bit = 1
 	TILL StopperLocked_Bit = 1
 	
 RET
@@ -108,6 +130,10 @@ StartConveyorBeltsUpstreamInternalSpeed:
 	JOG/v CONVEYOR_AXIS,-ConveyorBeltLoadingSpeed*ConveyorDirection
 RET
 
+AdjustConveyorBeltsUpstreamInternalSpeedToSlow:
+	ENABLE CONVEYOR_AXIS
+	JOG/v CONVEYOR_AXIS,-ConveyorBeltSlowSpeed*ConveyorDirection
+RET
 
 ErrorExit:
 	START InternalErrorExitBufferIndex,1
