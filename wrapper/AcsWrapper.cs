@@ -829,7 +829,6 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 _logger.Info("Controller not connected");
                 return false;
             }
-            int buffer = (int)AcsBuffers.SecurePanel;
 
             acsUtils.WriteVariable(parameters.ClampLiftDelayTime, "SecurePanelBuffer_ClampLiftDelayTime");
             acsUtils.WriteVariable(parameters.WaitTimeToPanelClamped, "SecurePanelBuffer_WaitTimeToPanelClamped");
@@ -920,11 +919,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public void ClearError(GantryAxes axis)
         {
-            _logger.Info(string.Format("ClearError(axis = {0})", axis), 1030, nameof(ClearError),
-                "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+            _logger.Info(string.Format("ClearError(axis = {0})", axis));
             if (!IsConnected) {
-                _logger.Info("Controller not connected", 1033, nameof(ClearError),
-                    "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+                _logger.Info("Controller not connected");
             }
             else {
                 if (axesCache.ContainsKey(axis))
@@ -935,11 +932,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public bool Enable(GantryAxes axis)
         {
-            _logger.Info(string.Format("Enable(axis = {0})", axis), 1050, nameof(Enable),
-                "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+            _logger.Info(string.Format("Enable(axis = {0})", axis));
             if (!IsConnected) {
-                _logger.Info("Controller not connected", 1053, nameof(Enable),
-                    "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+                _logger.Info("Controller not connected");
                 return false;
             }
 
@@ -1309,11 +1304,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public bool Enable(ConveyorAxes axis)
         {
-            this._logger.Info(string.Format("Enable(axis = {0})", (object) axis), 1916, nameof(Enable),
-                "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
+            this._logger.Info(string.Format("Enable(axis = {0})"));
             if (!this.IsConnected) {
-                this._logger.Info("Controller not connected", 1919, nameof(Enable),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
+                this._logger.Info("Controller not connected");
                 return false;
             }
 
@@ -1721,7 +1714,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 conveyorAxes <= ConveyorAxes.Lifter;
                 ++conveyorAxes) {
                 ACSAxis acsAxis = new ACSAxis(this.Ch, this.acsUtils, conveyorAxes, this.GetAcsAxisIndex(conveyorAxes),
-                    this.isSimulation);
+                    false);
                 this.conveyorAxesCache[conveyorAxes] = acsAxis;
                 acsAxis.IdleChanged += new Action<int, bool>(this.conveyorAxisIdleChanged);
                 acsAxis.EnabledChanged += new Action<int, bool>(this.conveyorAxisEnabledChanged);
@@ -1778,15 +1771,15 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         private void initAxisNumbersAtController()
         {
-            this.acsUtils.WriteVariable((object) this.axesCache[GantryAxes.X].AcsAxisId, "X_AXIS", From1: 0, To1: 0);
-            this.acsUtils.WriteVariable((object) this.axesCache[GantryAxes.Y].AcsAxisId, "Y_AXIS", From1: 0, To1: 0);
-            this.acsUtils.WriteVariable((object) this.axesCache[GantryAxes.Z].AcsAxisId, "Z_AXIS", From1: 0, To1: 0);
+            this.acsUtils.WriteVariable((object) this.axesCache[GantryAxes.X].AcsAxisId, "X_AXIS", from1: 0, to1: 0);
+            this.acsUtils.WriteVariable((object) this.axesCache[GantryAxes.Y].AcsAxisId, "Y_AXIS", from1: 0, to1: 0);
+            this.acsUtils.WriteVariable((object) this.axesCache[GantryAxes.Z].AcsAxisId, "Z_AXIS", from1: 0, to1: 0);
             this.acsUtils.WriteVariable((object) this.conveyorAxesCache[ConveyorAxes.Conveyor].AcsAxisId,
-                "CONVEYOR_AXIS", From1: 0, To1: 0);
+                "CONVEYOR_AXIS", from1: 0, to1: 0);
             this.acsUtils.WriteVariable((object) this.conveyorAxesCache[ConveyorAxes.Width].AcsAxisId,
-                "CONVEYOR_WIDTH_AXIS", From1: 0, To1: 0);
+                "CONVEYOR_WIDTH_AXIS", from1: 0, to1: 0);
             this.acsUtils.WriteVariable((object) this.conveyorAxesCache[ConveyorAxes.Lifter].AcsAxisId, "LIFTER_AXIS",
-                From1: 0, To1: 0);
+                from1: 0, to1: 0);
         }
 
         public void ReadAxesSettignsFromConfig()

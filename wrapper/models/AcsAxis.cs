@@ -394,7 +394,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
             this.acsUtils.SetBits("FMASK", (int) this.AcsAxisId, 64);
             if (this.Homed)
               this.acsUtils.SetBits("FDEF", (int) this.AcsAxisId, 64);
-            this.acsUtils.WriteVariable((object) (this.minPos - 0.01), "SLLIMIT", From1: ((int) this.AcsAxisId), To1: ((int) this.AcsAxisId));
+            this.acsUtils.WriteVariable((object) (this.minPos - 0.01), "SLLIMIT", from1: ((int) this.AcsAxisId), to1: ((int) this.AcsAxisId));
           }
         }
         catch (Exception ex)
@@ -424,7 +424,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
             this.acsUtils.SetBits("FMASK", (int) this.AcsAxisId, 32);
             if (this.Homed)
               this.acsUtils.SetBits("FDEF", (int) this.AcsAxisId, 32);
-            this.acsUtils.WriteVariable((object) (this.maxPos + 0.001), "SRLIMIT", From1: ((int) this.AcsAxisId), To1: ((int) this.AcsAxisId));
+            this.acsUtils.WriteVariable((object) (this.maxPos + 0.001), "SRLIMIT", from1: ((int) this.AcsAxisId), to1: ((int) this.AcsAxisId));
           }
         }
         catch (Exception ex)
@@ -756,7 +756,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
     {
       if (!this.Ch.IsConnected)
       {
-        this._logger.Info("Controller not connected", 947, nameof (getDataFromController), "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\ACSAxis.cs");
+        this._logger.Info("Controller not connected");
       }
       else
       {
@@ -800,16 +800,16 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
     {
       if (!this.Ch.IsConnected)
       {
-        this._logger.Info("Controller not connected", 1003, nameof (InitPrepare), "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\ACSAxis.cs");
+        this._logger.Info("Controller not connected");
         return false;
       }
       if (!this.Idle)
       {
-        this._logger.Info("Axis is busy", 1008, nameof (InitPrepare), "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\ACSAxis.cs");
+        this._logger.Info("Axis is busy");
         return false;
       }
       this.ClearError();
-      this._logger.Info("Init Axis " + this.Name, 1013, nameof (InitPrepare), "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\ACSAxis.cs");
+      this._logger.Info("Init Axis " + this.Name);
       if (!this.Enable() || !this.checkInitParams())
         return false;
       this.Idle = false;
