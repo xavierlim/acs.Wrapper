@@ -198,8 +198,10 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
 
         public bool IsProgramRunning(ProgramBuffer buffer)
         {
-            if (api.IsConnected)
+            if (api.IsConnected) {
                 return (uint) (api.GetProgramState(buffer) & ProgramStates.ACSC_PST_RUN) > 0U;
+            }
+
             logger.Info("Controller not connected");
             return false;
         }
@@ -216,72 +218,72 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
                 return api.ReadVariable(varName, bufferIndex, indFrom, indFromTo);
             }
             catch (Exception ex) {
-                logger.Info("ReadVar error " + ex.Message);
+                logger.Info($"AcsUtil.ReadVar: Exception while accessing '{varName}': " + ex.Message);
                 return null;
             }
         }
 
         public object ReadVariableAsVector(string varName, ProgramBuffer bufferIndex = ProgramBuffer.ACSC_NONE,
-            int From1 = -1, int To1 = -1, int From2 = -1, int To2 = -1)
+            int from1 = -1, int to1 = -1, int from2 = -1, int to2 = -1)
         {
             if (!api.IsConnected) {
-                logger.Info("Controller not connected");
+                logger.Info("AcsUtil.ReadVariableAsVector: Controller not connected");
                 return null;
             }
 
             try {
-                return api.ReadVariableAsVector(varName, bufferIndex, From1, To1, From2, To2);
+                return api.ReadVariableAsVector(varName, bufferIndex, from1, to1, from2, to2);
             }
             catch (Exception ex) {
-                logger.Info("ReadVariableAsVector error " + ex.Message);
+                logger.Info($"AcsUtil.ReadVariableAsVector: Exception while accessing '{varName}': " + ex.Message);
                 return null;
             }
         }
 
         public object ReadVariableAsMatrix(string varName, ProgramBuffer bufferIndex = ProgramBuffer.ACSC_NONE,
-            int From1 = -1, int To1 = -1, int From2 = -1, int To2 = -1)
+            int from1 = -1, int to1 = -1, int from2 = -1, int to2 = -1)
         {
             if (!api.IsConnected) {
-                logger.Info("Controller not connected");
+                logger.Info("AcsUtil.ReadVariableAsMatrix: Controller not connected");
                 return null;
             }
 
             try {
-                return api.ReadVariableAsMatrix(varName, bufferIndex, From1, To1, From2, To2);
+                return api.ReadVariableAsMatrix(varName, bufferIndex, from1, to1, from2, to2);
             }
             catch (Exception ex) {
-                logger.Info("ReadVariableAsMatrix error " + ex.Message);
+                logger.Info($"AcsUtil.ReadVariableAsMatrix: Exception while accessing '{varName}': " + ex.Message);
                 return null;
             }
         }
 
-        public void WriteVariable(object Value, string Variable, int NBuf = -1, int From1 = -1, int To1 = -1,
-            int From2 = -1, int To2 = -1)
+        public void WriteVariable(object value, string variable, int index = -1, int from1 = -1, int to1 = -1,
+            int from2 = -1, int to2 = -1)
         {
             if (!api.IsConnected) {
-                logger.Info("Controller not connected");
+                logger.Info("AcsUtil.WriteVariable: Controller not connected");
             }
             else {
                 try {
-                    api.WriteVariable(Value, Variable, (ProgramBuffer) NBuf, From1, To1, From2, To2);
+                    api.WriteVariable(value, variable, (ProgramBuffer) index, from1, to1, from2, to2);
                 }
                 catch (Exception ex) {
-                    logger.Info($"WriteVariable '{Variable}' error " + ex.Message);
+                    logger.Info($"AcsUtil.WriteVariable: Exception while accessing '{variable}': " + ex.Message);
                 }
             }
         }
 
-        public void WriteVar(double varVal, string varName)
+        public void WriteDouble(double varVal, string varName)
         {
             if (!api.IsConnected) {
-                logger.Info("Controller not connected");
+                logger.Info("AcsUtils.WriteDouble: Controller not connected");
             }
             else {
                 try {
                     api.WriteVariable(varVal, varName);
                 }
                 catch (Exception ex) {
-                    logger.Info("WriteVar error " + ex.Message);
+                    logger.Info($"AcsUtils.WriteDouble: Exception while accessing '{varName}': " + ex.Message);
                 }
             }
         }
@@ -289,45 +291,58 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
         public void WriteVar(int[] num, string varName)
         {
             if (!api.IsConnected) {
-                logger.Info("Controller not connected");
+                logger.Info("AcsUtils.WriteVar: Controller not connected");
             }
             else {
                 try {
                     api.WriteVariable(num, varName, from1: 0, to1: (num.Length - 1));
                 }
                 catch (Exception ex) {
-                    logger.Info("WriteVar error " + ex.Message);
+                    logger.Info($"AcsUtils.WriteVar: Exception while accessing '{varName}': " + ex.Message);
                 }
             }
         }
 
-        public void WriteGlobalReal(object Value, string Variable, int indx = -1)
-        {
-            if (!api.IsConnected)
-                logger.Info("Controller not connected");
-            else
-                api.WriteVariable(Value, Variable, from1: indx, to1: indx);
-        }
-
-        public double ReadGlobalReal(string Variable, int indx = -1)
+        public void WriteGlobalReal(object value, string variable, int index = -1)
         {
             if (!api.IsConnected) {
-                logger.Info("Controller not connected");
+                logger.Info("AcsUtils.WriteGlobalReal: Controller not connected");
+                return;
+            }
+
+            try {
+                api.WriteVariable(value, variable, from1: index, to1: index);
+            }
+            catch (Exception e) {
+                logger.Info($"AcsUtils.WriteGlobalReal: Exception while writing '{variable}': " + e.Message);
+            }
+        }
+
+        public double ReadGlobalReal(string variable, int index = -1)
+        {
+            if (!api.IsConnected) {
+                logger.Info("AcsUtils.ReadGlobalReal: Controller not connected");
                 return 0.0;
             }
 
             try {
-                return (double) api.ReadVariableAsScalar(Variable, ProgramBuffer.ACSC_NONE, indx);
+                return (double) api.ReadVariableAsScalar(variable, ProgramBuffer.ACSC_NONE, index);
             }
-            catch (Exception ex) {
-                logger.Info(ex.Message);
+            catch (Exception e) {
+                logger.Info($"AcsUtils.ReadGlobalReal: Exception while reading '{variable}': " + e.Message);
                 return 0.0;
             }
         }
 
-        public int ReadInt(string varName, int index)
+        public int ReadInt(string variable, int index)
         {
-            return Convert.ToInt32(ReadVar(varName, indFrom: index, indFromTo: index));
+            try {
+                return Convert.ToInt32(ReadVar(variable, indFrom: index, indFromTo: index));
+            }
+            catch (Exception e) {
+                logger.Info($"AcsUtils.ReadInt: Exception while reading '{variable}', '{index}': " + e.Message);
+                return 0;
+            }
         }
 
         public void WriteInt(string varName, int val)
@@ -337,7 +352,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
 
         public void WriteInt(string varName, int index, int val)
         {
-            WriteVariable(val, varName, From1: index, To1: index);
+            WriteVariable(val, varName, from1: index, to1: index);
         }
 
         public void WriteBit(string varName, int index, int bit, bool val)
@@ -374,26 +389,34 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
             }
         }
 
-        public bool ReadBit(string Var, int index, int mask)
+        public bool ReadBit(string variable, int index, int mask)
         {
-            return ReadBit(Var, index, (uint) mask);
+            return ReadBit(variable, index, (uint) mask);
         }
 
-        public bool ReadBit(string Var, int index, uint mask)
+        public bool ReadBit(string variable, int index, uint mask)
         {
-            if (api.IsConnected)
-                return ((ulong) (int) api.ReadVariableAsScalar(Var, ProgramBuffer.ACSC_NONE, index) &
-                        mask) > 0UL;
-            logger.Info("Controller not connected");
-            return false;
+            if (!api.IsConnected) {
+                logger.Info("AcsUtils.ReadBit: Controller not connected");
+                return false;
+            }
+
+            try {
+                return ((ulong) (int) api.ReadVariableAsScalar(variable, ProgramBuffer.ACSC_NONE, index) & mask) > 0UL;
+            }
+            catch (Exception e) {
+                logger.Info($"AcsUtils.Command: Exception accessing '{variable}': " + e.Message);
+                return false;
+            }
         }
 
-        public void Command(string cmd)
+        private void Command(string cmd)
         {
             try {
                 api.Command(cmd);
             }
-            catch (Exception ex) {
+            catch (Exception e) {
+                logger.Info($"AcsUtils.Command: Exception sending '{cmd}': " + e.Message);
             }
         }
 
