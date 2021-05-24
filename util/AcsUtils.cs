@@ -243,29 +243,29 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
                 ClearBits(varName, index, (uint) (1 << bit));
         }
 
-        public void ClearBits(string Var, int index, int mask)
+        public void ClearBits(string var, int index, int mask)
         {
-            ClearBits(Var, index, (uint) mask);
+            ClearBits(var, index, (uint) mask);
         }
 
-        public void ClearBits(string Var, int index, uint mask)
+        public void ClearBits(string var, int index, uint mask)
         {
             for (int index1 = 0; index1 < 32; ++index1) {
                 if (((uint) (1 << index1) & mask) > 0U)
-                    Command(string.Format("{0}({1}).{2} = 0", Var, index, index1));
+                    Command(string.Format("{0}({1}).{2} = 0", var, index, index1));
             }
         }
 
-        public void SetBits(string Var, int index, int mask)
+        public void SetBits(string var, int index, int mask)
         {
-            SetBits(Var, index, (uint) mask);
+            SetBits(var, index, (uint) mask);
         }
 
-        public void SetBits(string Var, int index, uint mask)
+        public void SetBits(string var, int index, uint mask)
         {
             for (int index1 = 0; index1 < 32; ++index1) {
                 if (((uint) (1 << index1) & mask) > 0U)
-                    Command(string.Format("{0}({1}).{2} = 1", Var, index, index1));
+                    Command(string.Format("{0}({1}).{2} = 1", var, index, index1));
             }
         }
 
@@ -298,26 +298,6 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
             catch (Exception e) {
                 logger.Info($"AcsUtils.Command: Exception sending '{cmd}': " + e.Message);
             }
-        }
-
-        public bool GetEtherCATSlaveIndex(int vendorID, int productID, int count, out int slaveIndex)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool GetEtherCATSlaveOffset(string ecatVarName, int slaveIndex, out int slaveOffset)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool MapEtherCATInput(int offset, string acsVarName)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool MapEtherCATOutput(int offset, string acsVarName)
-        {
-            throw new NotImplementedException();
         }
     }
 }

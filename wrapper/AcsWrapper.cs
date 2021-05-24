@@ -1304,7 +1304,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public bool Enable(ConveyorAxes axis)
         {
-            this._logger.Info(string.Format("Enable(axis = {0})"));
+            this._logger.Info(string.Format("Enable(axis = {0})", axis));
             if (!this.IsConnected) {
                 this._logger.Info("Controller not connected");
                 return false;
@@ -2388,6 +2388,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 TowerLightGreen = Convert.ToBoolean(acsUtils.ReadVar("TowerLightGreen_Bit")),
                 TowerLightBlue = Convert.ToBoolean(acsUtils.ReadVar("TowerLightBlue_Bit")),
                 TowerLightBuzzer = Convert.ToBoolean(acsUtils.ReadVar("TowerLightBuzzer_Bit")),
+                SensorPower = Convert.ToBoolean(acsUtils.ReadVar("SensorPowerOnOff_Bit")),
                 BeltShroudVaccumOn = Convert.ToBoolean(acsUtils.ReadVar("BeltShroudVaccumON_Bit")),
                 StopSensor = Convert.ToBoolean(acsUtils.ReadVar("StopSensor_Bit")),
                 SmemaUpStreamMachineReady = Convert.ToBoolean(acsUtils.ReadVar("SmemaUpStreamMachineReady_Bit")),
