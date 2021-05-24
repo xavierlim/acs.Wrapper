@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using System.Threading;
 using ACS.SPiiPlusNET;
 using CO.Common.Logger;
@@ -11,114 +10,15 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
         private readonly Api api;
         private readonly ILogger logger = LoggersManager.SystemLogger;
 
-        public bool anyBufferChanged = false;
-        private const int ACSC_MAX_LINE = 100000;
-
         public AcsUtils(Api api)
         {
             this.api = api;
         }
 
-        public void ClearBuffer(ProgramBuffer buffer, int fromLine = 1, int toLine = 100000)
-        {
-            if (!api.IsConnected) {
-                logger.Info("Controller not connected");
-            }
-            else {
-                try {
-                    api.ClearBuffer(buffer, fromLine, toLine);
-                }
-                catch (Exception ex) {
-                    logger.Info(
-                        string.Format("failed to clear buffer {0} {1}", buffer, ex.Message));
-                }
-            }
-        }
-
-        public void CompareAndCompileBuffer(
-            ProgramBuffer buffer,
-            string program,
-            bool run,
-            string runLabel = null,
-            bool runIfDifferent = false)
-        {
-            if (!api.IsConnected) {
-                logger.Info("Controller not connected");
-            }
-            else {
-                string s = UploadBuffer(buffer);
-                if (s == null)
-                    s = "";
-                else
-                    s.Trim();
-                StringReader stringReader1 = new StringReader(program);
-                StringReader stringReader2 = new StringReader(s);
-                bool flag = false;
-                string str1;
-                string str2;
-                do {
-                    str1 = stringReader1.ReadLine();
-                    str2 = stringReader2.ReadLine();
-                    if (str1 != null || str2 != null) {
-                        if (str1 == null && str2 != null || str2 == null && str1 != null)
-                            goto label_8;
-                    }
-                    else
-                        goto label_12;
-                } while ((uint) str1.Trim().CompareTo(str2.Trim()) <= 0U);
-
-                goto label_10;
-                label_8:
-                flag = true;
-                goto label_12;
-                label_10:
-                flag = true;
-                label_12:
-                if (flag) {
-                    anyBufferChanged = true;
-                    if (buffer == (ProgramBuffer) GetDBufferIndex()) {
-                        // when there's any 'compiled' buffer exist in the controller, it does not allow modification to D-Buffer.
-                        // compiling D-Buffer will change all the other buffers' status to 'not compiled', hence allowing
-                        // modification to the D-Buffer
-                        CompileBuffer(buffer);
-                        LoadBuffer(buffer, program);
-                        CompileBuffer(ProgramBuffer.ACSC_NONE);
-                    }
-                    else {
-                        LoadBuffer(buffer, program);
-                        CompileBuffer(buffer);
-                    }
-                }
-
-                if (!run && !(flag & runIfDifferent))
-                    return;
-                RunBuffer(buffer, runLabel);
-            }
-        }
-
-        public void CompileBuffer(ProgramBuffer buffer)
-        {
-            if (!api.IsConnected) {
-                logger.Info("Controller not connected");
-            }
-            else {
-                try {
-                    api.CompileBuffer(buffer);
-                }
-                catch (ACSException ae) {
-                    logger.Error($"failed to compile buffer {buffer} {ae.Message}");
-                }
-                catch (Exception ex) {
-                    logger.Info(
-                        string.Format("failed to compile buffer {0} {1}", buffer, ex.Message));
-                }
-            }
-        }
-
         public int GetDBufferIndex()
         {
             if (!api.IsConnected) {
-                logger.Info("Controller not connected");
+                logger.Info("AcsUtil.ReadVar: Controller not connected");
                 return 0;
             }
 
@@ -127,31 +27,16 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
                 num = api.GetDBufferIndex();
             }
             catch (Exception ex) {
-                logger.Info("failed to get DBuffer index " + ex.Message);
+                logger.Info("AcsUtil.ReadVar: Failed to get DBuffer index " + ex.Message);
             }
 
             return (int) num;
         }
 
-        public void LoadBuffer(ProgramBuffer buffer, string program)
-        {
-            if (!api.IsConnected) {
-                logger.Info("Controller not connected");
-            }
-            else {
-                try {
-                    api.LoadBuffer(buffer, program);
-                }
-                catch (Exception ex) {
-                    logger.Info(string.Format("failed to load buffer {0} {1}", buffer, ex.Message));
-                }
-            }
-        }
-
         public void RunBuffer(ProgramBuffer buffer, string label = null)
         {
             if (!api.IsConnected) {
-                logger.Info("Controller not connected");
+                logger.Info("AcsUtil.ReadVar: Controller not connected");
             }
             else {
                 try {
@@ -164,7 +49,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
                 }
                 catch (Exception ex) {
                     logger.Info(
-                        string.Format("failed to run buffer {0}:{1} {2}", buffer,
+                        string.Format("AcsUtil.ReadVar: Failed to run buffer {0}:{1} {2}", buffer,
                             label == null ? "the top" : (object) label, ex.Message));
                 }
             }
@@ -173,44 +58,39 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
         public void StopBuffer(ProgramBuffer buffer)
         {
             if (!api.IsConnected) {
-                logger.Info("Controller not connected");
+                logger.Info("AcsUtil.ReadVar: Controller not connected");
             }
             else {
                 try {
                     api.StopBuffer(buffer);
                 }
                 catch (Exception ex) {
-                    logger.Info(string.Format("failed to stop buffer {0} {1}", buffer, ex.Message));
+                    logger.Info(string.Format("AcsUtil.ReadVar: Failed to stop buffer {0}: {1}", buffer, ex.Message));
                 }
-            }
-        }
-
-        public string UploadBuffer(ProgramBuffer buffer)
-        {
-            try {
-                return api.UploadBuffer(buffer);
-            }
-            catch (Exception ex) {
-                logger.Info(string.Format("failed to upload buffer {0} {1}", buffer, ex.Message));
-                return "";
             }
         }
 
         public bool IsProgramRunning(ProgramBuffer buffer)
         {
-            if (api.IsConnected) {
-                return (uint) (api.GetProgramState(buffer) & ProgramStates.ACSC_PST_RUN) > 0U;
+            if (!api.IsConnected) {
+                logger.Info("AcsUtil.ReadVar: Controller not connected");
+                return false;
             }
 
-            logger.Info("Controller not connected");
-            return false;
+            try {
+                return (uint) (api.GetProgramState(buffer) & ProgramStates.ACSC_PST_RUN) > 0U;
+            }
+            catch (Exception ex) {
+                logger.Info(string.Format("AcsUtil.ReadVar: Exception {0}: {1}", buffer, ex.Message));
+                return false;
+            }
         }
 
         public object ReadVar(string varName, ProgramBuffer bufferIndex = ProgramBuffer.ACSC_NONE,
             int indFrom = -1, int indFromTo = -1)
         {
             if (!api.IsConnected) {
-                logger.Info("Controller not connected");
+                logger.Info("AcsUtil.ReadVar: Controller not connected");
                 return null;
             }
 

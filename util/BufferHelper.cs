@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using ACS.SPiiPlusNET;
-using CO.Systems.Services.Acs.AcsWrapper.wrapper;
 using CO.Systems.Services.Acs.AcsWrapper.wrapper.exceptions;
 using CO.Systems.Services.Acs.AcsWrapper.wrapper.models;
 using CO.Systems.Services.Robot.RobotBase;
@@ -142,7 +141,8 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
         public void PrepareScanningBuffer(List<IPvTuple3D> motionPaths, int triggerToCameraStartPort, int triggerToCameraStartBit, int triggerFromCameraContinuePort, int triggerFromCameraContinueBit, int triggerFromCameraTimeOut)
         {
             var motionCount = motionPaths.Count;
-            WriteScanningBuffer(motionCount, triggerToCameraStartPort, triggerToCameraStartBit, triggerFromCameraContinuePort, triggerFromCameraContinueBit, triggerFromCameraTimeOut);
+            WriteScanningBuffer(motionCount, triggerToCameraStartPort, triggerToCameraStartBit,
+                triggerFromCameraContinuePort, triggerFromCameraContinueBit, triggerFromCameraTimeOut);
 
             double[,] positions = new double[motionCount, 3];
             double[,] velocity = new double[motionCount, 3];
