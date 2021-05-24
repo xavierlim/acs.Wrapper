@@ -169,6 +169,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         void SetTowerLightBuzzer(AcsIndicatorState state);
         void SetStartButtonIndicator(AcsIndicatorState state);
         void SetStopButtonIndicator(AcsIndicatorState state);
+        void SetMachineReady();
+        void ResetMachineReady();
+
         bool IsConveyorAxisEnable();
         bool IsConveyorWidthAxisEnable();
         void HomeConveyorWidthAxis(HomeConveyorWidthParameters parameter);

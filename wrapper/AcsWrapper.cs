@@ -2608,6 +2608,16 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             }
         }
 
+        public void SetMachineReady()
+        {
+            acsUtils.WriteVariable(1, "SmemaUpStreamMachineReady_Bit");
+        }
+
+        public void ResetMachineReady()
+        {
+            acsUtils.WriteVariable(0, "SmemaUpStreamMachineReady_Bit");
+        }
+
         public bool IsConveyorAxisEnable()
         {
             return Enabled(ConveyorAxes.Conveyor);

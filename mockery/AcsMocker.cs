@@ -419,6 +419,16 @@ namespace CO.Systems.Services.Acs.AcsWrapper.mockery
             throw new NotImplementedException();
         }
 
+        public void SetMachineReady()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ResetMachineReady()
+        {
+            throw new NotImplementedException();
+        }
+
         public bool IsConveyorAxisEnable()
         {
             throw new NotImplementedException();
