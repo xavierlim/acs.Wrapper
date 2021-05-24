@@ -22,8 +22,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
         public void ClearBuffer(ProgramBuffer buffer, int fromLine = 1, int toLine = 100000)
         {
             if (!api.IsConnected) {
-                logger.Info("Controller not connected", 28, nameof(ClearBuffer),
-                    "C:\\TruckProject\\trunk\\ExternalHardware\\AcsWrapper\\AcsUtils.cs");
+                logger.Info("Controller not connected");
             }
             else {
                 try {
@@ -31,8 +30,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
                 }
                 catch (Exception ex) {
                     logger.Info(
-                        string.Format("failed to clear buffer {0} {1}", (object) buffer, (object) ex.Message), 38,
-                        nameof(ClearBuffer), "C:\\TruckProject\\trunk\\ExternalHardware\\AcsWrapper\\AcsUtils.cs");
+                        string.Format("failed to clear buffer {0} {1}", buffer, ex.Message));
                 }
             }
         }
@@ -45,8 +43,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
             bool runIfDifferent = false)
         {
             if (!api.IsConnected) {
-                logger.Info("Controller not connected", 46, nameof(CompareAndCompileBuffer),
-                    "C:\\TruckProject\\trunk\\ExternalHardware\\AcsWrapper\\AcsUtils.cs");
+                logger.Info("Controller not connected");
             }
             else {
                 string s = UploadBuffer(buffer);
@@ -102,8 +99,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
         public void CompileBuffer(ProgramBuffer buffer)
         {
             if (!api.IsConnected) {
-                logger.Info("Controller not connected", 128, nameof(CompileBuffer),
-                    "C:\\TruckProject\\trunk\\ExternalHardware\\AcsWrapper\\AcsUtils.cs");
+                logger.Info("Controller not connected");
             }
             else {
                 try {
@@ -114,8 +110,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
                 }
                 catch (Exception ex) {
                     logger.Info(
-                        string.Format("failed to compile buffer {0} {1}", (object) buffer, (object) ex.Message), 138,
-                        nameof(CompileBuffer), "C:\\TruckProject\\trunk\\ExternalHardware\\AcsWrapper\\AcsUtils.cs");
+                        string.Format("failed to compile buffer {0} {1}", buffer, ex.Message));
                 }
             }
         }
@@ -123,8 +118,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
         public int GetDBufferIndex()
         {
             if (!api.IsConnected) {
-                logger.Info("Controller not connected", 146, nameof(GetDBufferIndex),
-                    "C:\\TruckProject\\trunk\\ExternalHardware\\AcsWrapper\\AcsUtils.cs");
+                logger.Info("Controller not connected");
                 return 0;
             }
 
@@ -133,8 +127,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
                 num = api.GetDBufferIndex();
             }
             catch (Exception ex) {
-                logger.Info("failed to get DBuffer index " + ex.Message, 158, nameof(GetDBufferIndex),
-                    "C:\\TruckProject\\trunk\\ExternalHardware\\AcsWrapper\\AcsUtils.cs");
+                logger.Info("failed to get DBuffer index " + ex.Message);
             }
 
             return (int) num;
@@ -143,17 +136,14 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
         public void LoadBuffer(ProgramBuffer buffer, string program)
         {
             if (!api.IsConnected) {
-                logger.Info("Controller not connected", 166, nameof(LoadBuffer),
-                    "C:\\TruckProject\\trunk\\ExternalHardware\\AcsWrapper\\AcsUtils.cs");
+                logger.Info("Controller not connected");
             }
             else {
                 try {
                     api.LoadBuffer(buffer, program);
                 }
                 catch (Exception ex) {
-                    logger.Info(
-                        string.Format("failed to load buffer {0} {1}", (object) buffer, (object) ex.Message), 176,
-                        nameof(LoadBuffer), "C:\\TruckProject\\trunk\\ExternalHardware\\AcsWrapper\\AcsUtils.cs");
+                    logger.Info(string.Format("failed to load buffer {0} {1}", buffer, ex.Message));
                 }
             }
         }
@@ -161,8 +151,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
         public void RunBuffer(ProgramBuffer buffer, string label = null)
         {
             if (!api.IsConnected) {
-                logger.Info("Controller not connected", 183, nameof(RunBuffer),
-                    "C:\\TruckProject\\trunk\\ExternalHardware\\AcsWrapper\\AcsUtils.cs");
+                logger.Info("Controller not connected");
             }
             else {
                 try {
@@ -175,9 +164,8 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
                 }
                 catch (Exception ex) {
                     logger.Info(
-                        string.Format("failed to run buffer {0}:{1} {2}", (object) buffer,
-                            label == null ? (object) "the top" : (object) label, (object) ex.Message), 198,
-                        nameof(RunBuffer), "C:\\TruckProject\\trunk\\ExternalHardware\\AcsWrapper\\AcsUtils.cs");
+                        string.Format("failed to run buffer {0}:{1} {2}", buffer,
+                            label == null ? "the top" : (object) label, ex.Message));
                 }
             }
         }
@@ -185,17 +173,14 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
         public void StopBuffer(ProgramBuffer buffer)
         {
             if (!api.IsConnected) {
-                logger.Info("Controller not connected", 206, nameof(StopBuffer),
-                    "C:\\TruckProject\\trunk\\ExternalHardware\\AcsWrapper\\AcsUtils.cs");
+                logger.Info("Controller not connected");
             }
             else {
                 try {
                     api.StopBuffer(buffer);
                 }
                 catch (Exception ex) {
-                    logger.Info(
-                        string.Format("failed to stop buffer {0} {1}", (object) buffer, (object) ex.Message), 216,
-                        nameof(StopBuffer), "C:\\TruckProject\\trunk\\ExternalHardware\\AcsWrapper\\AcsUtils.cs");
+                    logger.Info(string.Format("failed to stop buffer {0} {1}", buffer, ex.Message));
                 }
             }
         }
@@ -206,9 +191,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
                 return api.UploadBuffer(buffer);
             }
             catch (Exception ex) {
-                logger.Info(
-                    string.Format("failed to upload buffer {0} {1}", (object) buffer, (object) ex.Message), 229,
-                    nameof(UploadBuffer), "C:\\TruckProject\\trunk\\ExternalHardware\\AcsWrapper\\AcsUtils.cs");
+                logger.Info(string.Format("failed to upload buffer {0} {1}", buffer, ex.Message));
                 return "";
             }
         }
@@ -217,90 +200,66 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
         {
             if (api.IsConnected)
                 return (uint) (api.GetProgramState(buffer) & ProgramStates.ACSC_PST_RUN) > 0U;
-            logger.Info("Controller not connected", 237, nameof(IsProgramRunning),
-                "C:\\TruckProject\\trunk\\ExternalHardware\\AcsWrapper\\AcsUtils.cs");
+            logger.Info("Controller not connected");
             return false;
         }
 
-        public object ReadVar(string varName, ProgramBuffer bufferIndex = ProgramBuffer.ACSC_NONE, int indFrom = -1,
-            int indFromTo = -1)
+        public object ReadVar(string varName, ProgramBuffer bufferIndex = ProgramBuffer.ACSC_NONE,
+            int indFrom = -1, int indFromTo = -1)
         {
             if (!api.IsConnected) {
-                logger.Info("Controller not connected", 250, nameof(ReadVar),
-                    "C:\\TruckProject\\trunk\\ExternalHardware\\AcsWrapper\\AcsUtils.cs");
-                return (object) null;
+                logger.Info("Controller not connected");
+                return null;
             }
 
             try {
                 return api.ReadVariable(varName, bufferIndex, indFrom, indFromTo);
             }
             catch (Exception ex) {
-                logger.Info("ReadVar error " + ex.Message, 259, nameof(ReadVar),
-                    "C:\\TruckProject\\trunk\\ExternalHardware\\AcsWrapper\\AcsUtils.cs");
-                return (object) null;
+                logger.Info("ReadVar error " + ex.Message);
+                return null;
             }
         }
 
-        public object ReadVariableAsVector(
-            string varName,
-            ProgramBuffer bufferIndex = ProgramBuffer.ACSC_NONE,
-            int From1 = -1,
-            int To1 = -1,
-            int From2 = -1,
-            int To2 = -1)
+        public object ReadVariableAsVector(string varName, ProgramBuffer bufferIndex = ProgramBuffer.ACSC_NONE,
+            int From1 = -1, int To1 = -1, int From2 = -1, int To2 = -1)
         {
             if (!api.IsConnected) {
-                logger.Info("Controller not connected", 271, nameof(ReadVariableAsVector),
-                    "C:\\TruckProject\\trunk\\ExternalHardware\\AcsWrapper\\AcsUtils.cs");
-                return (object) null;
+                logger.Info("Controller not connected");
+                return null;
             }
 
             try {
                 return api.ReadVariableAsVector(varName, bufferIndex, From1, To1, From2, To2);
             }
             catch (Exception ex) {
-                logger.Info("ReadVariableAsVector error " + ex.Message, 282, nameof(ReadVariableAsVector),
-                    "C:\\TruckProject\\trunk\\ExternalHardware\\AcsWrapper\\AcsUtils.cs");
-                return (object) null;
+                logger.Info("ReadVariableAsVector error " + ex.Message);
+                return null;
             }
         }
 
-        public object ReadVariableAsMatrix(
-            string varName,
-            ProgramBuffer bufferIndex = ProgramBuffer.ACSC_NONE,
-            int From1 = -1,
-            int To1 = -1,
-            int From2 = -1,
-            int To2 = -1)
+        public object ReadVariableAsMatrix(string varName, ProgramBuffer bufferIndex = ProgramBuffer.ACSC_NONE,
+            int From1 = -1, int To1 = -1, int From2 = -1, int To2 = -1)
         {
             if (!api.IsConnected) {
-                logger.Info("Controller not connected", 292, nameof(ReadVariableAsMatrix),
-                    "C:\\TruckProject\\trunk\\ExternalHardware\\AcsWrapper\\AcsUtils.cs");
-                return (object) null;
+                logger.Info("Controller not connected");
+                return null;
             }
 
             try {
                 return api.ReadVariableAsMatrix(varName, bufferIndex, From1, To1, From2, To2);
             }
             catch (Exception ex) {
-                logger.Info("ReadVariableAsMatrix error " + ex.Message, 301, nameof(ReadVariableAsMatrix),
-                    "C:\\TruckProject\\trunk\\ExternalHardware\\AcsWrapper\\AcsUtils.cs");
-                return (object) null;
+                logger.Info("ReadVariableAsMatrix error " + ex.Message);
+                return null;
             }
         }
 
-        public void WriteVariable(
-            object Value,
-            string Variable,
-            int NBuf = -1,
-            int From1 = -1,
-            int To1 = -1,
-            int From2 = -1,
-            int To2 = -1)
+        public void WriteVariable(object Value, string Variable, int NBuf = -1, int From1 = -1, int To1 = -1,
+            int From2 = -1, int To2 = -1)
         {
             if (!api.IsConnected) {
-                logger.Info("Controller not connected", 313, nameof(WriteVariable),
-                    "C:\\TruckProject\\trunk\\ExternalHardware\\AcsWrapper\\AcsUtils.cs");
+                logger.Info("Controller not connected");
             }
             else {
                 try {
@@ -315,16 +274,14 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
         public void WriteVar(double varVal, string varName)
         {
             if (!api.IsConnected) {
-                logger.Info("Controller not connected", 330, nameof(WriteVar),
-                    "C:\\TruckProject\\trunk\\ExternalHardware\\AcsWrapper\\AcsUtils.cs");
+                logger.Info("Controller not connected");
             }
             else {
                 try {
-                    api.WriteVariable((object) varVal, varName);
+                    api.WriteVariable(varVal, varName);
                 }
                 catch (Exception ex) {
-                    logger.Info("WriteVar error " + ex.Message, 339, nameof(WriteVar),
-                        "C:\\TruckProject\\trunk\\ExternalHardware\\AcsWrapper\\AcsUtils.cs");
+                    logger.Info("WriteVar error " + ex.Message);
                 }
             }
         }
@@ -332,16 +289,14 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
         public void WriteVar(int[] num, string varName)
         {
             if (!api.IsConnected) {
-                logger.Info("Controller not connected", 347, nameof(WriteVar),
-                    "C:\\TruckProject\\trunk\\ExternalHardware\\AcsWrapper\\AcsUtils.cs");
+                logger.Info("Controller not connected");
             }
             else {
                 try {
-                    api.WriteVariable((object) num, varName, from1: 0, to1: (num.Length - 1));
+                    api.WriteVariable(num, varName, from1: 0, to1: (num.Length - 1));
                 }
                 catch (Exception ex) {
-                    logger.Info("WriteVar error " + ex.Message, 356, nameof(WriteVar),
-                        "C:\\TruckProject\\trunk\\ExternalHardware\\AcsWrapper\\AcsUtils.cs");
+                    logger.Info("WriteVar error " + ex.Message);
                 }
             }
         }
@@ -349,8 +304,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
         public void WriteGlobalReal(object Value, string Variable, int indx = -1)
         {
             if (!api.IsConnected)
-                logger.Info("Controller not connected", 364, nameof(WriteGlobalReal),
-                    "C:\\TruckProject\\trunk\\ExternalHardware\\AcsWrapper\\AcsUtils.cs");
+                logger.Info("Controller not connected");
             else
                 api.WriteVariable(Value, Variable, from1: indx, to1: indx);
         }
@@ -358,8 +312,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
         public double ReadGlobalReal(string Variable, int indx = -1)
         {
             if (!api.IsConnected) {
-                logger.Info("Controller not connected", 373, nameof(ReadGlobalReal),
-                    "C:\\TruckProject\\trunk\\ExternalHardware\\AcsWrapper\\AcsUtils.cs");
+                logger.Info("Controller not connected");
                 return 0.0;
             }
 
@@ -367,15 +320,14 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
                 return (double) api.ReadVariableAsScalar(Variable, ProgramBuffer.ACSC_NONE, indx);
             }
             catch (Exception ex) {
-                logger.Info(ex.Message, 382, nameof(ReadGlobalReal),
-                    "C:\\TruckProject\\trunk\\ExternalHardware\\AcsWrapper\\AcsUtils.cs");
+                logger.Info(ex.Message);
                 return 0.0;
             }
         }
 
-        public int ReadInt(string varName, int indx)
+        public int ReadInt(string varName, int index)
         {
-            return Convert.ToInt32(ReadVar(varName, indFrom: indx, indFromTo: indx));
+            return Convert.ToInt32(ReadVar(varName, indFrom: index, indFromTo: index));
         }
 
         public void WriteInt(string varName, int val)
@@ -385,7 +337,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
 
         public void WriteInt(string varName, int index, int val)
         {
-            WriteVariable((object) val, varName, From1: index, To1: index);
+            WriteVariable(val, varName, From1: index, To1: index);
         }
 
         public void WriteBit(string varName, int index, int bit, bool val)
@@ -405,7 +357,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
         {
             for (int index1 = 0; index1 < 32; ++index1) {
                 if (((uint) (1 << index1) & mask) > 0U)
-                    Command(string.Format("{0}({1}).{2} = 0", (object) Var, (object) index, (object) index1));
+                    Command(string.Format("{0}({1}).{2} = 0", Var, index, index1));
             }
         }
 
@@ -418,7 +370,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
         {
             for (int index1 = 0; index1 < 32; ++index1) {
                 if (((uint) (1 << index1) & mask) > 0U)
-                    Command(string.Format("{0}({1}).{2} = 1", (object) Var, (object) index, (object) index1));
+                    Command(string.Format("{0}({1}).{2} = 1", Var, index, index1));
             }
         }
 
@@ -431,9 +383,8 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
         {
             if (api.IsConnected)
                 return ((ulong) (int) api.ReadVariableAsScalar(Var, ProgramBuffer.ACSC_NONE, index) &
-                        (ulong) mask) > 0UL;
-            logger.Info("Controller not connected", 444, nameof(ReadBit),
-                "C:\\TruckProject\\trunk\\ExternalHardware\\AcsWrapper\\AcsUtils.cs");
+                        mask) > 0UL;
+            logger.Info("Controller not connected");
             return false;
         }
 
