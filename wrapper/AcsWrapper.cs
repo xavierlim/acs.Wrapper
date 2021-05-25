@@ -171,20 +171,17 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
                 EnableAcsEvents();
                 bufferHelper.InitDBuffer();
-                initAxesCache();
-                initConveyorAxesCache();
-                initAxisNumbersAtController();
-                ReadAxesSettignsFromConfig();
-                enableAllBlocking();
-                initBuffers();
-                ThreadPool.QueueUserWorkItem(s => scanLoop());
+                InitAxesCache();
+                InitConveyorAxesCache();
+                InitAxisNumbersAtController();
+                InitBuffers();
+                ThreadPool.QueueUserWorkItem(s => ScanLoop());
             }
         }
 
-        public bool DisConnect()
+        public bool Disconnect()
         {
-            logger.Info(nameof(DisConnect), 334, nameof(DisConnect),
-                "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+            logger.Info("AcsWrapper: Disconnect");
             lock (lockObject) {
                 if (api == null) {
                     IsConnected = false;
@@ -196,7 +193,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                     IsConnected = api.IsConnected;
                 }
                 catch (Exception e) {
-                    logger.Error($"AcsWrapper: Disconnect Exception. {e.Message}");
+                    logger.Error($"AcsWrapper: Disconnect Exception: {e.Message}");
                 }
 
                 scanLoopRunning = false;
@@ -207,389 +204,243 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public bool IsIdle(GantryAxes axis)
         {
-            logger.Info(string.Format("IsIdle(axis = {0})", axis), 374, nameof(IsIdle),
-                "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
-            if (!IsConnected) {
-                logger.Info("Controller not connected", 377, nameof(IsIdle),
-                    "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
-                return false;
-            }
+            logger.Info(string.Format("IsIdle(axis = {0})", axis));
 
-            if (axesCache.ContainsKey(axis))
-                return axesCache[axis].Idle;
-            throw new ArgumentException("Axis not exist ");
+            if (IsConnected) return axesCache[axis].Idle;
+            logger.Info("Controller not connected");
+            return false;
         }
 
         public bool IsIdle(ConveyorAxes axis)
         {
-            logger.Info(string.Format("IsIdle(axis = {0})", axis), 515, nameof(IsIdle),
-                "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-            if (!IsConnected) {
-                logger.Info("Controller not connected", 518, nameof(IsIdle),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-                return false;
-            }
+            logger.Info(string.Format("IsIdle(axis = {0})", axis));
 
-            if (conveyorAxesCache.ContainsKey(axis))
-                return conveyorAxesCache[axis].Idle;
-            throw new ArgumentException("Axis not exist ");
+            if (IsConnected) return conveyorAxesCache[axis].Idle;
+            logger.Info("Controller not connected");
+            return false;
         }
 
         public bool Enabled(GantryAxes axis)
         {
-            logger.Info(string.Format("Enabled(axis = {0})", axis), 539, nameof(Enabled),
-                "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-            if (!IsConnected) {
-                logger.Info("Controller not connected", 542, nameof(Enabled),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-                return false;
-            }
+            logger.Info(string.Format("Enabled(axis = {0})", axis));
 
-            if (axesCache.ContainsKey(axis))
-                return axesCache[axis].Enabled;
-            throw new ArgumentException("Axis not exist ");
+            if (IsConnected) return axesCache[axis].Enabled;
+            logger.Info("Controller not connected");
+            return false;
         }
 
         public bool Enabled(ConveyorAxes axis)
         {
-            logger.Info(string.Format("Enabled(axis = {0})", axis), 559, nameof(Enabled),
-                "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-            if (!IsConnected) {
-                logger.Info("Controller not connected", 562, nameof(Enabled),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-                return false;
-            }
+            logger.Info(string.Format("Enabled(axis = {0})", axis));
 
-            if (conveyorAxesCache.ContainsKey(axis))
-                return conveyorAxesCache[axis].Enabled;
-            throw new ArgumentException("Axis not exist ");
+            if (IsConnected) return conveyorAxesCache[axis].Enabled;
+            logger.Info("Controller not connected");
+            return false;
         }
 
         public bool Homed(GantryAxes axis)
         {
-            logger.Info(string.Format("Homed(axis = {0})", axis), 582, nameof(Homed),
-                "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-            if (!IsConnected) {
-                logger.Info("Controller not connected", 585, nameof(Homed),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-                return false;
-            }
+            logger.Info(string.Format("Homed(axis = {0})", axis));
 
-            if (axesCache.ContainsKey(axis))
-                return axesCache[axis].Homed;
-            throw new ArgumentException("Axis not exist ");
+            if (IsConnected) return axesCache[axis].Homed;
+            logger.Info("Controller not connected");
+            return false;
         }
 
         public bool Homed(ConveyorAxes axis)
         {
-            logger.Info(string.Format("Homed(axis = {0})", axis), 602, nameof(Homed),
-                "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-            if (!IsConnected) {
-                logger.Info("Controller not connected", 605, nameof(Homed),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-                return false;
-            }
+            logger.Info(string.Format("Homed(axis = {0})", axis));
 
-            if (conveyorAxesCache.ContainsKey(axis))
-                return conveyorAxesCache[axis].Homed;
-            throw new ArgumentException("Axis not exist ");
+            if (IsConnected) return conveyorAxesCache[axis].Homed;
+            logger.Info("Controller not connected");
+            return false;
         }
 
         public bool Ready(GantryAxes axis)
         {
-            logger.Info(string.Format("Ready(axis = {0})", axis), 626, nameof(Ready),
-                "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-            if (!IsConnected) {
-                logger.Info("Controller not connected", 629, nameof(Ready),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-                return false;
-            }
+            logger.Info(string.Format("Ready(axis = {0})", axis));
 
-            if (axesCache.ContainsKey(axis))
-                return axesCache[axis].Ready;
-            throw new ArgumentException("Axis not exist ");
+            if (IsConnected) return axesCache[axis].Ready;
+            logger.Info("Controller not connected");
+            return false;
         }
 
         public bool Ready(ConveyorAxes axis)
         {
-            logger.Info(string.Format("Ready(axis = {0})", axis), 646, nameof(Ready),
-                "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-            if (!IsConnected) {
-                logger.Info("Controller not connected", 649, nameof(Ready),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-                return false;
-            }
+            logger.Info(string.Format("Ready(axis = {0})", axis));
 
-            if (conveyorAxesCache.ContainsKey(axis))
-                return conveyorAxesCache[axis].Ready;
-            throw new ArgumentException("Axis not exist ");
+            if (IsConnected) return conveyorAxesCache[axis].Ready;
+            logger.Info("Controller not connected");
+            return false;
         }
 
         public double Position(GantryAxes axis)
         {
-            logger.Info(string.Format("Position(axis = {0})", axis), 674, nameof(Position),
-                "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-            if (!IsConnected) {
-                logger.Info("Controller not connected", 677, nameof(Position),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-                return 0.0;
-            }
+            logger.Info(string.Format("Position(axis = {0})", axis));
 
-            if (axesCache.ContainsKey(axis))
-                return axesCache[axis].Position;
-            throw new ArgumentException("Axis not exist ");
+            if (IsConnected) return axesCache[axis].Position;
+            logger.Info("Controller not connected");
+            return 0.0;
         }
 
         public double Position(ConveyorAxes axis)
         {
-            logger.Info(string.Format("Position(axis = {0})", axis), 694, nameof(Position),
-                "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-            if (!IsConnected) {
-                logger.Info("Controller not connected", 697, nameof(Position),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-                return 0.0;
-            }
+            logger.Info(string.Format("Position(axis = {0})", axis));
 
-            if (conveyorAxesCache.ContainsKey(axis))
-                return conveyorAxesCache[axis].Position;
-            throw new ArgumentException("Axis not exist ");
+            if (IsConnected) return conveyorAxesCache[axis].Position;
+            logger.Info("Controller not connected");
+            return 0.0;
         }
 
         public double Velocity(GantryAxes axis)
         {
-            logger.Info(string.Format("Velocity(axis = {0})", axis), 717, nameof(Velocity),
-                "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-            if (!IsConnected) {
-                logger.Info("Controller not connected", 720, nameof(Velocity),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-                return 0.0;
-            }
+            logger.Info(string.Format("Velocity(axis = {0})", axis));
 
-            if (axesCache.ContainsKey(axis))
-                return axesCache[axis].CurrentVelocity;
-            throw new ArgumentException("Axis not exist ");
+            if (IsConnected) return axesCache[axis].CurrentVelocity;
+            logger.Info("Controller not connected");
+            return 0.0;
         }
 
         public double Velocity(ConveyorAxes axis)
         {
-            logger.Info(string.Format("Velocity(axis = {0})", axis), 737, nameof(Velocity),
-                "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-            if (!IsConnected) {
-                logger.Info("Controller not connected", 740, nameof(Velocity),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-                return 0.0;
-            }
+            logger.Info(string.Format("Velocity(axis = {0})", axis));
 
-            if (conveyorAxesCache.ContainsKey(axis))
-                return conveyorAxesCache[axis].CurrentVelocity;
-            throw new ArgumentException("Axis not exist ");
+            if (IsConnected) return conveyorAxesCache[axis].CurrentVelocity;
+            logger.Info("Controller not connected");
+            return 0.0;
         }
 
         public bool AtHomeSensor(GantryAxes axis)
         {
-            logger.Info(string.Format("AtHomeSensor(axis = {0})", axis), 765, nameof(AtHomeSensor),
-                "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-            if (!IsConnected) {
-                logger.Info("Controller not connected", 768, nameof(AtHomeSensor),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-                return false;
-            }
+            logger.Info(string.Format("AtHomeSensor(axis = {0})", axis));
 
-            if (axesCache.ContainsKey(axis))
-                return axesCache[axis].AtHomeSensor;
-            throw new ArgumentException("Axis not exist ");
+            if (IsConnected) return axesCache[axis].AtHomeSensor;
+            logger.Info("Controller not connected");
+            return false;
         }
 
         public bool AtHomeSensor(ConveyorAxes axis)
         {
-            logger.Info(string.Format("AtHomeSensor(axis = {0})", axis), 785, nameof(AtHomeSensor),
-                "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-            if (!IsConnected) {
-                logger.Info("Controller not connected", 788, nameof(AtHomeSensor),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-                return false;
-            }
+            logger.Info(string.Format("AtHomeSensor(axis = {0})", axis));
 
-            if (conveyorAxesCache.ContainsKey(axis))
-                return conveyorAxesCache[axis].AtHomeSensor;
-            throw new ArgumentException("Axis not exist ");
+            if (IsConnected) return conveyorAxesCache[axis].AtHomeSensor;
+            logger.Info("Controller not connected");
+            return false;
         }
 
-        public bool AtPositiveHWLimit(GantryAxes axis)
+        public bool AtPositiveHwLimit(GantryAxes axis)
         {
-            logger.Info(string.Format("AtPositiveHWLimit(axis = {0})", axis), 808,
-                nameof(AtPositiveHWLimit), "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-            if (!IsConnected) {
-                logger.Info("Controller not connected", 811, nameof(AtPositiveHWLimit),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-                return false;
-            }
+            logger.Info(string.Format("AtPositiveHWLimit(axis = {0})", axis));
 
-            if (axesCache.ContainsKey(axis))
-                return axesCache[axis].AtPositiveHwLimit;
-            throw new ArgumentException("Axis not exist ");
+            if (IsConnected) return axesCache[axis].AtPositiveHwLimit;
+            logger.Info("Controller not connected");
+            return false;
         }
 
-        public bool AtPositiveHWLimit(ConveyorAxes axis)
+        public bool AtPositiveHwLimit(ConveyorAxes axis)
         {
-            logger.Info(string.Format("AtPositiveHWLimit(axis = {0})", axis), 828,
-                nameof(AtPositiveHWLimit), "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-            if (!IsConnected) {
-                logger.Info("Controller not connected", 831, nameof(AtPositiveHWLimit),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-                return false;
-            }
+            logger.Info(string.Format("AtPositiveHWLimit(axis = {0})", axis));
 
-            if (conveyorAxesCache.ContainsKey(axis))
-                return conveyorAxesCache[axis].AtPositiveHwLimit;
-            throw new ArgumentException("Axis not exist ");
+            if (IsConnected) return conveyorAxesCache[axis].AtPositiveHwLimit;
+            logger.Info("Controller not connected");
+            return false;
         }
 
-        public bool AtNegativeHWLimit(GantryAxes axis)
+        public bool AtNegativeHwLimit(GantryAxes axis)
         {
-            logger.Info(string.Format("AtNegativeHWLimit(axis = {0})", axis), 851,
-                nameof(AtNegativeHWLimit), "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-            if (!IsConnected) {
-                logger.Info("Controller not connected", 854, nameof(AtNegativeHWLimit),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-                return false;
-            }
+            logger.Info(string.Format("AtNegativeHWLimit(axis = {0})", axis));
 
-            if (axesCache.ContainsKey(axis))
-                return axesCache[axis].AtNegativeHwLimit;
-            throw new ArgumentException("Axis not exist ");
+            if (IsConnected) return axesCache[axis].AtNegativeHwLimit;
+            logger.Info("Controller not connected");
+            return false;
         }
 
-        public bool AtNegativeHWLimit(ConveyorAxes axis)
+        public bool AtNegativeHwLimit(ConveyorAxes axis)
         {
-            logger.Info(string.Format("AtNegativeHWLimit(axis = {0})", axis), 871,
-                nameof(AtNegativeHWLimit), "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-            if (!IsConnected) {
-                logger.Info("Controller not connected", 874, nameof(AtNegativeHWLimit),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-                return false;
-            }
+            logger.Info(string.Format("AtNegativeHWLimit(axis = {0})", axis));
 
-            if (conveyorAxesCache.ContainsKey(axis))
-                return conveyorAxesCache[axis].AtNegativeHwLimit;
-            throw new ArgumentException("Axis not exist ");
+            if (IsConnected) return conveyorAxesCache[axis].AtNegativeHwLimit;
+            logger.Info("Controller not connected");
+            return false;
         }
 
-        public bool AtPositiveSWLimit(GantryAxes axis)
+        public bool AtPositiveSwLimit(GantryAxes axis)
         {
-            logger.Info(string.Format("AtPositiveSWLimit(axis = {0})", axis), 894,
-                nameof(AtPositiveSWLimit), "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-            if (!IsConnected) {
-                logger.Info("Controller not connected", 897, nameof(AtPositiveSWLimit),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-                return false;
-            }
+            logger.Info(string.Format("AtPositiveSWLimit(axis = {0})", axis));
 
-            if (axesCache.ContainsKey(axis))
-                return axesCache[axis].AtPositiveSwLimit;
-            throw new ArgumentException("Axis not exist ");
+            if (IsConnected) return axesCache[axis].AtPositiveSwLimit;
+            logger.Info("Controller not connected");
+            return false;
         }
 
-        public bool AtPositiveSWLimit(ConveyorAxes axis)
+        public bool AtPositiveSwLimit(ConveyorAxes axis)
         {
-            logger.Info(string.Format("AtPositiveSWLimit(axis = {0})", axis), 914,
-                nameof(AtPositiveSWLimit), "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-            if (!IsConnected) {
-                logger.Info("Controller not connected", 917, nameof(AtPositiveSWLimit),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-                return false;
-            }
+            logger.Info(string.Format("AtPositiveSWLimit(axis = {0})", axis));
 
-            if (conveyorAxesCache.ContainsKey(axis))
-                return conveyorAxesCache[axis].AtPositiveSwLimit;
-            throw new ArgumentException("Axis not exist ");
+            if (IsConnected) return conveyorAxesCache[axis].AtPositiveSwLimit;
+            logger.Info("Controller not connected");
+            return false;
         }
 
-        public bool AtNegativeSWLimit(GantryAxes axis)
+        public bool AtNegativeSwLimit(GantryAxes axis)
         {
-            logger.Info(string.Format("AtNegativeSWLimit(axis = {0})", axis), 937,
-                nameof(AtNegativeSWLimit), "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-            if (!IsConnected) {
-                logger.Info("Controller not connected", 940, nameof(AtNegativeSWLimit),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-                return false;
-            }
+            logger.Info(string.Format("AtNegativeSWLimit(axis = {0})", axis));
 
-            if (axesCache.ContainsKey(axis))
-                return axesCache[axis].AtNegativeSwLimit;
-            throw new ArgumentException("Axis not exist ");
+            if (IsConnected) return axesCache[axis].AtNegativeSwLimit;
+            logger.Info("Controller not connected");
+            return false;
         }
 
-        public bool AtNegativeSWLimit(ConveyorAxes axis)
+        public bool AtNegativeSwLimit(ConveyorAxes axis)
         {
-            logger.Info(string.Format("AtNegativeSWLimit(axis = {0})", axis), 957,
-                nameof(AtNegativeSWLimit), "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-            if (!IsConnected) {
-                logger.Info("Controller not connected", 960, nameof(AtNegativeSWLimit),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-                return false;
-            }
+            logger.Info(string.Format("AtNegativeSWLimit(axis = {0})", axis));
 
-            if (conveyorAxesCache.ContainsKey(axis))
-                return conveyorAxesCache[axis].AtNegativeSwLimit;
-            throw new ArgumentException("Axis not exist ");
+            if (IsConnected) return conveyorAxesCache[axis].AtNegativeSwLimit;
+            logger.Info("Controller not connected");
+            return false;
         }
 
         private bool GetInput(int port, int bit)
         {
-            logger.Info(string.Format("GetInput(port = {0},bit = {1})", port, bit), 651,
-                nameof(GetInput),
-                "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
-            if (IsConnected)
-                return Convert.ToBoolean(api.GetInput(port, bit));
-            logger.Info("Controller not connected", 654, nameof(GetInput),
-                "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+            logger.Info(string.Format("GetInput(port = {0},bit = {1})", port, bit));
+
+            if (IsConnected) return Convert.ToBoolean(api.GetInput(port, bit));
+            logger.Info("Controller not connected");
             return false;
         }
 
         private bool GetOutput(int port, int bit)
         {
-            logger.Info(string.Format("GetOutput(port = {0},bit = {1})", port, bit), 669,
-                nameof(GetOutput),
-                "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
-            if (IsConnected)
-                return Convert.ToBoolean(api.GetOutput(port, bit));
-            logger.Info("Controller not connected", 672, nameof(GetOutput),
-                "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+            logger.Info(string.Format("GetOutput(port = {0},bit = {1})", port, bit));
+
+            if (IsConnected) return Convert.ToBoolean(api.GetOutput(port, bit));
+            logger.Info("Controller not connected");
             return false;
         }
 
         private void SetOutput(int port, int bit, bool value)
         {
-            logger.Info(
-                string.Format("SetOutput(port = {0},bit = {1},value = {2})", port, bit,
-                    value), 688, nameof(SetOutput),
-                "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
-            if (!IsConnected)
-                logger.Info("Controller not connected", 691, nameof(SetOutput),
-                    "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
-            else
+            logger.Info(string.Format("SetOutput(port = {0},bit = {1},value = {2})", port, bit, value));
+            if (IsConnected) {
                 api.SetOutput(port, bit, Convert.ToInt32(value));
+            }
+            else {
+                logger.Info("Controller not connected");
+            }
         }
 
-        public bool PrepareScanning(
-            List<IPvTuple3D> pvTuple3DList,
-            int triggerToCameraStartPort,
-            int triggerToCameraStartBit,
-            int triggerFromCameraContinuePort,
-            int triggerFromCameraContinueBit,
+        public bool PrepareScanning(List<IPvTuple3D> pvTuple3DList, int triggerToCameraStartPort,
+            int triggerToCameraStartBit, int triggerFromCameraContinuePort, int triggerFromCameraContinueBit,
             int triggerFromCameraTimeOut)
         {
             logger.Info(
                 string.Format(
-                    "PrepareScanning(triggerToCameraStartPort = {0},triggerToCameraStartBit = {1},triggerFromCameraContinuePort = {2},triggerFromCameraContinueBit = {3},triggerFromCameraTimeOut = {4}))",
-                    triggerToCameraStartPort, triggerToCameraStartBit,
-                    triggerFromCameraContinuePort, triggerFromCameraContinueBit,
-                    triggerFromCameraTimeOut), 718, nameof(PrepareScanning),
-                "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+                    "AcsWrapper.PrepareScanning: triggerToCameraStartPort = {0},triggerToCameraStartBit = {1},triggerFromCameraContinuePort = {2},triggerFromCameraContinueBit = {3},triggerFromCameraTimeOut = {4}))",
+                    triggerToCameraStartPort, triggerToCameraStartBit, triggerFromCameraContinuePort,
+                    triggerFromCameraContinueBit, triggerFromCameraTimeOut));
+
             if (!IsConnected) {
-                logger.Info("Controller not connected", 721, nameof(PrepareScanning),
-                    "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+                logger.Info("Controller not connected");
                 return false;
             }
 
@@ -600,10 +451,10 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public bool StartScanning(AxesScanParameters scanParameters)
         {
-            logger.Info("StartScanning");
+            logger.Info("AcsWrapper.StartScanning");
 
             if (!IsConnected) {
-                logger.Info("Controller not connected");
+                logger.Info("AcsWrapper.StartScanning: Controller not connected");
                 return false;
             }
 
@@ -616,12 +467,11 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             CurrentMovePsxAckReceived = 0;
             acsUtils.RunBuffer(ProgramBuffer.ACSC_BUFFER_9);
             isScanningBufferRun = acsUtils.IsProgramRunning(ProgramBuffer.ACSC_BUFFER_9);
+
             if (isScanningBufferRun) {
                 foreach (KeyValuePair<GantryAxes, AcsAxis> keyValuePair in axesCache)
                     keyValuePair.Value.ScanningBufferRun = true;
-                Action scanningBegin = ScanningBegin;
-                if (scanningBegin != null)
-                    scanningBegin();
+                ScanningBegin?.Invoke();
             }
 
             return isScanningBufferRun;
@@ -629,12 +479,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public bool StartConveyorBuffer(AcsBuffers buffer)
         {
-            logger.Info(string.Format("StartConveyorBuffer({0})", buffer), 767,
-                nameof(StartConveyorBuffer),
-                "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+            logger.Info(string.Format("StartConveyorBuffer({0})", buffer));
             if (!IsConnected) {
-                logger.Info("Controller not connected", 770, nameof(StartConveyorBuffer),
-                    "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+                logger.Info("Controller not connected");
                 return false;
             }
 
@@ -645,17 +492,14 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public bool SetReleaseCommandReceived(bool commandReceived)
         {
-            logger.Info(string.Format("SetReleaseCommandReceived({0})", commandReceived), 781,
-                nameof(SetReleaseCommandReceived),
-                "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+            logger.Info(string.Format("SetReleaseCommandReceived({0})", commandReceived));
             if (!IsConnected) {
-                logger.Info("Controller not connected", 784, nameof(SetReleaseCommandReceived),
-                    "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+                logger.Info("Controller not connected");
                 return false;
             }
 
-            int NBuf = 19;
-            acsUtils.WriteVariable(commandReceived ? 1 : 0, "ReleaseCommandReceived", NBuf);
+            int nBuf = 19;
+            acsUtils.WriteVariable(commandReceived ? 1 : 0, "ReleaseCommandReceived", nBuf);
             return true;
         }
 
@@ -667,7 +511,6 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 logger.Info("Controller not connected");
                 return false;
             }
-            int buffer = (int)AcsBuffers.BypassMode;
 
             acsUtils.WriteVariable(parameters.WaitTimeToSearch, "BypassModeBuffer_WaitTimeToSearch");
             acsUtils.WriteVariable(parameters.WaitTimeToAcq, "BypassModeBuffer_WaitTimeToAcq");
@@ -704,7 +547,6 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 logger.Info("Controller not connected");
                 return false;
             }
-            int buffer = (int)AcsBuffers.FreePanel;
 
             acsUtils.WriteVariable(parameters.UnclampLiftDelayTime, "FreePanelBuffer_UnclampLiftDelayTime");
             acsUtils.WriteVariable(parameters.WaitTimeToUnlift, "FreePanelBuffer_WaitTimeToUnlift");
@@ -721,13 +563,10 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 logger.Info("Controller not connected");
                 return false;
             }
-            int buffer = (int)AcsBuffers.InternalMachineLoad;
 
             acsUtils.WriteVariable(parameters.WaitTimeToSlow, "InternalMachineLoadBuffer_WaitTimeToSlow");
             acsUtils.WriteVariable(parameters.WaitTimeToAlign, "InternalMachineLoadBuffer_WaitTimeToAlign");
             acsUtils.WriteVariable(parameters.SlowDelayTime, "InternalMachineLoadBuffer_SlowDelayTime");
-
-
 
             return true;
         }
@@ -740,10 +579,8 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 logger.Info("Controller not connected");
                 return false;
             }
-            int buffer = (int)AcsBuffers.LoadPanel;
 
             acsUtils.WriteVariable(parameters.WaitTimeToAcq, "LoadPanelBuffer_WaitTimeToAcq");
-
             return true;
         }
 
@@ -773,12 +610,8 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 logger.Info("Controller not connected");
                 return false;
             }
-            int buffer = (int)AcsBuffers.PreReleasePanel;
 
             acsUtils.WriteVariable(parameters.WaitTimeToExit, "PreReleasePanelBuffer_WaitTimeToExit");
-
-
-
             return true;
         }
 
@@ -790,7 +623,6 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 logger.Info("Controller not connected");
                 return false;
             }
-            int buffer = (int)AcsBuffers.ReleasePanel;
 
             acsUtils.WriteVariable(parameters.WaitTimeToExit, "ReleasePanelBuffer_WaitTimeToExit");
             acsUtils.WriteVariable(parameters.WaitTimeToRelease, "ReleasePanelBuffer_WaitTimeToRelease");
@@ -809,7 +641,6 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 logger.Info("Controller not connected");
                 return false;
             }
-            int buffer = (int)AcsBuffers.ReloadPanel;
 
             acsUtils.WriteVariable(parameters.WaitTimeToSearch, "ReloadPanelBuffer_WaitTimeToSearch");
             acsUtils.WriteVariable(parameters.ReloadDelayTime, "ReloadPanelBuffer_ReloadDelayTime");
@@ -892,18 +723,16 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 return false;
             }
 
-            int dbufferIndex = acsUtils.GetDBufferIndex();
-            acsUtils.WriteVariable((int) conveyorDirection, "ConveyorDirection", dbufferIndex);
+            int dBufferIndex = acsUtils.GetDBufferIndex();
+            acsUtils.WriteVariable((int) conveyorDirection, "ConveyorDirection", dBufferIndex);
             return true;
         }
 
         public void Reset()
         {
-            logger.Info("Reset()", 1011, nameof(Reset),
-                "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+            logger.Info("Reset()");
             if (!IsConnected) {
-                logger.Info("Controller not connected", 1014, nameof(Reset),
-                    "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+                logger.Info("Controller not connected");
             }
             else {
                 foreach (KeyValuePair<GantryAxes, AcsAxis> keyValuePair in axesCache) {
@@ -920,73 +749,56 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 logger.Info("Controller not connected");
             }
             else {
-                if (axesCache.ContainsKey(axis))
-                    axesCache[axis].ClearError();
-                throw new ArgumentException("Axis not exist ");
+                axesCache[axis].ClearError();
             }
         }
 
         public bool Enable(GantryAxes axis)
         {
             logger.Info(string.Format("Enable(axis = {0})", axis));
+
+            if (IsConnected) return axesCache[axis].Enable();
+            logger.Info("Controller not connected");
+            return false;
+        }
+
+        public bool Disable(GantryAxes axis)
+        {
+            logger.Info(string.Format("Disable(axis = {0})", axis));
+
+            if (IsConnected) return axesCache[axis].Disable();
+            logger.Info("Controller not connected");
+            return false;
+        }
+
+        public bool ReloadConfigParameters(bool forZOnly = false)
+        {
+            logger.Info(string.Format("ReloadConfigParameters(forZOnly = {0})", forZOnly));
             if (!IsConnected) {
                 logger.Info("Controller not connected");
                 return false;
             }
 
-            if (axesCache.ContainsKey(axis))
-                return axesCache[axis].Enable();
-            throw new ArgumentException("Axis not exist ");
-        }
-
-        public bool Disable(GantryAxes axis)
-        {
-            logger.Info(string.Format("Disable(axis = {0})", axis), 1070, nameof(Disable),
-                "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
-            if (!IsConnected) {
-                logger.Info("Controller not connected", 1073, nameof(Disable),
-                    "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
-                return false;
-            }
-
-            if (axesCache.ContainsKey(axis))
-                return axesCache[axis].Disable();
-            throw new ArgumentException("Axis not exist ");
-        }
-
-        public bool ReloadConfigParameters(bool forZOnly = false)
-        {
-            logger.Info(string.Format("ReloadConfigParameters(forZOnly = {0})", forZOnly), 1086,
-                nameof(ReloadConfigParameters),
-                "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
-            if (!IsConnected) {
-                logger.Info("Controller not connected", 1089, nameof(ReloadConfigParameters),
-                    "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
-                return false;
-            }
-
-            if (forZOnly)
+            if (forZOnly) {
                 return ReloadConfigParameters(GantryAxes.Z);
-            foreach (KeyValuePair<GantryAxes, AcsAxis> keyValuePair in axesCache)
+            }
+
+            foreach (KeyValuePair<GantryAxes, AcsAxis> keyValuePair in axesCache) {
                 ReloadConfigParameters(keyValuePair.Key);
+            }
             return true;
         }
 
         public bool ReloadConfigParameters(GantryAxes axis)
         {
-            logger.Info(string.Format("ReloadConfigParameters(axis = {0})", axis), 1105,
-                nameof(ReloadConfigParameters),
-                "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
-            if (!IsConnected) {
-                logger.Info("Controller not connected", 1108, nameof(ReloadConfigParameters),
-                    "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
-                return false;
+            logger.Info(string.Format("ReloadConfigParameters(axis = {0})", axis));
+            if (IsConnected) {
+                axesCache[axis].ReloadConfigParameters();
+                return true;
             }
 
-            if (!axesCache.ContainsKey(axis))
-                throw new ArgumentException("Axis not exist ");
-            axesCache[axis].ReloadConfigParameters();
-            return true;
+            logger.Info("Controller not connected");
+            return false;
         }
 
         public bool Init(bool forZOnly = false)
@@ -1084,21 +896,17 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public bool MoveAbsolute(List<AxisMoveParameters> axesToMove)
         {
-            logger.Info("MoveAbsolute(List<AxisMoveParameters> axesToMove)", 1287, nameof(MoveAbsolute),
-                "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+            logger.Info("MoveAbsolute(List<AxisMoveParameters> axesToMove)");
             if (!IsConnected) {
-                logger.Info("Controller not connected", 1290, nameof(MoveAbsolute),
-                    "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+                logger.Info("Controller not connected");
                 return false;
             }
 
             if (axesToMove == null || axesToMove.Count == 0) {
                 if (axesToMove == null)
-                    logger.Info("axesToMove = null", 1297, nameof(MoveAbsolute),
-                        "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+                    logger.Info("axesToMove = null");
                 else
-                    logger.Info("axesToMove.Count = 0", 1299, nameof(MoveAbsolute),
-                        "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+                    logger.Info("axesToMove.Count = 0");
                 return false;
             }
 
@@ -1113,20 +921,13 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             return true;
         }
 
-        public bool MoveAbsolute(
-            GantryAxes axis,
-            double targetPos,
-            double vel = 0.0,
-            double acc = 0.0,
-            double dec = 0.0)
+        public bool MoveAbsolute(GantryAxes axis, double targetPos, double vel = 0.0, double acc = 0.0, double dec = 0.0)
         {
-            logger.Info(
-                string.Format("MoveAbsolute(axis = {0},targetPos= {1}, vel= {2}, acc= {3}, dec= {4})", axis,
-                    targetPos, vel, acc, dec), 1328, nameof(MoveAbsolute),
-                "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+            logger.Info(string.Format("MoveAbsolute(axis = {0},targetPos= {1}, vel= {2}, acc= {3}, dec= {4})", axis,
+                targetPos, vel, acc, dec));
+
             if (!IsConnected) {
-                logger.Info("Controller not connected", 1331, nameof(MoveAbsolute),
-                    "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+                logger.Info("Controller not connected");
                 return false;
             }
 
@@ -1137,11 +938,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public bool MoveRelative(List<AxisMoveParameters> axesToMove)
         {
-            logger.Info("MoveRelative(List<AxisMoveParameters> axesToMove)", 1354, nameof(MoveRelative),
-                "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+            logger.Info("MoveRelative(List<AxisMoveParameters> axesToMove)");
             if (!IsConnected) {
-                logger.Info("Controller not connected", 1357, nameof(MoveRelative),
-                    "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+                logger.Info("Controller not connected");
                 return false;
             }
 
@@ -1158,21 +957,14 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             return true;
         }
 
-        public bool MoveRelative(
-            GantryAxes axis,
-            double relativePosition,
-            double vel = 0.0,
-            double acc = 0.0,
+        public bool MoveRelative(GantryAxes axis, double relativePosition, double vel = 0.0, double acc = 0.0,
             double dec = 0.0)
         {
-            logger.Info(
-                string.Format("MoveRelative(axis = {0},relativePosition= {1}, vel= {2}, acc= {3}, dec= {4})",
-                    axis, relativePosition, vel, acc, dec), 1389,
-                nameof(MoveRelative),
-                "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+            logger.Info(string.Format("MoveRelative(axis = {0},relativePosition= {1}, vel= {2}, acc= {3}, dec= {4})",
+                axis, relativePosition, vel, acc, dec));
+
             if (!IsConnected) {
-                logger.Info("Controller not connected", 1392, nameof(MoveRelative),
-                    "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+                logger.Info("Controller not connected");
                 return false;
             }
 
@@ -1183,13 +975,10 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public bool Jog(GantryAxes axis, double vel = 0.0, double acc = 0.0, double dec = 0.0)
         {
-            logger.Info(
-                string.Format("Jog(axis = {0}, vel= {1}, acc= {2}, dec= {3})", axis, vel,
-                    acc, dec), 1412, nameof(Jog),
-                "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+            logger.Info(string.Format("Jog(axis = {0}, vel= {1}, acc= {2}, dec= {3})", axis, vel, acc, dec));
+
             if (!IsConnected) {
-                logger.Info("Controller not connected", 1415, nameof(Jog),
-                    "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+                logger.Info("Controller not connected");
                 return false;
             }
 
@@ -1200,11 +989,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public bool StopAll()
         {
-            logger.Info("StopAll()", 1431, nameof(StopAll),
-                "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+            logger.Info("StopAll()");
             if (!IsConnected) {
-                logger.Info("Controller not connected", 1434, nameof(StopAll),
-                    "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+                logger.Info("Controller not connected");
                 return false;
             }
 
@@ -1216,11 +1003,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public bool Stop(GantryAxes axis)
         {
-            logger.Info(string.Format("Stop(axis={0})", axis), 1455, nameof(Stop),
-                "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+            logger.Info(string.Format("Stop(axis={0})", axis));
             if (!IsConnected) {
-                logger.Info("Controller not connected", 1458, nameof(Stop),
-                    "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+                logger.Info("Controller not connected");
                 return false;
             }
 
@@ -1554,7 +1339,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             }
         }
 
-        private void scanLoop()
+        private void ScanLoop()
         {
             scanLoopRunning = true;
             while (scanLoopRunning) {
@@ -1564,23 +1349,22 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                     }
                     catch (Exception ex1) {
                         var acsException1 = ex1 as ACSException;
-                        if (acsException1 != null)
-                            logger.Info(acsException1.Message, 1535, nameof(scanLoop),
-                                "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+                        if (acsException1 != null) {
+                            logger.Info(acsException1.Message);
+                        }
+
                         try {
                             IsConnected = api.IsConnected;
                         }
                         catch (Exception ex2) {
                             var acsException = ex2 as ACSException;
                             if (acsException != null)
-                                logger.Info(acsException.Message, 1544, nameof(scanLoop),
-                                    "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+                                logger.Info(acsException.Message);
                             IsConnected = false;
                         }
                     }
 
-                    if (!IsConnected)
-                        continue;
+                    if (!IsConnected) continue;
                 }
 
                 if (isScanningBufferRun) {
@@ -1591,20 +1375,23 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                             acsUtils.ReadVar("MOVE_MOTION_COMPLETE_RECVD", ProgramBuffer.ACSC_BUFFER_9));
                     CurrentMovePsxAckReceived =
                         Convert.ToInt32(acsUtils.ReadVar("MOVE_PSX_ACK_RECVD", ProgramBuffer.ACSC_BUFFER_9));
+
                     if (!acsUtils.IsProgramRunning(ProgramBuffer.ACSC_BUFFER_9)) {
                         isScanningBufferRun = false;
-                        Action scanningEnd = ScanningEnd;
-                        if (scanningEnd != null)
-                            scanningEnd();
-                        foreach (KeyValuePair<GantryAxes, AcsAxis> keyValuePair in axesCache)
+                        ScanningEnd?.Invoke();
+                        foreach (KeyValuePair<GantryAxes, AcsAxis> keyValuePair in axesCache) {
                             keyValuePair.Value.ScanningBufferRun = false;
+                        }
                     }
                 }
 
-                foreach (KeyValuePair<GantryAxes, AcsAxis> keyValuePair in axesCache)
+                foreach (KeyValuePair<GantryAxes, AcsAxis> keyValuePair in axesCache) {
                     keyValuePair.Value.GetDataFromController();
-                foreach (KeyValuePair<ConveyorAxes, AcsAxis> keyValuePair in conveyorAxesCache)
+                }
+                foreach (KeyValuePair<ConveyorAxes, AcsAxis> keyValuePair in conveyorAxesCache) {
                     keyValuePair.Value.GetDataFromController();
+                }
+
                 Thread.Sleep(SleepInterval);
             }
 
@@ -1613,8 +1400,8 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         private void EnableAcsEvents()
         {
-            if (api == null)
-                return;
+            if (api == null) return;
+
             api.EnableEvent(Interrupts.ACSC_INTR_EMERGENCY);
             api.EnableEvent(Interrupts.ACSC_INTR_ETHERCAT_ERROR);
             api.EnableEvent(Interrupts.ACSC_INTR_MESSAGE);
@@ -1665,12 +1452,12 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         {
         }
 
-        private void initAxesCache()
+        private void InitAxesCache()
         {
             axesCache.Clear();
-            for (GantryAxes gantryAxes = GantryAxes.Z; gantryAxes < GantryAxes.All; ++gantryAxes) {
-                AcsAxis acsAxis = new AcsAxis(api, acsUtils, gantryAxes, GetAcsAxisIndex(gantryAxes),
-                    robotSettings);
+            for (var gantryAxes = GantryAxes.Z; gantryAxes < GantryAxes.All; ++gantryAxes) {
+                var acsAxis = new AcsAxis(api, acsUtils, gantryAxes, GetAcsAxisIndex(gantryAxes), robotSettings);
+
                 axesCache[gantryAxes] = acsAxis;
                 acsAxis.IdleChanged += axisIdleChanged;
                 acsAxis.EnabledChanged += axisEnabledChanged;
@@ -1688,18 +1475,19 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 acsAxis.AtNegativeSwLimitChanged += axisAtNegativeSWLimitChanged;
                 acsAxis.AxisHomingBegin += Axis_AxisHomingBegin;
                 acsAxis.AxisHomingEnd += Axis_AxisHomingEnd;
-                if (acsAxis.AcsAxisId >= Axis.ACSC_AXIS_0)
+
+                if (acsAxis.AcsAxisId >= Axis.ACSC_AXIS_0) {
                     api.Halt(acsAxis.AcsAxisId);
+                }
             }
         }
 
-        private void initConveyorAxesCache()
+        private void InitConveyorAxesCache()
         {
             conveyorAxesCache.Clear();
-            for (ConveyorAxes conveyorAxes = ConveyorAxes.Conveyor;
-                conveyorAxes <= ConveyorAxes.Lifter;
-                ++conveyorAxes) {
+            for (var conveyorAxes = ConveyorAxes.Conveyor; conveyorAxes <= ConveyorAxes.Lifter; ++conveyorAxes) {
                 var acsAxis = new AcsAxis(api, acsUtils, conveyorAxes, GetAcsAxisIndex(conveyorAxes));
+
                 conveyorAxesCache[conveyorAxes] = acsAxis;
                 acsAxis.IdleChanged += conveyorAxisIdleChanged;
                 acsAxis.EnabledChanged += conveyorAxisEnabledChanged;
@@ -1717,8 +1505,10 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 acsAxis.AtNegativeSwLimitChanged += conveyorAxisAtNegativeSWLimitChanged;
                 acsAxis.AxisHomingBegin += conveyorAxis_AxisHomingBegin;
                 acsAxis.AxisHomingEnd += conveyorAxis_AxisHomingEnd;
-                if (acsAxis.AcsAxisId >= Axis.ACSC_AXIS_0)
+
+                if (acsAxis.AcsAxisId >= Axis.ACSC_AXIS_0) {
                     api.Halt(acsAxis.AcsAxisId);
+                }
             }
         }
 
@@ -1754,7 +1544,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             }
         }
 
-        private void initAxisNumbersAtController()
+        private void InitAxisNumbersAtController()
         {
             acsUtils.WriteVariable(axesCache[GantryAxes.X].AcsAxisId, "X_AXIS", from1: 0, to1: 0);
             acsUtils.WriteVariable(axesCache[GantryAxes.Y].AcsAxisId, "Y_AXIS", from1: 0, to1: 0);
@@ -1767,19 +1557,10 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 from1: 0, to1: 0);
         }
 
-        public void ReadAxesSettignsFromConfig()
-        {
-        }
-
-        private void enableAllBlocking()
-        {
-        }
-
-        private void initBuffers()
+        private void InitBuffers()
         {
             try {
                 bufferHelper.StopAllBuffers();
-                createCommutationBuffer();
                 bufferHelper.InitGantryHomingBuffers();
                 bufferHelper.InitIoBuffer();
 
@@ -1795,12 +1576,6 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 logger.Error("AcsWrapper: initBuffers Exception: " + e.Message);
                 throw;
             }
-        }
-
-        private void createCommutationBuffer()
-        {
-            if (!isSimulation)
-                ;
         }
 
         private bool teminateOldConnections()

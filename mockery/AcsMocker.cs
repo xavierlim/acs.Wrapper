@@ -46,7 +46,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.mockery
             throw new NotImplementedException();
         }
 
-        public bool DisConnect()
+        public bool Disconnect()
         {
             throw new NotImplementedException();
         }
@@ -86,22 +86,22 @@ namespace CO.Systems.Services.Acs.AcsWrapper.mockery
             throw new NotImplementedException();
         }
 
-        public bool AtPositiveHWLimit(GantryAxes axis)
+        public bool AtPositiveHwLimit(GantryAxes axis)
         {
             throw new NotImplementedException();
         }
 
-        public bool AtNegativeHWLimit(GantryAxes axis)
+        public bool AtNegativeHwLimit(GantryAxes axis)
         {
             throw new NotImplementedException();
         }
 
-        public bool AtPositiveSWLimit(GantryAxes axis)
+        public bool AtPositiveSwLimit(GantryAxes axis)
         {
             throw new NotImplementedException();
         }
 
-        public bool AtNegativeSWLimit(GantryAxes axis)
+        public bool AtNegativeSwLimit(GantryAxes axis)
         {
             throw new NotImplementedException();
         }
@@ -278,11 +278,6 @@ namespace CO.Systems.Services.Acs.AcsWrapper.mockery
         }
 
         public void SetRPos(GantryAxes axis, double pos)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ReadAxesSettignsFromConfig()
         {
             throw new NotImplementedException();
         }

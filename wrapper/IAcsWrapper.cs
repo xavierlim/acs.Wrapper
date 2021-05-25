@@ -69,7 +69,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         event Action<int> ScanningIndexChange;
         event Action ScanningEnd;
         void Connect();
-        bool DisConnect();
+        bool Disconnect();
         bool IsIdle(GantryAxes axis);
         bool Enabled(GantryAxes axis);
         bool Homed(GantryAxes axis);
@@ -77,10 +77,10 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         double Position(GantryAxes axis);
         double Velocity(GantryAxes axis);
         bool AtHomeSensor(GantryAxes axis);
-        bool AtPositiveHWLimit(GantryAxes axis);
-        bool AtNegativeHWLimit(GantryAxes axis);
-        bool AtPositiveSWLimit(GantryAxes axis);
-        bool AtNegativeSWLimit(GantryAxes axis);
+        bool AtPositiveHwLimit(GantryAxes axis);
+        bool AtNegativeHwLimit(GantryAxes axis);
+        bool AtPositiveSwLimit(GantryAxes axis);
+        bool AtNegativeSwLimit(GantryAxes axis);
 
         bool PrepareScanning(
             List<IPvTuple3D> pvTuple3DList,
@@ -138,7 +138,6 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         bool Stop(GantryAxes axis);
         bool Abort(GantryAxes axis);
         void SetRPos(GantryAxes axis, double pos);
-        void ReadAxesSettignsFromConfig();
         void StartPanelLoad(LoadPanelBufferParameters parameters, double panelLength, int timeout);
         void StartPanelReload(ReloadPanelBufferParameters parameters, double panelLength, int timeout);
         void StopPanelLoad();
