@@ -9,59 +9,45 @@ using CO.Systems.Services.Robot.Interface;
 
 namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
 {
-    internal class ACSAxis
+    internal class AcsAxis
     {
         private readonly Api api;
         private readonly AcsUtils acsUtils;
         private readonly IRobotControlSetting axisConfig;
         private readonly ILogger logger = LoggersManager.SystemLogger;
 
-        private const int ACS_MFLAGS_HOME = 8;
-        private int WaitEnabledDisabledTimeout = 10000;
+        private const int WaitEnabledDisabledTimeout = 10000;
 
-        private object locker = new object();
-        private object moveLocker = new object();
+        private readonly object locker = new object();
+        private readonly object moveLocker = new object();
 
-        private bool initing;
+        private bool initializing;
         private bool moving;
-        private bool stoping;
+        private bool stopping;
         private bool aborting;
-        private bool isAcsSimulation;
         private bool idle = true;
         private bool enabled;
         private bool ready = true;
         private double position;
-        private double currerntVelocity;
+        private double currentVelocity;
         private double currentAccel;
         private double currentDecel;
         private bool atHomeSensor;
-        private bool atPositiveHWLimit;
-        private bool atNegativeHWLimit;
-        private bool atPositiveSWLimit;
-        private bool atNegativeSWLimit;
+        private bool atPositiveHwLimit;
+        private bool atNegativeHwLimit;
+        private bool atPositiveSwLimit;
+        private bool atNegativeSwLimit;
         private double minPos;
         private double maxPos;
-        private bool initingBufferRun;
+        private bool initializingBufferRun;
 
-        private ACSAxis()
-        {
-        }
-
-        internal ACSAxis(
-            Api api,
-            AcsUtils utils,
-            GantryAxes axisID,
-            Axis acsAxisId,
-            IRobotControlSetting config,
-            bool isSimulation)
-            : this()
+        internal AcsAxis(Api api, AcsUtils utils, GantryAxes axisId, Axis acsAxisId, IRobotControlSetting config)
         {
             this.api = api;
             acsUtils = utils;
             axisConfig = config;
-            ApplicationAxisId = (int) axisID;
+            ApplicationAxisId = (int) axisId;
             AcsAxisId = acsAxisId;
-            isAcsSimulation = isSimulation;
             Name = ApplicationAxisId.ToString();
             ReloadConfigParameters();
             HomeStopCondition = string.Format("FAULT({0}).#LL", (int) AcsAxisId);
@@ -76,49 +62,25 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
                 acsUtils.SetBits("FDEF", (int) AcsAxisId, 32);
             }
 
-            if (isAcsSimulation)
-                HomeStopCondition = HomeStopCondition.Replace("#LL", "#SLL").Replace("#RL", "#SRL");
             switch (ApplicationAxisId) {
                 case 0:
-                    if (isAcsSimulation) {
-                        HomeBuffer = 57;
-                        break;
-                    }
-
                     HomeBuffer = 3;
                     break;
                 case 1:
-                    if (isAcsSimulation) {
-                        HomeBuffer = 55;
-                        break;
-                    }
-
                     HomeBuffer = 0;
                     break;
                 case 2:
-                    if (isAcsSimulation) {
-                        HomeBuffer = 56;
-                        break;
-                    }
-
                     HomeBuffer = 1;
                     break;
             }
         }
 
-        internal ACSAxis(
-            Api api,
-            AcsUtils utils,
-            ConveyorAxes axisID,
-            Axis acsAxisId,
-            bool isSimulation)
-            : this()
+        internal AcsAxis(Api api, AcsUtils utils, ConveyorAxes axisId, Axis acsAxisId)
         {
             this.api = api;
             acsUtils = utils;
-            ApplicationAxisId = (int) axisID;
+            ApplicationAxisId = (int) axisId;
             AcsAxisId = acsAxisId;
-            isAcsSimulation = isSimulation;
             Name = ApplicationAxisId.ToString();
             ReloadConfigParameters();
             HomeStopCondition = string.Format("FAULT({0}).#LL", (int) AcsAxisId);
@@ -133,8 +95,6 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
                 acsUtils.SetBits("FDEF", (int) AcsAxisId, 32);
             }
 
-            if (isAcsSimulation)
-                HomeStopCondition = HomeStopCondition.Replace("#LL", "#SLL").Replace("#RL", "#SRL");
             switch (ApplicationAxisId) {
                 case 5:
                     HomeBuffer = 4;
@@ -164,13 +124,13 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
 
         public event Action<int, bool> AtHomeSensorChanged;
 
-        public event Action<int, bool> AtPositiveHWLimitChanged;
+        public event Action<int, bool> AtPositiveHwLimitChanged;
 
-        public event Action<int, bool> AtNegativeHWLimitChanged;
+        public event Action<int, bool> AtNegativeHwLimitChanged;
 
-        public event Action<int, bool> AtPositiveSWLimitChanged;
+        public event Action<int, bool> AtPositiveSwLimitChanged;
 
-        public event Action<int, bool> AtNegativeSWLimitChanged;
+        public event Action<int, bool> AtNegativeSwLimitChanged;
 
         public event Action<int> MovementBegin;
 
@@ -180,7 +140,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
 
         public event Action<int, bool> AxisHomingEnd;
 
-        public int ApplicationAxisId { get; private set; }
+        public int ApplicationAxisId { get; }
 
         public bool Idle
         {
@@ -210,14 +170,11 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
             }
         }
 
-        public bool Homed
-        {
-            get { return Convert.ToBoolean(acsUtils.ReadInt("MFLAGS", (int) AcsAxisId) & 8); }
-        }
+        public bool Homed => Convert.ToBoolean(acsUtils.ReadInt("MFLAGS", (int) AcsAxisId) & 8);
 
-        public Axis AcsAxisId { get; private set; }
+        public Axis AcsAxisId { get; }
 
-        public string Name { get; set; }
+        public string Name { get; }
 
         public bool Ready
         {
@@ -249,17 +206,17 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
 
         public double DefaultVelocity { get; set; }
 
-        public double CurrerntVelocity
+        public double CurrentVelocity
         {
-            get { return currerntVelocity; }
+            get { return currentVelocity; }
             private set
             {
-                if (currerntVelocity == value)
+                if (currentVelocity == value)
                     return;
-                currerntVelocity = value;
+                currentVelocity = value;
                 Action<int, double> velocityUpdated = VelocityUpdated;
                 if (velocityUpdated != null)
-                    velocityUpdated(ApplicationAxisId, currerntVelocity);
+                    velocityUpdated(ApplicationAxisId, currentVelocity);
             }
         }
 
@@ -311,59 +268,59 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
             }
         }
 
-        public bool AtPositiveHWLimit
+        public bool AtPositiveHwLimit
         {
-            get { return atPositiveHWLimit; }
+            get { return atPositiveHwLimit; }
             private set
             {
-                if (atPositiveHWLimit == value)
+                if (atPositiveHwLimit == value)
                     return;
-                atPositiveHWLimit = value;
-                Action<int, bool> positiveHwLimitChanged = AtPositiveHWLimitChanged;
+                atPositiveHwLimit = value;
+                Action<int, bool> positiveHwLimitChanged = AtPositiveHwLimitChanged;
                 if (positiveHwLimitChanged != null)
-                    positiveHwLimitChanged(ApplicationAxisId, atPositiveHWLimit);
+                    positiveHwLimitChanged(ApplicationAxisId, atPositiveHwLimit);
             }
         }
 
-        public bool AtNegativeHWLimit
+        public bool AtNegativeHwLimit
         {
-            get { return atNegativeHWLimit; }
+            get { return atNegativeHwLimit; }
             private set
             {
-                if (atNegativeHWLimit == value)
+                if (atNegativeHwLimit == value)
                     return;
-                atNegativeHWLimit = value;
-                Action<int, bool> negativeHwLimitChanged = AtNegativeHWLimitChanged;
+                atNegativeHwLimit = value;
+                Action<int, bool> negativeHwLimitChanged = AtNegativeHwLimitChanged;
                 if (negativeHwLimitChanged != null)
-                    negativeHwLimitChanged(ApplicationAxisId, atNegativeHWLimit);
+                    negativeHwLimitChanged(ApplicationAxisId, atNegativeHwLimit);
             }
         }
 
-        public bool AtPositiveSWLimit
+        public bool AtPositiveSwLimit
         {
-            get { return atPositiveSWLimit; }
+            get { return atPositiveSwLimit; }
             private set
             {
-                if (atPositiveSWLimit == value)
+                if (atPositiveSwLimit == value)
                     return;
-                atPositiveSWLimit = value;
-                Action<int, bool> positiveSwLimitChanged = AtPositiveSWLimitChanged;
+                atPositiveSwLimit = value;
+                Action<int, bool> positiveSwLimitChanged = AtPositiveSwLimitChanged;
                 if (positiveSwLimitChanged != null)
-                    positiveSwLimitChanged(ApplicationAxisId, atPositiveSWLimit);
+                    positiveSwLimitChanged(ApplicationAxisId, atPositiveSwLimit);
             }
         }
 
-        public bool AtNegativeSWLimit
+        public bool AtNegativeSwLimit
         {
-            get { return atNegativeSWLimit; }
+            get { return atNegativeSwLimit; }
             private set
             {
-                if (atNegativeSWLimit == value)
+                if (atNegativeSwLimit == value)
                     return;
-                atNegativeSWLimit = value;
-                Action<int, bool> negativeSwLimitChanged = AtNegativeSWLimitChanged;
+                atNegativeSwLimit = value;
+                Action<int, bool> negativeSwLimitChanged = AtNegativeSwLimitChanged;
                 if (negativeSwLimitChanged != null)
-                    negativeSwLimitChanged(ApplicationAxisId, atNegativeSWLimit);
+                    negativeSwLimitChanged(ApplicationAxisId, atNegativeSwLimit);
             }
         }
 
@@ -373,24 +330,18 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
             set
             {
                 minPos = value;
-                try {
-                    if (minPos == double.MinValue) {
-                        acsUtils.ClearBits("FMASK", (int) AcsAxisId, 64);
-                        if (Homed)
-                            return;
-                        acsUtils.ClearBits("FDEF", (int) AcsAxisId, 64);
-                    }
-                    else {
-                        acsUtils.SetBits("FMASK", (int) AcsAxisId, 64);
-                        if (Homed)
-                            acsUtils.SetBits("FDEF", (int) AcsAxisId, 64);
-                        acsUtils.WriteVariable(minPos - 0.01, "SLLIMIT",
-                            from1: ((int) AcsAxisId), to1: ((int) AcsAxisId));
-                    }
+                if (minPos == double.MinValue) {
+                    acsUtils.ClearBits("FMASK", (int) AcsAxisId, 64);
+                    if (Homed)
+                        return;
+                    acsUtils.ClearBits("FDEF", (int) AcsAxisId, 64);
                 }
-                catch (Exception ex) {
-                    logger.Info(ex.Message, 494, nameof(MinPos),
-                        "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\ACSAxis.cs");
+                else {
+                    acsUtils.SetBits("FMASK", (int) AcsAxisId, 64);
+                    if (Homed)
+                        acsUtils.SetBits("FDEF", (int) AcsAxisId, 64);
+                    acsUtils.WriteVariable(minPos - 0.01, "SLLIMIT",
+                        from1: ((int) AcsAxisId), to1: ((int) AcsAxisId));
                 }
             }
         }
@@ -401,24 +352,18 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
             set
             {
                 maxPos = value;
-                try {
-                    if (maxPos == double.MaxValue) {
-                        acsUtils.ClearBits("FMASK", (int) AcsAxisId, 32);
-                        if (Homed)
-                            return;
-                        acsUtils.ClearBits("FDEF", (int) AcsAxisId, 32);
-                    }
-                    else {
-                        acsUtils.SetBits("FMASK", (int) AcsAxisId, 32);
-                        if (Homed)
-                            acsUtils.SetBits("FDEF", (int) AcsAxisId, 32);
-                        acsUtils.WriteVariable(maxPos + 0.001, "SRLIMIT",
-                            from1: ((int) AcsAxisId), to1: ((int) AcsAxisId));
-                    }
+                if (maxPos == double.MaxValue) {
+                    acsUtils.ClearBits("FMASK", (int) AcsAxisId, 32);
+                    if (Homed)
+                        return;
+                    acsUtils.ClearBits("FDEF", (int) AcsAxisId, 32);
                 }
-                catch (Exception ex) {
-                    logger.Info(ex.Message, 526, nameof(MaxPos),
-                        "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\ACSAxis.cs");
+                else {
+                    acsUtils.SetBits("FMASK", (int) AcsAxisId, 32);
+                    if (Homed)
+                        acsUtils.SetBits("FDEF", (int) AcsAxisId, 32);
+                    acsUtils.WriteVariable(maxPos + 0.001, "SRLIMIT",
+                        from1: ((int) AcsAxisId), to1: ((int) AcsAxisId));
                 }
             }
         }
@@ -430,13 +375,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
             {
                 if (HomeVelIn == value)
                     return;
-                try {
-                    acsUtils.WriteGlobalReal(value, "HOME_VEL_IN", (int) AcsAxisId);
-                }
-                catch (Exception ex) {
-                    logger.Info(ex.Message, 549, nameof(HomeVelIn),
-                        "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\ACSAxis.cs");
-                }
+                acsUtils.WriteGlobalReal(value, "HOME_VEL_IN", (int) AcsAxisId);
             }
         }
 
@@ -447,13 +386,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
             {
                 if (HomeVelOut == value)
                     return;
-                try {
-                    acsUtils.WriteGlobalReal(value, "HOME_VEL_OUT", (int) AcsAxisId);
-                }
-                catch (Exception ex) {
-                    logger.Info(ex.Message, 571, nameof(HomeVelOut),
-                        "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\ACSAxis.cs");
-                }
+                acsUtils.WriteGlobalReal(value, "HOME_VEL_OUT", (int) AcsAxisId);
             }
         }
 
@@ -461,37 +394,24 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
         {
             get
             {
-                try {
-                    return acsUtils.ReadGlobalReal("HOME_OFFSET", (int) AcsAxisId);
-                }
-                catch (Exception ex) {
-                    logger.Info(ex.Message, 587, nameof(HomeOffset),
-                        "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\ACSAxis.cs");
-                    return 0.0;
-                }
+                return acsUtils.ReadGlobalReal("HOME_OFFSET", (int) AcsAxisId);
             }
             set
             {
                 if (HomeOffset == value)
                     return;
-                try {
-                    acsUtils.WriteGlobalReal(value, "HOME_OFFSET", (int) AcsAxisId);
-                    acsUtils.ClearBits("MFLAGS", (int) AcsAxisId, 8);
-                }
-                catch (Exception ex) {
-                    logger.Info(ex.Message, 602, nameof(HomeOffset),
-                        "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\ACSAxis.cs");
-                }
+                acsUtils.WriteGlobalReal(value, "HOME_OFFSET", (int) AcsAxisId);
+                acsUtils.ClearBits("MFLAGS", (int) AcsAxisId, 8);
             }
         }
 
         public string HomeStopCondition { get; set; }
 
-        public int HomeBuffer { get; private set; } = -1;
+        public int HomeBuffer { get; }
 
-        public bool ScanningBufferRun { get; set; } = false;
+        public bool ScanningBufferRun { get; set; }
 
-        public void RestoreDefualtSettings()
+        public void RestoreDefaultSettings()
         {
             ReloadConfigParameters();
         }
@@ -499,8 +419,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
         public void ClearError()
         {
             if (!api.IsConnected)
-                logger.Info("Controller not connected", 636, nameof(ClearError),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\ACSAxis.cs");
+                logger.Info("Controller not connected");
             else
                 api.FaultClear(AcsAxisId);
         }
@@ -508,8 +427,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
         public bool Enable()
         {
             if (!api.IsConnected) {
-                logger.Info("Controller not connected", 646, nameof(Enable),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\ACSAxis.cs");
+                logger.Info("Controller not connected");
                 return false;
             }
 
@@ -522,8 +440,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
         public bool Disable()
         {
             if (!api.IsConnected) {
-                logger.Info("Controller not connected", 660, nameof(Disable),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\ACSAxis.cs");
+                logger.Info("Controller not connected");
                 return false;
             }
 
@@ -570,40 +487,30 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
             CurrentDecel = parameters.Deceleration;
         }
 
-        public bool MoveAbsolute(
-            double targetPos,
-            bool waitProgramEnd,
-            double vel = 0.0,
-            double acc = 0.0,
+        public bool MoveAbsolute(double targetPos, bool waitProgramEnd, double vel = 0.0, double acc = 0.0,
             double dec = 0.0)
         {
             if (IsLocked(moveLocker))
                 return false;
             lock (moveLocker) {
                 if (!api.IsConnected) {
-                    logger.Info("Controller not connected", 747, nameof(MoveAbsolute),
-                        "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\ACSAxis.cs");
+                    logger.Info("Controller not connected");
                     return false;
                 }
 
                 if (!Idle) {
-                    logger.Info("Axis is busy", 752, nameof(MoveAbsolute),
-                        "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\ACSAxis.cs");
+                    logger.Info("Axis is busy");
                     return false;
                 }
 
-                logger.Info(
-                    string.Format("MoveAbsolute {0} to {1} position", Name, targetPos), 756,
-                    nameof(MoveAbsolute), "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\ACSAxis.cs");
+                logger.Info(string.Format("MoveAbsolute {0} to {1} position", Name, targetPos));
                 if (!Homed) {
-                    logger.Info(Name + " need initialize", 760, nameof(MoveAbsolute),
-                        "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\ACSAxis.cs");
+                    logger.Info(Name + " need initialize");
                     return false;
                 }
 
                 if (!Enable()) {
-                    logger.Info(Name + " failed to enable", 765, nameof(MoveAbsolute),
-                        "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\ACSAxis.cs");
+                    logger.Info(Name + " failed to enable");
                     return false;
                 }
 
@@ -622,34 +529,25 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
             }
         }
 
-        public bool MoveRelative(
-            bool waitProgramEnd,
-            double relativePosition,
-            double vel = 0.0,
-            double acc = 0.0,
+        public bool MoveRelative(bool waitProgramEnd, double relativePosition, double vel = 0.0, double acc = 0.0,
             double dec = 0.0)
         {
             if (IsLocked(moveLocker))
                 return false;
             lock (moveLocker) {
                 if (!api.IsConnected) {
-                    logger.Info("Controller not connected", 796, nameof(MoveRelative),
-                        "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\ACSAxis.cs");
+                    logger.Info("Controller not connected");
                     return false;
                 }
 
                 if (!Idle) {
-                    logger.Info("Axis is busy", 801, nameof(MoveRelative),
-                        "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\ACSAxis.cs");
+                    logger.Info("Axis is busy");
                     return false;
                 }
 
-                logger.Info(
-                    string.Format("MoveRelative {0} to {1} position", Name, relativePosition),
-                    805, nameof(MoveRelative), "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\ACSAxis.cs");
+                logger.Info(string.Format("MoveRelative {0} to {1} position", Name, relativePosition));
                 if (!Enable()) {
-                    logger.Info(Name + " failed to enable", 809, nameof(MoveRelative),
-                        "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\ACSAxis.cs");
+                    logger.Info(Name + " failed to enable");
                     return false;
                 }
 
@@ -674,22 +572,18 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
                 return false;
             lock (moveLocker) {
                 if (!api.IsConnected) {
-                    logger.Info("Controller not connected", 844, nameof(Jog),
-                        "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\ACSAxis.cs");
+                    logger.Info("Controller not connected");
                     return false;
                 }
 
                 if (!Idle) {
-                    logger.Info("Axis is busy", 849, nameof(Jog),
-                        "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\ACSAxis.cs");
+                    logger.Info("Axis is busy");
                     return false;
                 }
 
-                logger.Info("Jog " + Name + " ", 853, nameof(Jog),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\ACSAxis.cs");
+                logger.Info("Jog " + Name + " ");
                 if (!Enable()) {
-                    logger.Info(Name + " failed to enable", 857, nameof(Jog),
-                        "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\ACSAxis.cs");
+                    logger.Info(Name + " failed to enable");
                     return false;
                 }
 
@@ -712,45 +606,41 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
         public bool Stop()
         {
             if (!api.IsConnected) {
-                logger.Info("Controller not connected", 892, nameof(Stop),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\ACSAxis.cs");
+                logger.Info("Controller not connected");
                 return false;
             }
 
             lock (locker) {
-                stoping = true;
-                return haltOrKill(true);
+                stopping = true;
+                return HaltOrKill(true);
             }
         }
 
         public bool Abort()
         {
             if (!api.IsConnected) {
-                logger.Info("Controller not connected", 911, nameof(Abort),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\ACSAxis.cs");
+                logger.Info("Controller not connected");
                 return false;
             }
 
             lock (locker) {
                 aborting = true;
-                return haltOrKill(false);
+                return HaltOrKill(false);
             }
         }
 
         public void SetRPos(double pos)
         {
             if (!api.IsConnected) {
-                logger.Info("Controller not connected", 931, nameof(SetRPos),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\ACSAxis.cs");
+                logger.Info("Controller not connected");
             }
             else {
-                logger.Info(string.Format("SetRPos {0} to {1} ", Name, pos), 935,
-                    nameof(SetRPos), "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\ACSAxis.cs");
+                logger.Info(string.Format("SetRPos {0} to {1} ", Name, pos));
                 api.SetFPosition(AcsAxisId, pos);
             }
         }
 
-        public void getDataFromController()
+        public void GetDataFromController()
         {
             if (!api.IsConnected) {
                 logger.Info("Controller not connected");
@@ -758,38 +648,38 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
             else {
                 acsUtils.ReadInt("MFLAGS", (int) AcsAxisId);
                 SafetyControlMasks fault = api.GetFault(AcsAxisId);
-                AtPositiveHWLimit = (fault & SafetyControlMasks.ACSC_SAFETY_RL) > SafetyControlMasks.ACSC_NONE;
-                AtNegativeHWLimit = (fault & SafetyControlMasks.ACSC_SAFETY_LL) > SafetyControlMasks.ACSC_NONE;
-                AtPositiveSWLimit = (fault & SafetyControlMasks.ACSC_SAFETY_SRL) > SafetyControlMasks.ACSC_NONE;
-                AtNegativeSWLimit = (fault & SafetyControlMasks.ACSC_SAFETY_SLL) > SafetyControlMasks.ACSC_NONE;
+                AtPositiveHwLimit = (fault & SafetyControlMasks.ACSC_SAFETY_RL) > SafetyControlMasks.ACSC_NONE;
+                AtNegativeHwLimit = (fault & SafetyControlMasks.ACSC_SAFETY_LL) > SafetyControlMasks.ACSC_NONE;
+                AtPositiveSwLimit = (fault & SafetyControlMasks.ACSC_SAFETY_SRL) > SafetyControlMasks.ACSC_NONE;
+                AtNegativeSwLimit = (fault & SafetyControlMasks.ACSC_SAFETY_SLL) > SafetyControlMasks.ACSC_NONE;
                 MotorStates motorState = api.GetMotorState(AcsAxisId);
                 Enabled = (motorState & MotorStates.ACSC_MST_ENABLE) == MotorStates.ACSC_MST_ENABLE;
                 bool flag = (motorState & MotorStates.ACSC_MST_MOVE) != MotorStates.ACSC_MST_MOVE &&
                             !ScanningBufferRun;
-                if (initing) {
-                    InitingBufferRun = acsUtils.IsProgramRunning((ProgramBuffer) HomeBuffer);
-                    flag = flag && !InitingBufferRun;
+                if (initializing) {
+                    InitializingBufferRun = acsUtils.IsProgramRunning((ProgramBuffer) HomeBuffer);
+                    flag = flag && !InitializingBufferRun;
                 }
 
                 Idle = flag;
-                if (Idle && (moving || stoping || aborting))
-                    motionEnded(true);
+                if (Idle && (moving || stopping || aborting))
+                    MotionEnded(true);
                 Position = api.GetRPosition(AcsAxisId);
-                CurrerntVelocity = Math.Round(api.GetRVelocity(AcsAxisId));
+                CurrentVelocity = Math.Round(api.GetRVelocity(AcsAxisId));
                 Ready = Enabled && Homed;
             }
         }
 
-        private bool InitingBufferRun
+        private bool InitializingBufferRun
         {
-            get { return initingBufferRun; }
+            get { return initializingBufferRun; }
             set
             {
-                if (value == InitingBufferRun && (value || !initing))
+                if (value == InitializingBufferRun && (value || !initializing))
                     return;
-                initingBufferRun = value;
-                if (!initingBufferRun)
-                    motionEnded(Homed);
+                initializingBufferRun = value;
+                if (!initializingBufferRun)
+                    MotionEnded(Homed);
             }
         }
 
@@ -807,7 +697,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
 
             ClearError();
             logger.Info("Init Axis " + Name);
-            if (!Enable() || !checkInitParams())
+            if (!Enable() || !CheckInitParams())
                 return false;
             Idle = false;
             return true;
@@ -852,12 +742,12 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
             HomeOffset = 28.0;
         }
 
-        private bool checkInitParams()
+        private bool CheckInitParams()
         {
             return HomeVelIn != 0.0 && HomeVelOut != 0.0 && HomeBuffer != -1;
         }
 
-        private void motionEnded(bool ok)
+        private void MotionEnded(bool ok)
         {
             Position = api.GetRPosition(AcsAxisId);
             bool flag1 = false;
@@ -865,8 +755,8 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
             bool flag3 = false;
             bool flag4 = false;
             lock (locker) {
-                if (initing) {
-                    initing = false;
+                if (initializing) {
+                    initializing = false;
                     flag2 = true;
                 }
 
@@ -875,9 +765,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
                     moving = false;
                 }
 
-                if (stoping) {
+                if (stopping) {
                     flag3 = true;
-                    stoping = false;
+                    stopping = false;
                 }
 
                 if (aborting) {
@@ -912,7 +802,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
             abortDone(ApplicationAxisId, ok);
         }
 
-        private void motionEnded(int motorErr, int motionErr)
+        private void MotionEnded(int motorErr, int motionErr)
         {
             try {
                 if (motionErr >= 5000 && motionErr <= 5006)
@@ -925,21 +815,18 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
                 if (motorErr != 0 && motionErr != motorErr)
                     message = Name + " " + api.GetErrorString(motorErr);
                 if (!string.IsNullOrEmpty(message))
-                    logger.Info(message, 1159, nameof(motionEnded),
-                        "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\ACSAxis.cs");
+                    logger.Info(message);
             }
             catch (Exception ex) {
-                logger.Info(ex.Message, 1163, nameof(motionEnded),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\ACSAxis.cs");
+                logger.Info(ex.Message);
             }
 
-            motionEnded(motionErr == 0 && motorErr == 0);
+            MotionEnded(motionErr == 0 && motorErr == 0);
         }
 
-        private bool haltOrKill(bool halt)
+        private bool HaltOrKill(bool halt)
         {
-            logger.Info(string.Format("haltOrKill {0} ", halt), 1169, nameof(haltOrKill),
-                "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\ACSAxis.cs");
+            logger.Info(string.Format("haltOrKill {0} ", halt));
             try {
                 api.StopBuffer((ProgramBuffer) HomeBuffer);
                 if (halt)
@@ -948,8 +835,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
                     api.Kill(AcsAxisId);
             }
             catch (Exception ex) {
-                logger.Info(ex.Message + " " + Name, 1184, nameof(haltOrKill),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\ACSAxis.cs");
+                logger.Info(ex.Message + " " + Name);
                 return false;
             }
 
@@ -960,7 +846,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
         {
             bool ok = true;
             lock (locker)
-                initing = true;
+                initializing = true;
             Action<int> axisHomingBegin = AxisHomingBegin;
             if (axisHomingBegin != null)
                 axisHomingBegin(ApplicationAxisId);
@@ -971,11 +857,10 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
                         (int) (100000.0 * Math.Max(Math.Abs((MaxPos - MinPos) / HomeVelIn), 1.0)));
             }
             catch (Exception ex) {
-                logger.Info("failed to init axis " + Name + "  :  " + ex.Message, 1214, nameof(InitImpl),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\ACSAxis.cs");
+                logger.Info("failed to init axis " + Name + "  :  " + ex.Message);
                 Stop();
                 lock (locker)
-                    initing = false;
+                    initializing = false;
                 ok = false;
             }
 
@@ -986,7 +871,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
                 ok = Homed;
             }
 
-            motionEnded(ok);
+            MotionEnded(ok);
         }
 
         private async void InitImplAsync(bool waitProgramEnd)
@@ -1011,14 +896,12 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
                     return;
                 api.WaitMotionEnd(AcsAxisId,
                     (int) (100000.0 * Math.Max(Math.Abs((targetPos - Position) / vel), 1.0)));
-                motionEnded(true);
+                MotionEnded(true);
             }
             catch (Exception ex) {
-                motionEnded(false);
+                MotionEnded(false);
                 logger.Info(
-                    string.Format("MoveAbsolute {0} to {1} position exception {2}", Name,
-                        targetPos, ex.Message), 1272, nameof(MoveAbsoluteImpl),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\ACSAxis.cs");
+                    string.Format("MoveAbsolute {0} to {1} position exception {2}", Name, targetPos, ex.Message));
             }
         }
 
@@ -1055,14 +938,12 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
                     return;
                 api.WaitMotionEnd(AcsAxisId,
                     (int) (100000.0 * Math.Max(Math.Abs(relativePosition / vel), 1.0)));
-                motionEnded(true);
+                MotionEnded(true);
             }
             catch (Exception ex) {
-                motionEnded(false);
+                MotionEnded(false);
                 logger.Info(
-                    string.Format("MoveRelative {0} to {1} position exception {2}", Name,
-                        relativePosition, ex.Message), 1324, nameof(MoveRelativeImpl),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\ACSAxis.cs");
+                    string.Format("MoveRelative {0} to {1} position exception {2}", Name, relativePosition, ex.Message));
             }
         }
 
@@ -1078,14 +959,12 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
                     try {
                         api.Jog(MotionFlags.ACSC_AMF_VELOCITY, AcsAxisId, vel);
                         api.WaitMotionEnd(AcsAxisId, int.MaxValue);
-                        motionEnded(true);
+                        MotionEnded(true);
                     }
                     catch (Exception ex) {
                         logger.Info(
-                            string.Format("Jog {0} to {1}  exception {2}", Name, direction,
-                                ex.Message), 1345, nameof(JogImplAsync),
-                            "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\ACSAxis.cs");
-                        motionEnded(true);
+                            string.Format("Jog {0} to {1}  exception {2}", Name, direction, ex.Message));
+                        MotionEnded(true);
                     }
                 }
             });
@@ -1103,12 +982,11 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
                 if (!waitProgramEnd)
                     return;
                 api.WaitMotionEnd(AcsAxisId, int.MaxValue);
-                motionEnded(true);
+                MotionEnded(true);
             }
             catch (Exception ex) {
-                logger.Info("Jog " + Name + " exception " + ex.Message, 1373, nameof(JogImpl),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\ACSAxis.cs");
-                motionEnded(true);
+                logger.Info("Jog " + Name + " exception " + ex.Message);
+                MotionEnded(true);
             }
         }
 

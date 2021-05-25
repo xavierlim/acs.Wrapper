@@ -27,8 +27,8 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         private AutoResetEvent waiteExitFromPoling = new AutoResetEvent(false);
         private readonly ILogger _logger = LoggersManager.SystemLogger;
         private static AcsWrapper instance;
-        private Dictionary<GantryAxes, ACSAxis> axesCache = new Dictionary<GantryAxes, ACSAxis>();
-        private Dictionary<ConveyorAxes, ACSAxis> conveyorAxesCache = new Dictionary<ConveyorAxes, ACSAxis>();
+        private Dictionary<GantryAxes, AcsAxis> axesCache = new Dictionary<GantryAxes, AcsAxis>();
+        private Dictionary<ConveyorAxes, AcsAxis> conveyorAxesCache = new Dictionary<ConveyorAxes, AcsAxis>();
 
         private IRobotControlSetting _robotSettings =
             (IRobotControlSetting) Configuration.Configuration.GetSettingsSection("Robot");
@@ -370,7 +370,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             }
 
             if (this.axesCache.ContainsKey(axis))
-                return this.axesCache[axis].CurrerntVelocity;
+                return this.axesCache[axis].CurrentVelocity;
             throw new ArgumentException("Axis not exist ");
         }
 
@@ -385,7 +385,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             }
 
             if (this.conveyorAxesCache.ContainsKey(axis))
-                return this.conveyorAxesCache[axis].CurrerntVelocity;
+                return this.conveyorAxesCache[axis].CurrentVelocity;
             throw new ArgumentException("Axis not exist ");
         }
 
@@ -430,7 +430,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             }
 
             if (this.axesCache.ContainsKey(axis))
-                return this.axesCache[axis].AtPositiveHWLimit;
+                return this.axesCache[axis].AtPositiveHwLimit;
             throw new ArgumentException("Axis not exist ");
         }
 
@@ -445,7 +445,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             }
 
             if (this.conveyorAxesCache.ContainsKey(axis))
-                return this.conveyorAxesCache[axis].AtPositiveHWLimit;
+                return this.conveyorAxesCache[axis].AtPositiveHwLimit;
             throw new ArgumentException("Axis not exist ");
         }
 
@@ -460,7 +460,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             }
 
             if (this.axesCache.ContainsKey(axis))
-                return this.axesCache[axis].AtNegativeHWLimit;
+                return this.axesCache[axis].AtNegativeHwLimit;
             throw new ArgumentException("Axis not exist ");
         }
 
@@ -475,7 +475,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             }
 
             if (this.conveyorAxesCache.ContainsKey(axis))
-                return this.conveyorAxesCache[axis].AtNegativeHWLimit;
+                return this.conveyorAxesCache[axis].AtNegativeHwLimit;
             throw new ArgumentException("Axis not exist ");
         }
 
@@ -490,7 +490,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             }
 
             if (this.axesCache.ContainsKey(axis))
-                return this.axesCache[axis].AtPositiveSWLimit;
+                return this.axesCache[axis].AtPositiveSwLimit;
             throw new ArgumentException("Axis not exist ");
         }
 
@@ -505,7 +505,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             }
 
             if (this.conveyorAxesCache.ContainsKey(axis))
-                return this.conveyorAxesCache[axis].AtPositiveSWLimit;
+                return this.conveyorAxesCache[axis].AtPositiveSwLimit;
             throw new ArgumentException("Axis not exist ");
         }
 
@@ -520,7 +520,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             }
 
             if (this.axesCache.ContainsKey(axis))
-                return this.axesCache[axis].AtNegativeSWLimit;
+                return this.axesCache[axis].AtNegativeSwLimit;
             throw new ArgumentException("Axis not exist ");
         }
 
@@ -535,7 +535,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             }
 
             if (this.conveyorAxesCache.ContainsKey(axis))
-                return this.conveyorAxesCache[axis].AtNegativeSWLimit;
+                return this.conveyorAxesCache[axis].AtNegativeSwLimit;
             throw new ArgumentException("Axis not exist ");
         }
 
@@ -621,7 +621,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             acsUtils.RunBuffer(ProgramBuffer.ACSC_BUFFER_9);
             isScanningBufferRun = acsUtils.IsProgramRunning(ProgramBuffer.ACSC_BUFFER_9);
             if (isScanningBufferRun) {
-                foreach (KeyValuePair<GantryAxes, ACSAxis> keyValuePair in axesCache)
+                foreach (KeyValuePair<GantryAxes, AcsAxis> keyValuePair in axesCache)
                     keyValuePair.Value.ScanningBufferRun = true;
                 Action scanningBegin = ScanningBegin;
                 if (scanningBegin != null)
@@ -910,9 +910,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                     "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
             }
             else {
-                foreach (KeyValuePair<GantryAxes, ACSAxis> keyValuePair in axesCache) {
+                foreach (KeyValuePair<GantryAxes, AcsAxis> keyValuePair in axesCache) {
                     keyValuePair.Value.ClearError();
-                    keyValuePair.Value.RestoreDefualtSettings();
+                    keyValuePair.Value.RestoreDefaultSettings();
                 }
             }
         }
@@ -973,7 +973,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
             if (forZOnly)
                 return ReloadConfigParameters(GantryAxes.Z);
-            foreach (KeyValuePair<GantryAxes, ACSAxis> keyValuePair in axesCache)
+            foreach (KeyValuePair<GantryAxes, AcsAxis> keyValuePair in axesCache)
                 ReloadConfigParameters(keyValuePair.Key);
             return true;
         }
@@ -1006,8 +1006,8 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             if (forZOnly)
                 return Init(GantryAxes.Z);
             List<Task> taskList = new List<Task>();
-            foreach (KeyValuePair<GantryAxes, ACSAxis> keyValuePair in axesCache) {
-                KeyValuePair<GantryAxes, ACSAxis> item = keyValuePair;
+            foreach (KeyValuePair<GantryAxes, AcsAxis> keyValuePair in axesCache) {
+                KeyValuePair<GantryAxes, AcsAxis> item = keyValuePair;
                 taskList.Add(Task.Run((Action) (() => Init(item.Key))));
             }
 
@@ -1039,8 +1039,8 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             }
 
             List<Task> taskList = new List<Task>();
-            foreach (KeyValuePair<GantryAxes, ACSAxis> keyValuePair in axesCache) {
-                KeyValuePair<GantryAxes, ACSAxis> item = keyValuePair;
+            foreach (KeyValuePair<GantryAxes, AcsAxis> keyValuePair in axesCache) {
+                KeyValuePair<GantryAxes, AcsAxis> item = keyValuePair;
                 AxisInitParameters axisInitParams = null;
                 try {
                     axisInitParams =
@@ -1216,7 +1216,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             }
 
             acsUtils.StopBuffer(ProgramBuffer.ACSC_BUFFER_9);
-            foreach (KeyValuePair<GantryAxes, ACSAxis> keyValuePair in axesCache)
+            foreach (KeyValuePair<GantryAxes, AcsAxis> keyValuePair in axesCache)
                 keyValuePair.Value.Stop();
             return true;
         }
@@ -1280,9 +1280,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                     "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
             }
             else {
-                foreach (KeyValuePair<ConveyorAxes, ACSAxis> keyValuePair in this.conveyorAxesCache) {
+                foreach (KeyValuePair<ConveyorAxes, AcsAxis> keyValuePair in this.conveyorAxesCache) {
                     keyValuePair.Value.ClearError();
-                    keyValuePair.Value.RestoreDefualtSettings();
+                    keyValuePair.Value.RestoreDefaultSettings();
                 }
             }
         }
@@ -1360,8 +1360,8 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             }
 
             List<Task> taskList = new List<Task>();
-            foreach (KeyValuePair<ConveyorAxes, ACSAxis> keyValuePair in this.conveyorAxesCache) {
-                KeyValuePair<ConveyorAxes, ACSAxis> item = keyValuePair;
+            foreach (KeyValuePair<ConveyorAxes, AcsAxis> keyValuePair in this.conveyorAxesCache) {
+                KeyValuePair<ConveyorAxes, AcsAxis> item = keyValuePair;
                 taskList.Add(Task.Run((Action) (() => this.Init(item.Key))));
             }
 
@@ -1515,7 +1515,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             this.acsUtils.StopBuffer(ProgramBuffer.ACSC_BUFFER_55);
             this.acsUtils.StopBuffer(ProgramBuffer.ACSC_BUFFER_56);
             this.acsUtils.StopBuffer(ProgramBuffer.ACSC_BUFFER_57);
-            foreach (KeyValuePair<ConveyorAxes, ACSAxis> keyValuePair in this.conveyorAxesCache)
+            foreach (KeyValuePair<ConveyorAxes, AcsAxis> keyValuePair in this.conveyorAxesCache)
                 keyValuePair.Value.Stop();
             return true;
         }
@@ -1610,15 +1610,15 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                         Action scanningEnd = ScanningEnd;
                         if (scanningEnd != null)
                             scanningEnd();
-                        foreach (KeyValuePair<GantryAxes, ACSAxis> keyValuePair in axesCache)
+                        foreach (KeyValuePair<GantryAxes, AcsAxis> keyValuePair in axesCache)
                             keyValuePair.Value.ScanningBufferRun = false;
                     }
                 }
 
-                foreach (KeyValuePair<GantryAxes, ACSAxis> keyValuePair in this.axesCache)
-                    keyValuePair.Value.getDataFromController();
-                foreach (KeyValuePair<ConveyorAxes, ACSAxis> keyValuePair in this.conveyorAxesCache)
-                    keyValuePair.Value.getDataFromController();
+                foreach (KeyValuePair<GantryAxes, AcsAxis> keyValuePair in this.axesCache)
+                    keyValuePair.Value.GetDataFromController();
+                foreach (KeyValuePair<ConveyorAxes, AcsAxis> keyValuePair in this.conveyorAxesCache)
+                    keyValuePair.Value.GetDataFromController();
                 Thread.Sleep(this.sleepPoling);
             }
 
@@ -1683,8 +1683,8 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         {
             this.axesCache.Clear();
             for (GantryAxes gantryAxes = GantryAxes.Z; gantryAxes < GantryAxes.All; ++gantryAxes) {
-                ACSAxis acsAxis = new ACSAxis(this.Ch, this.acsUtils, gantryAxes, this.GetAcsAxisIndex(gantryAxes),
-                    this._robotSettings, false);
+                AcsAxis acsAxis = new AcsAxis(this.Ch, this.acsUtils, gantryAxes, this.GetAcsAxisIndex(gantryAxes),
+                    this._robotSettings);
                 this.axesCache[gantryAxes] = acsAxis;
                 acsAxis.IdleChanged += new Action<int, bool>(this.axisIdleChanged);
                 acsAxis.EnabledChanged += new Action<int, bool>(this.axisEnabledChanged);
@@ -1696,10 +1696,10 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 acsAxis.StopDone += new Action<int, bool>(this.axisStopDone);
                 acsAxis.AbortDone += new Action<int, bool>(this.axisAbortDone);
                 acsAxis.AtHomeSensorChanged += new Action<int, bool>(this.axisAtHomeSensorChanged);
-                acsAxis.AtPositiveHWLimitChanged += new Action<int, bool>(this.axisAtPositiveHWLimitChanged);
-                acsAxis.AtNegativeHWLimitChanged += new Action<int, bool>(this.axisAtNegativeHWLimitChanged);
-                acsAxis.AtPositiveSWLimitChanged += new Action<int, bool>(this.axisAtPositiveSWLimitChanged);
-                acsAxis.AtNegativeSWLimitChanged += new Action<int, bool>(this.axisAtNegativeSWLimitChanged);
+                acsAxis.AtPositiveHwLimitChanged += new Action<int, bool>(this.axisAtPositiveHWLimitChanged);
+                acsAxis.AtNegativeHwLimitChanged += new Action<int, bool>(this.axisAtNegativeHWLimitChanged);
+                acsAxis.AtPositiveSwLimitChanged += new Action<int, bool>(this.axisAtPositiveSWLimitChanged);
+                acsAxis.AtNegativeSwLimitChanged += new Action<int, bool>(this.axisAtNegativeSWLimitChanged);
                 acsAxis.AxisHomingBegin += new Action<int>(this.Axis_AxisHomingBegin);
                 acsAxis.AxisHomingEnd += new Action<int, bool>(this.Axis_AxisHomingEnd);
                 if (acsAxis.AcsAxisId >= Axis.ACSC_AXIS_0)
@@ -1713,8 +1713,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             for (ConveyorAxes conveyorAxes = ConveyorAxes.Conveyor;
                 conveyorAxes <= ConveyorAxes.Lifter;
                 ++conveyorAxes) {
-                ACSAxis acsAxis = new ACSAxis(this.Ch, this.acsUtils, conveyorAxes, this.GetAcsAxisIndex(conveyorAxes),
-                    false);
+                var acsAxis = new AcsAxis(this.Ch, this.acsUtils, conveyorAxes, this.GetAcsAxisIndex(conveyorAxes));
                 this.conveyorAxesCache[conveyorAxes] = acsAxis;
                 acsAxis.IdleChanged += new Action<int, bool>(this.conveyorAxisIdleChanged);
                 acsAxis.EnabledChanged += new Action<int, bool>(this.conveyorAxisEnabledChanged);
@@ -1726,10 +1725,10 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 acsAxis.StopDone += new Action<int, bool>(this.conveyorAxisStopDone);
                 acsAxis.AbortDone += new Action<int, bool>(this.conveyorAxisAbortDone);
                 acsAxis.AtHomeSensorChanged += new Action<int, bool>(this.conveyorAxisAtHomeSensorChanged);
-                acsAxis.AtPositiveHWLimitChanged += new Action<int, bool>(this.conveyorAxisAtPositiveHWLimitChanged);
-                acsAxis.AtNegativeHWLimitChanged += new Action<int, bool>(this.conveyorAxisAtNegativeHWLimitChanged);
-                acsAxis.AtPositiveSWLimitChanged += new Action<int, bool>(this.conveyorAxisAtPositiveSWLimitChanged);
-                acsAxis.AtNegativeSWLimitChanged += new Action<int, bool>(this.conveyorAxisAtNegativeSWLimitChanged);
+                acsAxis.AtPositiveHwLimitChanged += new Action<int, bool>(this.conveyorAxisAtPositiveHWLimitChanged);
+                acsAxis.AtNegativeHwLimitChanged += new Action<int, bool>(this.conveyorAxisAtNegativeHWLimitChanged);
+                acsAxis.AtPositiveSwLimitChanged += new Action<int, bool>(this.conveyorAxisAtPositiveSWLimitChanged);
+                acsAxis.AtNegativeSwLimitChanged += new Action<int, bool>(this.conveyorAxisAtNegativeSWLimitChanged);
                 acsAxis.AxisHomingBegin += new Action<int>(this.conveyorAxis_AxisHomingBegin);
                 acsAxis.AxisHomingEnd += new Action<int, bool>(this.conveyorAxis_AxisHomingEnd);
                 if (acsAxis.AcsAxisId >= Axis.ACSC_AXIS_0)
