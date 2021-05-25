@@ -1,13 +1,15 @@
 
 using System;
+using CO.Common.Logger;
 using CO.Systems.Services.Acs.AcsWrapper.config;
 using CO.Systems.Services.Acs.AcsWrapper.mockery;
+using CO.Systems.Services.Configuration.Settings;
 
 namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 {
     public static class AcsWrapperFactory
     {
-        public static IAcsWrapper CreateInstance()
+        public static IAcsWrapper CreateInstance(ILogger logger, IRobotControlSetting robotSettings)
         {
             AcsWrapper acs;
 
@@ -17,9 +19,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                     return new AcsMocker();
                 }
                 else {
-                    acs = new AcsWrapper();
+                    acs = new AcsWrapper(logger, robotSettings);
                     try {
-                        acs.Connect(null);
+                        acs.Connect();
                         return acs;
                     }
                     catch (Exception e) {
@@ -29,8 +31,8 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 }
             }
 
-            acs = new AcsWrapper();
-            acs.Connect(null);
+            acs = new AcsWrapper(logger, robotSettings);
+            acs.Connect();
             return acs;
         }
     }

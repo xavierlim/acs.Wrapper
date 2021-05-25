@@ -37,11 +37,11 @@ namespace CO.Systems.Services.Acs.AcsWrapper.mockery
         public event Action<GantryAxes> AxisHomingBegin;
         public event Action<GantryAxes, bool> AxisHomingEnd;
         public event Action ScanningBegin;
-        public event Action HardwareNotifySingleMoveMotionCompleteRecvd;
-        public event Action HardwareNotifySingleMovePSXAckRecvd;
+        public event Action HardwareNotifySingleMoveMotionCompleteReceived;
+        public event Action HardwareNotifySingleMovePSXAckReceived;
         public event Action<int> ScanningIndexChange;
         public event Action ScanningEnd;
-        public void Connect(string ip)
+        public void Connect()
         {
             throw new NotImplementedException();
         }

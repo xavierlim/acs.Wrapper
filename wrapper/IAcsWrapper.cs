@@ -64,11 +64,11 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         event Action<GantryAxes> AxisHomingBegin;
         event Action<GantryAxes, bool> AxisHomingEnd;
         event Action ScanningBegin;
-        event Action HardwareNotifySingleMoveMotionCompleteRecvd;
-        event Action HardwareNotifySingleMovePSXAckRecvd;
+        event Action HardwareNotifySingleMoveMotionCompleteReceived;
+        event Action HardwareNotifySingleMovePSXAckReceived;
         event Action<int> ScanningIndexChange;
         event Action ScanningEnd;
-        void Connect(string ip);
+        void Connect();
         bool DisConnect();
         bool IsIdle(GantryAxes axis);
         bool Enabled(GantryAxes axis);
