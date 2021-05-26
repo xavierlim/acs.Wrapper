@@ -418,10 +418,18 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
 
         public void ClearError()
         {
-            if (!api.IsConnected)
+            if (api.IsConnected) {
+                try {
+                    if (api.GetFault(AcsAxisId) == SafetyControlMasks.ACSC_NONE) return;
+                    api.FaultClear(AcsAxisId);
+                }
+                catch (Exception e) {
+                    logger.Error($"AcsAxis.ClearError: Exception '{AcsAxisId}': " + e.Message);
+                }
+            }
+            else {
                 logger.Info("Controller not connected");
-            else
-                api.FaultClear(AcsAxisId);
+            }
         }
 
         public bool Enable()
@@ -430,6 +438,8 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
                 logger.Info("Controller not connected");
                 return false;
             }
+
+            if (enabled) return true;
 
             ClearError();
             api.Enable(AcsAxisId);
