@@ -29,6 +29,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         private bool scanLoopRunning;
         private const int SleepInterval = 50;
+        private const int DataRefreshCounter = 6;
 
         private readonly Dictionary<GantryAxes, AcsAxis> axesCache = new Dictionary<GantryAxes, AcsAxis>();
         private readonly Dictionary<ConveyorAxes, AcsAxis> conveyorAxesCache = new Dictionary<ConveyorAxes, AcsAxis>();
@@ -49,7 +50,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             this.logger = logger;
 
             api = new Api();
-            acsUtils = new AcsUtils(api);
+            acsUtils = new AcsUtils(api, logger);
             bufferHelper = new BufferHelper(api, acsUtils, isSimulation);
         }
 
@@ -154,7 +155,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             logger.Info($"AcsWrapper: Connect. IP {ip}");
 
             lock (lockObject) {
-                teminateOldConnections();
+                TerminateOldConnections();
                 try {
                     api.OpenCommEthernet(ip, 700);
                 }
@@ -1342,6 +1343,8 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         private void ScanLoop()
         {
             scanLoopRunning = true;
+            var refreshCounter = DataRefreshCounter;
+
             while (scanLoopRunning) {
                 lock (lockObject) {
                     try {
@@ -1385,11 +1388,14 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                     }
                 }
 
-                foreach (KeyValuePair<GantryAxes, AcsAxis> keyValuePair in axesCache) {
-                    keyValuePair.Value.GetDataFromController();
-                }
-                foreach (KeyValuePair<ConveyorAxes, AcsAxis> keyValuePair in conveyorAxesCache) {
-                    keyValuePair.Value.GetDataFromController();
+                if (--refreshCounter < 0) {
+                    foreach (KeyValuePair<GantryAxes, AcsAxis> keyValuePair in axesCache) {
+                        keyValuePair.Value.GetDataFromController();
+                    }
+                    foreach (KeyValuePair<ConveyorAxes, AcsAxis> keyValuePair in conveyorAxesCache) {
+                        keyValuePair.Value.GetDataFromController();
+                    }
+                    refreshCounter = DataRefreshCounter;
                 }
 
                 Thread.Sleep(SleepInterval);
@@ -1400,8 +1406,6 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         private void EnableAcsEvents()
         {
-            if (api == null) return;
-
             api.EnableEvent(Interrupts.ACSC_INTR_EMERGENCY);
             api.EnableEvent(Interrupts.ACSC_INTR_ETHERCAT_ERROR);
             api.EnableEvent(Interrupts.ACSC_INTR_MESSAGE);
@@ -1410,45 +1414,50 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             api.EnableEvent(Interrupts.ACSC_INTR_SYSTEM_ERROR);
             api.EnableEvent(Interrupts.ACSC_INTR_COMMAND);
             api.EMERGENCY += ApiEmergency;
-            api.SYSTEMERROR += ApiSystemerror;
-            api.MOTORFAILURE += ApiMotorfailure;
-            api.MOTIONFAILURE += ApiMotionfailure;
-            api.ETHERCATERROR += ApiEthercaterror;
+            api.SYSTEMERROR += ApiSystemError;
+            api.MOTORFAILURE += ApiMotorFailure;
+            api.MOTIONFAILURE += ApiMotionFailure;
+            api.ETHERCATERROR += ApiEtherCatError;
             api.MESSAGE += ApiMessage;
-            api.ACSPLPROGRAMEX += ApiAcsplprogramex;
+            api.ACSPLPROGRAMEX += ApiAcsplProgramEx;
         }
 
-        private void ApiMessage(ulong Param)
+        private void ApiMessage(ulong param)
         {
         }
 
-        private void ApiEthercaterror(ulong Param)
+        private void ApiEtherCatError(ulong param)
         {
         }
 
-        private void ApiMotionfailure(AxisMasks Param)
+        private void ApiMotionFailure(AxisMasks param)
         {
         }
 
-        private void ApiMotorfailure(AxisMasks Param)
+        private void ApiMotorFailure(AxisMasks param)
         {
         }
 
-        private void ApiSystemerror(ulong Param)
+        private void ApiSystemError(ulong param)
         {
-            int num = api.GetLastError() + 1;
             try {
-                api.GetErrorString(api.GetLastError());
+                var lastError = api.GetLastError();
+                logger.Info($"AcsWrapper.ApiSystemError: {param}, {lastError}");
+
+                if (lastError > 100) {
+                    logger.Info($"AcsWrapper.ApiSystemError: {param}, {api.GetErrorString(lastError)}");
+                }
             }
             catch (ACSException ex) {
+                logger.Error($"AcsWrapper.ApiSystemError: {ex.ErrorCode}: " + ex.Message);
             }
         }
 
-        private void ApiEmergency(ulong Param)
+        private void ApiEmergency(ulong param)
         {
         }
 
-        private void ApiAcsplprogramex(ulong Param)
+        private void ApiAcsplProgramEx(ulong param)
         {
         }
 
@@ -1578,7 +1587,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             }
         }
 
-        private bool teminateOldConnections()
+        private bool TerminateOldConnections()
         {
             string fileName = Path.GetFileName(Process.GetCurrentProcess().MainModule.FileName);
             try {
@@ -1762,9 +1771,8 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         private void Axis_AxisHomingEnd(int axis, bool res)
         {
-            logger.Info(string.Format("Axis_AxisHomingEnd {0} {1}", (GantryAxes) axis, res),
-                3130, nameof(Axis_AxisHomingEnd),
-                "C:\\Users\\Garry\\Desktop\\ExternalHardware - 19032021\\AcsWrapper\\AcsWrapper.cs");
+            logger.Info(string.Format("Axis_AxisHomingEnd {0} {1}", (GantryAxes) axis, res));
+
             Action<GantryAxes, bool> axisHomingEnd = AxisHomingEnd;
             if (axisHomingEnd == null)
                 return;

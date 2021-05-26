@@ -8,11 +8,12 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
     internal class AcsUtils
     {
         private readonly Api api;
-        private readonly ILogger logger = LoggersManager.SystemLogger;
+        private readonly ILogger logger;
 
-        public AcsUtils(Api api)
+        public AcsUtils(Api api, ILogger logger)
         {
             this.api = api;
+            this.logger = logger;
         }
 
         public int GetDBufferIndex()
@@ -27,7 +28,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
                 num = api.GetDBufferIndex();
             }
             catch (Exception ex) {
-                logger.Info("AcsUtil.ReadVar: Failed to get DBuffer index " + ex.Message);
+                logger.Error("AcsUtil.ReadVar: Failed to get DBuffer index " + ex.Message);
             }
 
             return (int) num;
@@ -48,7 +49,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
                     api.RunBuffer(buffer, label);
                 }
                 catch (Exception ex) {
-                    logger.Info(
+                    logger.Error(
                         string.Format("AcsUtil.ReadVar: Failed to run buffer {0}:{1} {2}", buffer,
                             label == null ? "the top" : (object) label, ex.Message));
                 }
@@ -65,7 +66,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
                     api.StopBuffer(buffer);
                 }
                 catch (Exception ex) {
-                    logger.Info(string.Format("AcsUtil.ReadVar: Failed to stop buffer {0}: {1}", buffer, ex.Message));
+                    logger.Error(string.Format("AcsUtil.ReadVar: Failed to stop buffer {0}: {1}", buffer, ex.Message));
                 }
             }
         }
@@ -81,7 +82,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
                 return (uint) (api.GetProgramState(buffer) & ProgramStates.ACSC_PST_RUN) > 0U;
             }
             catch (Exception ex) {
-                logger.Info(string.Format("AcsUtil.ReadVar: Exception {0}: {1}", buffer, ex.Message));
+                logger.Error(string.Format("AcsUtil.ReadVar: Exception {0}: {1}", buffer, ex.Message));
                 return false;
             }
         }
@@ -98,7 +99,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
                 return api.ReadVariable(varName, bufferIndex, indFrom, indFromTo);
             }
             catch (Exception ex) {
-                logger.Info($"AcsUtil.ReadVar: Exception while accessing '{varName}': " + ex.Message);
+                logger.Error($"AcsUtil.ReadVar: Exception while accessing '{varName}': " + ex.Message);
                 return null;
             }
         }
@@ -115,7 +116,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
                 return api.ReadVariableAsVector(varName, bufferIndex, from1, to1, from2, to2);
             }
             catch (Exception ex) {
-                logger.Info($"AcsUtil.ReadVariableAsVector: Exception while accessing '{varName}': " + ex.Message);
+                logger.Error($"AcsUtil.ReadVariableAsVector: Exception while accessing '{varName}': " + ex.Message);
                 return null;
             }
         }
@@ -132,7 +133,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
                 return api.ReadVariableAsMatrix(varName, bufferIndex, from1, to1, from2, to2);
             }
             catch (Exception ex) {
-                logger.Info($"AcsUtil.ReadVariableAsMatrix: Exception while accessing '{varName}': " + ex.Message);
+                logger.Error($"AcsUtil.ReadVariableAsMatrix: Exception while accessing '{varName}': " + ex.Message);
                 return null;
             }
         }
@@ -148,7 +149,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
                     api.WriteVariable(value, variable, (ProgramBuffer) index, from1, to1, from2, to2);
                 }
                 catch (Exception ex) {
-                    logger.Info($"AcsUtil.WriteVariable: Exception while accessing '{variable}': " + ex.Message);
+                    logger.Error($"AcsUtil.WriteVariable: Exception while accessing '{variable}': " + ex.Message);
                 }
             }
         }
@@ -163,7 +164,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
                     api.WriteVariable(varVal, varName);
                 }
                 catch (Exception ex) {
-                    logger.Info($"AcsUtils.WriteDouble: Exception while accessing '{varName}': " + ex.Message);
+                    logger.Error($"AcsUtils.WriteDouble: Exception while accessing '{varName}': " + ex.Message);
                 }
             }
         }
@@ -178,7 +179,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
                     api.WriteVariable(num, varName, from1: 0, to1: (num.Length - 1));
                 }
                 catch (Exception ex) {
-                    logger.Info($"AcsUtils.WriteVar: Exception while accessing '{varName}': " + ex.Message);
+                    logger.Error($"AcsUtils.WriteVar: Exception while accessing '{varName}': " + ex.Message);
                 }
             }
         }
@@ -194,7 +195,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
                 api.WriteVariable(value, variable, from1: index, to1: index);
             }
             catch (Exception e) {
-                logger.Info($"AcsUtils.WriteGlobalReal: Exception while writing '{variable}': " + e.Message);
+                logger.Error($"AcsUtils.WriteGlobalReal: Exception while writing '{variable}': " + e.Message);
             }
         }
 
@@ -209,7 +210,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
                 return (double) api.ReadVariableAsScalar(variable, ProgramBuffer.ACSC_NONE, index);
             }
             catch (Exception e) {
-                logger.Info($"AcsUtils.ReadGlobalReal: Exception while reading '{variable}': " + e.Message);
+                logger.Error($"AcsUtils.ReadGlobalReal: Exception while reading '{variable}': " + e.Message);
                 return 0.0;
             }
         }
@@ -220,7 +221,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
                 return Convert.ToInt32(ReadVar(variable, indFrom: index, indFromTo: index));
             }
             catch (Exception e) {
-                logger.Info($"AcsUtils.ReadInt: Exception while reading '{variable}', '{index}': " + e.Message);
+                logger.Error($"AcsUtils.ReadInt: Exception while reading '{variable}', '{index}': " + e.Message);
                 return 0;
             }
         }
@@ -285,7 +286,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
                 return ((ulong) (int) api.ReadVariableAsScalar(variable, ProgramBuffer.ACSC_NONE, index) & mask) > 0UL;
             }
             catch (Exception e) {
-                logger.Info($"AcsUtils.Command: Exception accessing '{variable}': " + e.Message);
+                logger.Error($"AcsUtils.Command: Exception accessing '{variable}': " + e.Message);
                 return false;
             }
         }
@@ -296,7 +297,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
                 api.Command(cmd);
             }
             catch (Exception e) {
-                logger.Info($"AcsUtils.Command: Exception sending '{cmd}': " + e.Message);
+                logger.Error($"AcsUtils.Command: Exception sending '{cmd}': " + e.Message);
             }
         }
     }
