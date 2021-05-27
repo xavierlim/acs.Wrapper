@@ -1,7 +1,5 @@
 !SecurePanelBuffer
 
-real Stage_1_LifterOnlyDistance
-real Stage_2_LifterAndClamperDistance
 
 ERROR_CODE = ERROR_SAFE
 
@@ -41,8 +39,7 @@ RET
 
 
 Stage_1_LifterOnly:
-	absPosTemp = RPOS(LIFTER_AXIS)+Stage_1_LifterOnlyDistance
-	ptp (LIFTER_AXIS), absPosTemp	
+	ptp/v (LIFTER_AXIS), Stage_1_LifterOnlyDistance, Stage_1_LifterSpeed
 	till ^AST(LIFTER_AXIS).#MOVE,SecurePanelBuffer_WaitTimeToLifted
 	
 	if (AST(LIFTER_AXIS).#MOVE)
@@ -59,8 +56,7 @@ RET
 
 Stage_2_LifterAndClamper:
 	CALL ClampPanel
-	absPosTemp = RPOS(LIFTER_AXIS)+Stage_2_LifterAndClamperDistance
-	ptp (LIFTER_AXIS), absPosTemp
+	ptp/v (LIFTER_AXIS), Stage_2_LifterAndClamperDistance, Stage_2_LifterSpeed
 	TILL (RearClampUp_Bit & FrontClampUp_Bit),SecurePanelBuffer_ClampLiftDelayTime
 	if (RearClampUp_Bit & FrontClampUp_Bit)
 		till ^AST(LIFTER_AXIS).#MOVE,SecurePanelBuffer_WaitTimeToLifted

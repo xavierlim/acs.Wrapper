@@ -17,11 +17,8 @@ global int LIFTER_AXIS
 global int ECOFFSETM(3)
 
 global int MotionSettlingTimeBeforeScan
-<<<<<<< HEAD:resources/buffers/real/d_buffer.prg
 global int BeforeMoveDelay
 
-=======
->>>>>>> remotes/origin/develop/acs:resources/buffers/simulation/d_buffer.prg
 
 global int SAFE_STATUS = 0,LOADED_STATUS = 1,ERROR_STATUS = 2
 global int PRERELEASED_STATUS = 3 ,RELEASED_STATUS = 4,CHANGING_WIDTH_STATUS = 5
@@ -90,7 +87,6 @@ global int ChangeWidthPanelPresent
 global real PanelLength
 global real DistanceBetweenSlowPositionAndStopSensor = 70
 global real DistanceBetweenSlowPositionAndExitSensor = 50
-<<<<<<< HEAD:resources/buffers/real/d_buffer.prg
 global real DistanceBetweenSlowPositionAndEntrySensor = 50
 global real DistanceBetweenEntryAndStopSensor = 620
 global real DistanceBetweenStopSensorAndExitSensor = 620
@@ -101,11 +97,6 @@ global real Stage_1_LifterSpeed
 global real Stage_2_LifterSpeed
 global real LifterDownSpeed
 
-=======
-global real DistanceBetweenEntryAndStopSensor = 620
-global real DistanceBetweenStopSensorAndExitSensor = 620
-
->>>>>>> remotes/origin/develop/acs:resources/buffers/simulation/d_buffer.prg
 
 global int TowerLightRedFlashing_Bit
 global int TowerLightYellowFlashing_Bit
@@ -171,7 +162,7 @@ global int TowerLightGreen_Bit ! done 0 0.6
 global int TowerLightBlue_Bit ! done 0 0.7
 
 global int TowerLightBuzzer_Bit ! done 0 1.0
-!global int SensorPowerOnOff_Bit !done O 1.1
+global int SensorPowerOnOff_Bit !done O 1.1
 global int StopSensor_Bit ! done 0 1.2
 global int SmemaUpStreamMachineReady_Bit ! done 0 1.3
 global int DownStreamBoardAvailable_Bit ! done 0 1.4

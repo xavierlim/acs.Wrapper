@@ -73,9 +73,6 @@
   <ItemGroup>
     <Compile Include="config\AcsSimConfig.cs" />
     <Compile Include="config\AcsSimHelper.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="config\AcsSimConfig.cs" />
-    <Compile Include="config\AcsSimHelper.cs" />
     <Compile Include="mockery\AcsMocker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="util\AcsUtils.cs" />
@@ -98,13 +95,28 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="README.md" />
-    <Content Include="resources\bufferCopier.py" />
-    <Content Include="resources\buffers\LoadPanelBuffer" />
-    <Content Include="resources\buffers\original_all.prg" />
-    <Content Include="resources\buffers\original_xHoming.prg" />
-    <Content Include="resources\buffers\original_yHoming.prg" />
+    <Content Include="resources\buffers\real\BypassModeBuffer.prg" />
+    <Content Include="resources\buffers\real\ChangeWidthBuffer.prg" />
+    <Content Include="resources\buffers\real\ConveyorHomingBuffer.prg" />
+    <Content Include="resources\buffers\real\d_buffer.prg" />
+    <Content Include="resources\buffers\real\EmergencyStopBuffer.prg" />
+    <Content Include="resources\buffers\real\FreePanelBuffer.prg" />
+    <Content Include="resources\buffers\real\Gantry_X_Homing.prg" />
+    <Content Include="resources\buffers\real\Gantry_Y_Homing.prg" />
+    <Content Include="resources\buffers\real\Gantry_Z_Homing.prg" />
+    <Content Include="resources\buffers\real\InternalErrorExitBuffer.prg" />
+    <Content Include="resources\buffers\real\InternalMachineLoadBuffer.prg" />
+    <Content Include="resources\buffers\real\IO_InitializationBuffer.prg" />
+    <Content Include="resources\buffers\real\LifterHoming.prg" />
+    <Content Include="resources\buffers\real\LoadPanelBuffer.prg" />
+    <Content Include="resources\buffers\real\PowerOnRecoverFromEmergencyStopBuffer.prg" />
+    <Content Include="resources\buffers\real\PreReleasePanelBuffer.prg" />
+    <Content Include="resources\buffers\real\ReleasePanelBuffer.prg" />
     <Content Include="resources\buffers\real\ReloadPanelBuffer.prg" />
-    <Content Include="resources\buffers\ReleasePanelBuffer" />
+    <Content Include="resources\buffers\real\ScanningBuffer.prg" />
+    <Content Include="resources\buffers\real\SecurePanelBuffer.prg" />
+    <Content Include="resources\buffers\real\WidthHoming.prg" />
+    <Content Include="resources\buffers\real\WidthLifterConveyorReset.prg" />
     <Content Include="resources\buffers\simulation\BypassModeBuffer.prg" />
     <Content Include="resources\buffers\simulation\ChangeWidthBuffer.prg" />
     <Content Include="resources\buffers\simulation\ConveyorHomingBuffer.prg" />
@@ -127,29 +139,6 @@
     <Content Include="resources\buffers\simulation\SecurePanelBuffer.prg" />
     <Content Include="resources\buffers\simulation\WidthHoming.prg" />
     <Content Include="resources\buffers\simulation\WidthLifterConveyorReset.prg" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="resources\buffers\real\BypassModeBuffer.prg" />
-    <None Include="resources\buffers\real\ChangeWidthBuffer.prg" />
-    <None Include="resources\buffers\real\ConveyorHomingBuffer.prg" />
-    <None Include="resources\buffers\real\d_buffer.prg" />
-    <None Include="resources\buffers\real\EmergencyStopBuffer.prg" />
-    <None Include="resources\buffers\real\FreePanelBuffer.prg" />
-    <None Include="resources\buffers\real\Gantry_X_Homing.prg" />
-    <None Include="resources\buffers\real\Gantry_Y_Homing.prg" />
-    <None Include="resources\buffers\real\Gantry_Z_Homing.prg" />
-    <None Include="resources\buffers\real\InternalErrorExitBuffer.prg" />
-    <None Include="resources\buffers\real\InternalMachineLoadBuffer.prg" />
-    <None Include="resources\buffers\real\IO_InitializationBuffer.prg" />
-    <None Include="resources\buffers\real\LifterHoming.prg" />
-    <None Include="resources\buffers\real\LoadPanelBuffer.prg" />
-    <None Include="resources\buffers\real\PowerOnRecoverFromEmergencyStopBuffer.prg" />
-    <None Include="resources\buffers\real\PreReleasePanelBuffer.prg" />
-    <None Include="resources\buffers\real\ReleasePanelBuffer.prg" />
-    <None Include="resources\buffers\real\ScanningBuffer.prg" />
-    <None Include="resources\buffers\real\SecurePanelBuffer.prg" />
-    <None Include="resources\buffers\real\WidthHoming.prg" />
-    <None Include="resources\buffers\real\WidthLifterConveyorReset.prg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

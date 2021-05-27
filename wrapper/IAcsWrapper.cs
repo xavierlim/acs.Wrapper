@@ -64,12 +64,12 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         event Action<GantryAxes> AxisHomingBegin;
         event Action<GantryAxes, bool> AxisHomingEnd;
         event Action ScanningBegin;
-        event Action HardwareNotifySingleMoveMotionCompleteRecvd;
-        event Action HardwareNotifySingleMovePSXAckRecvd;
+        event Action HardwareNotifySingleMoveMotionCompleteReceived;
+        event Action HardwareNotifySingleMovePSXAckReceived;
         event Action<int> ScanningIndexChange;
         event Action ScanningEnd;
-        void Connect(string ip);
-        bool DisConnect();
+        void Connect();
+        bool Disconnect();
         bool IsIdle(GantryAxes axis);
         bool Enabled(GantryAxes axis);
         bool Homed(GantryAxes axis);
@@ -77,10 +77,10 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         double Position(GantryAxes axis);
         double Velocity(GantryAxes axis);
         bool AtHomeSensor(GantryAxes axis);
-        bool AtPositiveHWLimit(GantryAxes axis);
-        bool AtNegativeHWLimit(GantryAxes axis);
-        bool AtPositiveSWLimit(GantryAxes axis);
-        bool AtNegativeSWLimit(GantryAxes axis);
+        bool AtPositiveHwLimit(GantryAxes axis);
+        bool AtNegativeHwLimit(GantryAxes axis);
+        bool AtPositiveSwLimit(GantryAxes axis);
+        bool AtNegativeSwLimit(GantryAxes axis);
 
         bool PrepareScanning(
             List<IPvTuple3D> pvTuple3DList,
@@ -90,7 +90,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             int triggerFromCameraContinueBit,
             int triggerFromCameraTimeOut);
 
-        bool StartScanning();
+        bool StartScanning(AxesScanParameters scanParameters);
         bool StartConveyorBuffer(AcsBuffers buffer);
         bool SetReleaseCommandReceived(bool commandReceived);
         bool InitConveyorBufferParameters(BypassModeBufferParameters parameters);
@@ -138,7 +138,6 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         bool Stop(GantryAxes axis);
         bool Abort(GantryAxes axis);
         void SetRPos(GantryAxes axis, double pos);
-        void ReadAxesSettignsFromConfig();
         void StartPanelLoad(LoadPanelBufferParameters parameters, double panelLength, int timeout);
         void StartPanelReload(ReloadPanelBufferParameters parameters, double panelLength, int timeout);
         void StopPanelLoad();
@@ -169,6 +168,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         void SetTowerLightBuzzer(AcsIndicatorState state);
         void SetStartButtonIndicator(AcsIndicatorState state);
         void SetStopButtonIndicator(AcsIndicatorState state);
+        void SetMachineReady();
+        void ResetMachineReady();
+
         bool IsConveyorAxisEnable();
         bool IsConveyorWidthAxisEnable();
         void HomeConveyorWidthAxis(HomeConveyorWidthParameters parameter);

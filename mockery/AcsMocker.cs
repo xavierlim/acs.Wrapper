@@ -37,16 +37,16 @@ namespace CO.Systems.Services.Acs.AcsWrapper.mockery
         public event Action<GantryAxes> AxisHomingBegin;
         public event Action<GantryAxes, bool> AxisHomingEnd;
         public event Action ScanningBegin;
-        public event Action HardwareNotifySingleMoveMotionCompleteRecvd;
-        public event Action HardwareNotifySingleMovePSXAckRecvd;
+        public event Action HardwareNotifySingleMoveMotionCompleteReceived;
+        public event Action HardwareNotifySingleMovePSXAckReceived;
         public event Action<int> ScanningIndexChange;
         public event Action ScanningEnd;
-        public void Connect(string ip)
+        public void Connect()
         {
             throw new NotImplementedException();
         }
 
-        public bool DisConnect()
+        public bool Disconnect()
         {
             throw new NotImplementedException();
         }
@@ -86,22 +86,22 @@ namespace CO.Systems.Services.Acs.AcsWrapper.mockery
             throw new NotImplementedException();
         }
 
-        public bool AtPositiveHWLimit(GantryAxes axis)
+        public bool AtPositiveHwLimit(GantryAxes axis)
         {
             throw new NotImplementedException();
         }
 
-        public bool AtNegativeHWLimit(GantryAxes axis)
+        public bool AtNegativeHwLimit(GantryAxes axis)
         {
             throw new NotImplementedException();
         }
 
-        public bool AtPositiveSWLimit(GantryAxes axis)
+        public bool AtPositiveSwLimit(GantryAxes axis)
         {
             throw new NotImplementedException();
         }
 
-        public bool AtNegativeSWLimit(GantryAxes axis)
+        public bool AtNegativeSwLimit(GantryAxes axis)
         {
             throw new NotImplementedException();
         }
@@ -112,7 +112,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.mockery
             throw new NotImplementedException();
         }
 
-        public bool StartScanning()
+        public bool StartScanning(AxesScanParameters scanParameters)
         {
             throw new NotImplementedException();
         }
@@ -282,11 +282,6 @@ namespace CO.Systems.Services.Acs.AcsWrapper.mockery
             throw new NotImplementedException();
         }
 
-        public void ReadAxesSettignsFromConfig()
-        {
-            throw new NotImplementedException();
-        }
-
         public void StartPanelLoad(LoadPanelBufferParameters parameters,
             double panelLength,
             int timeout)
@@ -415,6 +410,16 @@ namespace CO.Systems.Services.Acs.AcsWrapper.mockery
         }
 
         public void SetStopButtonIndicator(AcsIndicatorState state)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetMachineReady()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ResetMachineReady()
         {
             throw new NotImplementedException();
         }

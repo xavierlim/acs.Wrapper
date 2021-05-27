@@ -36,11 +36,22 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
         public double Decel { set; get; }
     }
 
-    public class AxesMoveParameters
+    /// <summary>
+    /// used to pass gantry motion profiles (acc, dec, etc.) before starting scanning buffer
+    /// </summary>
+    public class AxesScanParameters
     {
+        public AxisScanParameters AxisX { get; set; }
+        public AxisScanParameters AxisY { get; set; }
+        public AxisScanParameters AxisZ { get; set; }
+    }
 
-        public AxisMoveParameters AxisX { get; set; }
-        public AxisMoveParameters AxisY { get; set; }
-        public AxisMoveParameters AxisZ { get; set; }
+    /// <summary>
+    /// used for <see cref="AxesScanParameters"/>
+    /// </summary>
+    public class AxisScanParameters
+    {
+        public double Acceleration { get; set; }
+        public double Deceleration { get; set; }
     }
 }

@@ -23,7 +23,7 @@ ECOUT/b(3174,TowerLightGreen_Bit)!0 0.6
 ECOUT/b(3175,TowerLightBlue_Bit)!0 0.7
 
 ECOUT/b(3176,TowerLightBuzzer_Bit)!0 1.0
-!ECOUT/b(3177,SensorPowerOnOff_Bit)!0 1.1
+ECOUT/b(3177,SensorPowerOnOff_Bit)!0 1.1
 ECOUT/b(3178,StopSensor_Bit)!0 1.2
 ECOUT/b(3179,SmemaUpStreamMachineReady_Bit)!0 1.3
 ECOUT/b(3180,DownStreamBoardAvailable_Bit)!0 1.4
