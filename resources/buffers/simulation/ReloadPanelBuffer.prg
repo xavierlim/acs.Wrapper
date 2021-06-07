@@ -17,6 +17,10 @@ ReloadPanelSlowSensorError = 704
 WAIT 3000
 ERROR_CODE = ERROR_SAFE
 CURRENT_STATUS = LOADED_STATUS
+RearClampUp_Bit = 1
+FrontClampUp_Bit = 1
+RearClampDown_Bit = 0
+FrontClampDown_Bit = 0
 STOP
 
 
