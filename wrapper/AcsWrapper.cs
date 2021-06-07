@@ -91,21 +91,21 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public event Action<GantryAxes, bool> AtHomeSensorChanged;
 
-        public event Action<GantryAxes, bool> AtPositiveHWLimitChanged;
+        public event Action<GantryAxes, bool> AtPositiveHwLimitChanged;
 
-        public event Action<GantryAxes, bool> AtNegativeHWLimitChanged;
+        public event Action<GantryAxes, bool> AtNegativeHwLimitChanged;
 
-        public event Action<GantryAxes, bool> AtPositiveSWLimitChanged;
+        public event Action<GantryAxes, bool> AtPositiveSwLimitChanged;
 
-        public event Action<GantryAxes, bool> AtNegativeSWLimitChanged;
+        public event Action<GantryAxes, bool> AtNegativeSwLimitChanged;
 
         public event Action<GantryAxes> MovementBegin;
 
         public event Action<GantryAxes, bool> MovementEnd;
 
-        public event Action<GantryAxes> AxisHomingBegin;
+        public event Action<GantryAxes> OnAxisHomingBegin;
 
-        public event Action<GantryAxes, bool> AxisHomingEnd;
+        public event Action<GantryAxes, bool> OnAxisHomingEnd;
 
         public event Action ScanningBegin;
 
@@ -117,37 +117,37 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public event Action ScanningEnd;
 
-        public event Action<ConveyorAxes, bool> ConveyorAxisIdleChanged;
+        public event Action<ConveyorAxes, bool> OnConveyorAxisIdleChanged;
 
-        public event Action<ConveyorAxes, bool> ConveyorAxisEnabledChanged;
+        public event Action<ConveyorAxes, bool> OnConveyorAxisEnabledChanged;
 
-        public event Action<ConveyorAxes, bool> ConveyorAxisReadyChanged;
+        public event Action<ConveyorAxes, bool> OnConveyorAxisReadyChanged;
 
-        public event Action<ConveyorAxes, double> ConveyorAxisPositionUpdated;
+        public event Action<ConveyorAxes, double> OnConveyorAxisPositionUpdated;
 
-        public event Action<ConveyorAxes, double> ConveyorAxisVelocityUpdated;
+        public event Action<ConveyorAxes, double> OnConveyorAxisVelocityUpdated;
 
-        public event Action<ConveyorAxes, bool> ConveyorAxisStopDone;
+        public event Action<ConveyorAxes, bool> OnConveyorAxisStopDone;
 
-        public event Action<ConveyorAxes, bool> ConveyorAxisAbortDone;
+        public event Action<ConveyorAxes, bool> OnConveyorAxisAbortDone;
 
-        public event Action<ConveyorAxes, bool> ConveyorAxisAtHomeSensorChanged;
+        public event Action<ConveyorAxes, bool> OnConveyorAxisAtHomeSensorChanged;
 
-        public event Action<ConveyorAxes, bool> ConveyorAxisAtPositiveHwLimitChanged;
+        public event Action<ConveyorAxes, bool> OnConveyorAxisAtPositiveHwLimitChanged;
 
-        public event Action<ConveyorAxes, bool> ConveyorAxisAtNegativeHwLimitChanged;
+        public event Action<ConveyorAxes, bool> OnConveyorAxisAtNegativeHwLimitChanged;
 
-        public event Action<ConveyorAxes, bool> ConveyorAxisAtPositiveSwLimitChanged;
+        public event Action<ConveyorAxes, bool> OnConveyorAxisAtPositiveSwLimitChanged;
 
-        public event Action<ConveyorAxes, bool> ConveyorAxisAtNegativeSwLimitChanged;
+        public event Action<ConveyorAxes, bool> OnConveyorAxisAtNegativeSwLimitChanged;
 
-        public event Action<ConveyorAxes> ConveyorAxisMovementBegin;
+        public event Action<ConveyorAxes> OnConveyorAxisMovementBegin;
 
-        public event Action<ConveyorAxes, bool> ConveyorAxisMovementEnd;
+        public event Action<ConveyorAxes, bool> OnConveyorAxisMovementEnd;
 
-        public event Action<ConveyorAxes> ConveyorAxisHomingBegin;
+        public event Action<ConveyorAxes> OnConveyorAxisHomingBegin;
 
-        public event Action<ConveyorAxes, bool> ConveyorAxisHomingEnd;
+        public event Action<ConveyorAxes, bool> OnConveyorAxisHomingEnd;
 
         public void Connect()
         {
@@ -838,7 +838,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                     initParameters1 =
                         initParameters.Find(item => item.Axis == GantryAxes.Z);
                 }
-                catch (Exception ex) {
+                catch (Exception) {
                     return false;
                 }
 
@@ -848,12 +848,12 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             List<Task> taskList = new List<Task>();
             foreach (KeyValuePair<GantryAxes, AcsAxis> keyValuePair in axesCache) {
                 KeyValuePair<GantryAxes, AcsAxis> item = keyValuePair;
-                AxisInitParameters axisInitParams = null;
+                AxisInitParameters axisInitParams;
                 try {
                     axisInitParams =
                         initParameters.Find(item2 => item2.Axis == item.Key);
                 }
-                catch (Exception ex) {
+                catch (Exception) {
                     continue;
                 }
 
@@ -1017,11 +1017,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public bool Abort(GantryAxes axis)
         {
-            logger.Info(string.Format("Abort(axis={0})", axis), 1476, nameof(Abort),
-                "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+            logger.Info(string.Format("Abort(axis={0})", axis));
             if (!IsConnected) {
-                logger.Info("Controller not connected", 1479, nameof(Abort),
-                    "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+                logger.Info("Controller not connected");
                 return false;
             }
 
@@ -1034,12 +1032,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public void SetRPos(GantryAxes axis, double pos)
         {
-            logger.Info(string.Format("SetRPos(axis={0},pos={1})", axis, pos), 1499,
-                nameof(SetRPos),
-                "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+            logger.Info(string.Format("SetRPos(axis={0},pos={1})", axis, pos));
             if (!IsConnected) {
-                logger.Info("Controller not connected", 1502, nameof(SetRPos),
-                    "C:\\Users\\Garry.han\\CyberOptics Gantry\\2nd edit\\ExternalHardware\\AcsWrapper\\AcsWrapper.cs");
+                logger.Info("Controller not connected");
             }
             else {
                 if (axesCache.ContainsKey(axis))
@@ -1050,11 +1045,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public void ResetConveyorAxes()
         {
-            logger.Info("Reset()", 1877, nameof(ResetConveyorAxes),
-                "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
+            logger.Info("Reset()");
             if (!IsConnected) {
-                logger.Info("Controller not connected", 1880, nameof(ResetConveyorAxes),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
+                logger.Info("Controller not connected");
             }
             else {
                 foreach (KeyValuePair<ConveyorAxes, AcsAxis> keyValuePair in conveyorAxesCache) {
@@ -1066,11 +1059,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public void ClearError(ConveyorAxes axis)
         {
-            logger.Info(string.Format("ClearError(axis = {0})", axis), 1896, nameof(ClearError),
-                "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
+            logger.Info(string.Format("ClearError(axis = {0})", axis));
             if (!IsConnected) {
-                logger.Info("Controller not connected", 1899, nameof(ClearError),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
+                logger.Info("Controller not connected");
             }
             else {
                 if (conveyorAxesCache.ContainsKey(axis))
@@ -1094,11 +1085,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public bool Disable(ConveyorAxes axis)
         {
-            logger.Info(string.Format("Disable(axis = {0})", axis), 1936, nameof(Disable),
-                "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
+            logger.Info(string.Format("Disable(axis = {0})", axis));
             if (!IsConnected) {
-                logger.Info("Controller not connected", 1939, nameof(Disable),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
+                logger.Info("Controller not connected");
                 return false;
             }
 
@@ -1109,12 +1098,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public bool ReloadConfigParameters(ConveyorAxes axis)
         {
-            logger.Info(string.Format("ReloadConfigParameters(axis = {0})", axis), 1952,
-                nameof(ReloadConfigParameters),
-                "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
+            logger.Info(string.Format("ReloadConfigParameters(axis = {0})", axis));
             if (!IsConnected) {
-                logger.Info("Controller not connected", 1955, nameof(ReloadConfigParameters),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
+                logger.Info("Controller not connected");
                 return false;
             }
 
@@ -1126,11 +1112,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public bool InitConveyorAxes()
         {
-            logger.Info("Init()", 1977, nameof(InitConveyorAxes),
-                "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
+            logger.Info("Init()");
             if (!IsConnected) {
-                logger.Info("Controller not connected", 1980, nameof(InitConveyorAxes),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
+                logger.Info("Controller not connected");
                 return false;
             }
 
@@ -1159,25 +1143,21 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public bool MoveAbsolute(List<ConveyorAxesMoveParameters> axesToMove)
         {
-            logger.Info("MoveAbsolute(List<ConveyorAxesMoveParameters> axesToMove)", 2035, nameof(MoveAbsolute),
-                "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
+            logger.Info("MoveAbsolute(List<ConveyorAxesMoveParameters> axesToMove)");
             if (!IsConnected) {
-                logger.Info("Controller not connected", 2038, nameof(MoveAbsolute),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
+                logger.Info("Controller not connected");
                 return false;
             }
 
             if (axesToMove == null || axesToMove.Count == 0) {
                 if (axesToMove == null)
-                    logger.Info("axesToMove = null", 2045, nameof(MoveAbsolute),
-                        "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
+                    logger.Info("axesToMove = null");
                 else
-                    logger.Info("axesToMove.Count = 0", 2047, nameof(MoveAbsolute),
-                        "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
+                    logger.Info("axesToMove.Count = 0");
                 return false;
             }
 
-            List<Task> taskList = new List<Task>();
+            var taskList = new List<Task>();
             foreach (ConveyorAxesMoveParameters axesMoveParameters in axesToMove) {
                 ConveyorAxesMoveParameters axisToMove = axesMoveParameters;
                 taskList.Add(Task.Run((Action) (() => MoveAbsolute(axisToMove.Axis, axisToMove.TargetPos,
@@ -1188,20 +1168,12 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             return true;
         }
 
-        public bool MoveAbsolute(
-            ConveyorAxes axis,
-            double targetPos,
-            double vel = 0.0,
-            double acc = 0.0,
-            double dec = 0.0)
+        public bool MoveAbsolute(ConveyorAxes axis, double targetPos, double vel = 0.0, double acc = 0.0, double dec = 0.0)
         {
-            logger.Info(
-                string.Format("MoveAbsolute(axis = {0},targetPos= {1}, vel= {2}, acc= {3}, dec= {4})", axis,
-                    targetPos, vel, acc, dec), 2076, nameof(MoveAbsolute),
-                "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
+            logger.Info(string.Format("MoveAbsolute(axis = {0},targetPos= {1}, vel= {2}, acc= {3}, dec= {4})", axis,
+                targetPos, vel, acc, dec));
             if (!IsConnected) {
-                logger.Info("Controller not connected", 2079, nameof(MoveAbsolute),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
+                logger.Info("Controller not connected");
                 return false;
             }
 
@@ -1212,11 +1184,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public bool MoveRelative(List<ConveyorAxesMoveParameters> axesToMove)
         {
-            logger.Info("MoveRelative(List<AxisMoveParameters> axesToMove)", 2102, nameof(MoveRelative),
-                "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
+            logger.Info("MoveRelative(List<AxisMoveParameters> axesToMove)");
             if (!IsConnected) {
-                logger.Info("Controller not connected", 2105, nameof(MoveRelative),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
+                logger.Info("Controller not connected");
                 return false;
             }
 
@@ -1233,20 +1203,13 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             return true;
         }
 
-        public bool MoveRelative(
-            ConveyorAxes axis,
-            double relativePosition,
-            double vel = 0.0,
-            double acc = 0.0,
+        public bool MoveRelative(ConveyorAxes axis, double relativePosition, double vel = 0.0, double acc = 0.0,
             double dec = 0.0)
         {
-            logger.Info(
-                string.Format("MoveRelative(axis = {0},relativePosition= {1}, vel= {2}, acc= {3}, dec= {4})",
-                    axis, relativePosition, vel, acc, dec), 2137,
-                nameof(MoveRelative), "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
+            logger.Info(string.Format("MoveRelative(axis = {0},relativePosition= {1}, vel= {2}, acc= {3}, dec= {4})",
+                axis, relativePosition, vel, acc, dec));
             if (!IsConnected) {
-                logger.Info("Controller not connected", 2140, nameof(MoveRelative),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
+                logger.Info("Controller not connected");
                 return false;
             }
 
@@ -1257,13 +1220,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public bool Jog(ConveyorAxes axis, double vel = 0.0, double acc = 0.0, double dec = 0.0)
         {
-            logger.Info(
-                string.Format("Jog(axis = {0}, vel= {1}, acc= {2}, dec= {3})", axis, vel,
-                    acc, dec), 2160, nameof(Jog),
-                "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
+            logger.Info(string.Format("Jog(axis = {0}, vel= {1}, acc= {2}, dec= {3})", axis, vel, acc, dec));
             if (!IsConnected) {
-                logger.Info("Controller not connected", 2163, nameof(Jog),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
+                logger.Info("Controller not connected");
                 return false;
             }
 
@@ -1274,11 +1233,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public bool StopAllConveyorAxes()
         {
-            logger.Info("StopAll()", 2179, nameof(StopAllConveyorAxes),
-                "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
+            logger.Info("StopAll()");
             if (!IsConnected) {
-                logger.Info("Controller not connected", 2182, nameof(StopAllConveyorAxes),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
+                logger.Info("Controller not connected");
                 return false;
             }
 
@@ -1296,11 +1253,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public bool Stop(ConveyorAxes axis)
         {
-            logger.Info(string.Format("Stop(axis={0})", axis), 2210, nameof(Stop),
-                "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
+            logger.Info(string.Format("Stop(axis={0})", axis));
             if (!IsConnected) {
-                logger.Info("Controller not connected", 2213, nameof(Stop),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
+                logger.Info("Controller not connected");
                 return false;
             }
 
@@ -1311,11 +1266,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public bool Abort(ConveyorAxes axis)
         {
-            logger.Info(string.Format("Abort(axis={0})", axis), 2231, nameof(Abort),
-                "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
+            logger.Info(string.Format("Abort(axis={0})", axis));
             if (!IsConnected) {
-                logger.Info("Controller not connected", 2234, nameof(Abort),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
+                logger.Info("Controller not connected");
                 return false;
             }
 
@@ -1327,11 +1280,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public void SetRPos(ConveyorAxes axis, double pos)
         {
-            logger.Info(string.Format("SetRPos(axis={0},pos={1})", axis, pos), 2254,
-                nameof(SetRPos), "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
+            logger.Info(string.Format("SetRPos(axis={0},pos={1})", axis, pos));
             if (!IsConnected) {
-                logger.Info("Controller not connected", 2257, nameof(SetRPos),
-                    "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
+                logger.Info("Controller not connected");
             }
             else {
                 if (conveyorAxesCache.ContainsKey(axis))
@@ -1382,17 +1333,17 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                     if (!acsUtils.IsProgramRunning(ProgramBuffer.ACSC_BUFFER_9)) {
                         isScanningBufferRun = false;
                         ScanningEnd?.Invoke();
-                        foreach (KeyValuePair<GantryAxes, AcsAxis> keyValuePair in axesCache) {
+                        foreach (var keyValuePair in axesCache) {
                             keyValuePair.Value.ScanningBufferRun = false;
                         }
                     }
                 }
 
                 if (--refreshCounter < 0) {
-                    foreach (KeyValuePair<GantryAxes, AcsAxis> keyValuePair in axesCache) {
+                    foreach (var keyValuePair in axesCache) {
                         keyValuePair.Value.GetDataFromController();
                     }
-                    foreach (KeyValuePair<ConveyorAxes, AcsAxis> keyValuePair in conveyorAxesCache) {
+                    foreach (var keyValuePair in conveyorAxesCache) {
                         keyValuePair.Value.GetDataFromController();
                     }
                     refreshCounter = DataRefreshCounter;
@@ -1413,6 +1364,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             api.EnableEvent(Interrupts.ACSC_INTR_MOTOR_FAILURE);
             api.EnableEvent(Interrupts.ACSC_INTR_SYSTEM_ERROR);
             api.EnableEvent(Interrupts.ACSC_INTR_COMMAND);
+
             api.EMERGENCY += ApiEmergency;
             api.SYSTEMERROR += ApiSystemError;
             api.MOTORFAILURE += ApiMotorFailure;
@@ -1424,18 +1376,22 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         private void ApiMessage(ulong param)
         {
+            logger.Info($"AcsWrapper.ApiMessage: {param}");
         }
 
         private void ApiEtherCatError(ulong param)
         {
+            logger.Info($"AcsWrapper.ApiEtherCatError: {param}");
         }
 
         private void ApiMotionFailure(AxisMasks param)
         {
+            logger.Info($"AcsWrapper.ApiMotionFailure: {param}");
         }
 
         private void ApiMotorFailure(AxisMasks param)
         {
+            logger.Info($"AcsWrapper.ApiMotorFailure: {param}");
         }
 
         private void ApiSystemError(ulong param)
@@ -1455,10 +1411,12 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         private void ApiEmergency(ulong param)
         {
+            logger.Info($"AcsWrapper.ApiEmergency: {param}");
         }
 
         private void ApiAcsplProgramEx(ulong param)
         {
+            logger.Info($"AcsWrapper.ApiAcsplProgramEx: {param}");
         }
 
         private void InitAxesCache()
@@ -1468,22 +1426,22 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 var acsAxis = new AcsAxis(api, acsUtils, gantryAxes, GetAcsAxisIndex(gantryAxes), robotSettings);
 
                 axesCache[gantryAxes] = acsAxis;
-                acsAxis.IdleChanged += axisIdleChanged;
-                acsAxis.EnabledChanged += axisEnabledChanged;
-                acsAxis.ReadyChanged += axisReadyChanged;
-                acsAxis.PositionUpdated += axisPositionUpdated;
-                acsAxis.VelocityUpdated += axisVelocityUpdated;
-                acsAxis.MovementBegin += axisMovementBegin;
-                acsAxis.MovementEnd += axisMovementEnd;
-                acsAxis.StopDone += axisStopDone;
-                acsAxis.AbortDone += axisAbortDone;
-                acsAxis.AtHomeSensorChanged += axisAtHomeSensorChanged;
-                acsAxis.AtPositiveHwLimitChanged += axisAtPositiveHWLimitChanged;
-                acsAxis.AtNegativeHwLimitChanged += axisAtNegativeHWLimitChanged;
-                acsAxis.AtPositiveSwLimitChanged += axisAtPositiveSWLimitChanged;
-                acsAxis.AtNegativeSwLimitChanged += axisAtNegativeSWLimitChanged;
-                acsAxis.AxisHomingBegin += Axis_AxisHomingBegin;
-                acsAxis.AxisHomingEnd += Axis_AxisHomingEnd;
+                acsAxis.IdleChanged += AxisIdleChanged;
+                acsAxis.EnabledChanged += AxisEnabledChanged;
+                acsAxis.ReadyChanged += AxisReadyChanged;
+                acsAxis.PositionUpdated += AxisPositionUpdated;
+                acsAxis.VelocityUpdated += AxisVelocityUpdated;
+                acsAxis.MovementBegin += AxisMovementBegin;
+                acsAxis.MovementEnd += AxisMovementEnd;
+                acsAxis.StopDone += AxisStopDone;
+                acsAxis.AbortDone += AxisAbortDone;
+                acsAxis.AtHomeSensorChanged += AxisAtHomeSensorChanged;
+                acsAxis.AtPositiveHwLimitChanged += AxisAtPositiveHwLimitChanged;
+                acsAxis.AtNegativeHwLimitChanged += AxisAtNegativeHwLimitChanged;
+                acsAxis.AtPositiveSwLimitChanged += AxisAtPositiveSwLimitChanged;
+                acsAxis.AtNegativeSwLimitChanged += AxisAtNegativeSwLimitChanged;
+                acsAxis.AxisHomingBegin += AxisHomingBegin;
+                acsAxis.AxisHomingEnd += AxisHomingEnd;
 
                 if (acsAxis.AcsAxisId >= Axis.ACSC_AXIS_0) {
                     api.Halt(acsAxis.AcsAxisId);
@@ -1498,22 +1456,22 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 var acsAxis = new AcsAxis(api, acsUtils, conveyorAxes, GetAcsAxisIndex(conveyorAxes));
 
                 conveyorAxesCache[conveyorAxes] = acsAxis;
-                acsAxis.IdleChanged += conveyorAxisIdleChanged;
-                acsAxis.EnabledChanged += conveyorAxisEnabledChanged;
-                acsAxis.ReadyChanged += conveyorAxisReadyChanged;
-                acsAxis.PositionUpdated += conveyorAxisPositionUpdated;
-                acsAxis.VelocityUpdated += conveyorAxisVelocityUpdated;
-                acsAxis.MovementBegin += conveyorAxisMovementBegin;
-                acsAxis.MovementEnd += conveyorAxisMovementEnd;
-                acsAxis.StopDone += conveyorAxisStopDone;
-                acsAxis.AbortDone += conveyorAxisAbortDone;
-                acsAxis.AtHomeSensorChanged += conveyorAxisAtHomeSensorChanged;
-                acsAxis.AtPositiveHwLimitChanged += conveyorAxisAtPositiveHWLimitChanged;
-                acsAxis.AtNegativeHwLimitChanged += conveyorAxisAtNegativeHWLimitChanged;
-                acsAxis.AtPositiveSwLimitChanged += conveyorAxisAtPositiveSWLimitChanged;
-                acsAxis.AtNegativeSwLimitChanged += conveyorAxisAtNegativeSWLimitChanged;
-                acsAxis.AxisHomingBegin += conveyorAxis_AxisHomingBegin;
-                acsAxis.AxisHomingEnd += conveyorAxis_AxisHomingEnd;
+                acsAxis.IdleChanged += ConveyorAxisIdleChanged;
+                acsAxis.EnabledChanged += ConveyorAxisEnabledChanged;
+                acsAxis.ReadyChanged += ConveyorAxisReadyChanged;
+                acsAxis.PositionUpdated += ConveyorAxisPositionUpdated;
+                acsAxis.VelocityUpdated += ConveyorAxisVelocityUpdated;
+                acsAxis.MovementBegin += ConveyorAxisMovementBegin;
+                acsAxis.MovementEnd += ConveyorAxisMovementEnd;
+                acsAxis.StopDone += ConveyorAxisStopDone;
+                acsAxis.AbortDone += ConveyorAxisAbortDone;
+                acsAxis.AtHomeSensorChanged += ConveyorAxisAtHomeSensorChanged;
+                acsAxis.AtPositiveHwLimitChanged += ConveyorAxisAtPositiveHwLimitChanged;
+                acsAxis.AtNegativeHwLimitChanged += ConveyorAxisAtNegativeHwLimitChanged;
+                acsAxis.AtPositiveSwLimitChanged += ConveyorAxisAtPositiveSwLimitChanged;
+                acsAxis.AtNegativeSwLimitChanged += ConveyorAxisAtNegativeSwLimitChanged;
+                acsAxis.AxisHomingBegin += ConveyorAxisHomingBegin;
+                acsAxis.AxisHomingEnd += ConveyorAxisHomingEnd;
 
                 if (acsAxis.AcsAxisId >= Axis.ACSC_AXIS_0) {
                     api.Halt(acsAxis.AcsAxisId);
@@ -1589,367 +1547,216 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         private bool TerminateOldConnections()
         {
-            string fileName = Path.GetFileName(Process.GetCurrentProcess().MainModule.FileName);
             try {
-                ACSC_CONNECTION_DESC[] connectionsList = api.GetConnectionsList();
+                var processModule = Process.GetCurrentProcess().MainModule;
+                if (processModule == null) {
+                    return false;
+                }
+
+                string fileName = Path.GetFileName(processModule.FileName);
+                var connectionsList = api.GetConnectionsList();
                 for (int index = 0; index < connectionsList.Length; ++index) {
                     if (connectionsList[index].Application.Contains(fileName))
                         api.TerminateConnection(connectionsList[index]);
                 }
             }
-            catch (Exception ex) {
+            catch (Exception) {
                 return false;
             }
 
             return true;
         }
 
-        private void axisIdleChanged(int axis, bool isIdle)
+        private void AxisIdleChanged(int axis, bool isIdle)
         {
-            logger.Info(string.Format("axisIdleChanged {0} {1}", (GantryAxes) axis, isIdle),
-                3053, nameof(axisIdleChanged),
-                "C:\\Users\\Garry\\Desktop\\ExternalHardware - 19032021\\AcsWrapper\\AcsWrapper.cs");
-            Action<GantryAxes, bool> idleChanged = IdleChanged;
-            if (idleChanged == null)
-                return;
-            idleChanged((GantryAxes) axis, isIdle);
+            logger.Info(string.Format("axisIdleChanged {0} {1}", (GantryAxes) axis, isIdle));
+            IdleChanged?.Invoke((GantryAxes) axis, isIdle);
         }
 
-        private void axisEnabledChanged(int axis, bool isEnabled)
+        private void AxisEnabledChanged(int axis, bool isEnabled)
         {
-            logger.Info(
-                string.Format("axisEnabledChanged {0} {1}", (GantryAxes) axis, isEnabled), 3058,
-                nameof(axisEnabledChanged),
-                "C:\\Users\\Garry\\Desktop\\ExternalHardware - 19032021\\AcsWrapper\\AcsWrapper.cs");
-            Action<GantryAxes, bool> enabledChanged = EnabledChanged;
-            if (enabledChanged == null)
-                return;
-            enabledChanged((GantryAxes) axis, isEnabled);
+            logger.Info(string.Format("axisEnabledChanged {0} {1}", (GantryAxes) axis, isEnabled));
+            EnabledChanged?.Invoke((GantryAxes) axis, isEnabled);
         }
 
-        private void axisReadyChanged(int axis, bool isReady)
+        private void AxisReadyChanged(int axis, bool isReady)
         {
-            logger.Info(string.Format("axisReadyChanged {0} {1}", (GantryAxes) axis, isReady),
-                3063, nameof(axisReadyChanged),
-                "C:\\Users\\Garry\\Desktop\\ExternalHardware - 19032021\\AcsWrapper\\AcsWrapper.cs");
-            Action<GantryAxes, bool> readyChanged = ReadyChanged;
-            if (readyChanged == null)
-                return;
-            readyChanged((GantryAxes) axis, isReady);
+            logger.Info(string.Format("axisReadyChanged {0} {1}", (GantryAxes) axis, isReady));
+            ReadyChanged?.Invoke((GantryAxes) axis, isReady);
         }
 
-        private void axisPositionUpdated(int axis, double pos)
+        private void AxisPositionUpdated(int axis, double pos)
         {
-            Action<GantryAxes, double> positionUpdated = PositionUpdated;
-            if (positionUpdated == null)
-                return;
-            positionUpdated((GantryAxes) axis, pos);
+            PositionUpdated?.Invoke((GantryAxes) axis, pos);
         }
 
-        private void axisVelocityUpdated(int axis, double vel)
+        private void AxisVelocityUpdated(int axis, double vel)
         {
-            Action<GantryAxes, double> velocityUpdated = VelocityUpdated;
-            if (velocityUpdated == null)
-                return;
-            velocityUpdated((GantryAxes) axis, vel);
+            VelocityUpdated?.Invoke((GantryAxes) axis, vel);
         }
 
-        private void axisMovementBegin(int axis)
+        private void AxisMovementBegin(int axis)
         {
-            logger.Info(string.Format("Axis_MovementBegin {0} ", (GantryAxes) axis), 3079,
-                nameof(axisMovementBegin),
-                "C:\\Users\\Garry\\Desktop\\ExternalHardware - 19032021\\AcsWrapper\\AcsWrapper.cs");
-            Action<GantryAxes> movementBegin = MovementBegin;
-            if (movementBegin == null)
-                return;
-            movementBegin((GantryAxes) axis);
+            logger.Info(string.Format("Axis_MovementBegin {0} ", (GantryAxes) axis));
+            MovementBegin?.Invoke((GantryAxes) axis);
         }
 
-        private void axisMovementEnd(int axis, bool res)
+        private void AxisMovementEnd(int axis, bool res)
         {
-            logger.Info(string.Format("axisMovementEnd {0} {1}", (GantryAxes) axis, res), 3084,
-                nameof(axisMovementEnd),
-                "C:\\Users\\Garry\\Desktop\\ExternalHardware - 19032021\\AcsWrapper\\AcsWrapper.cs");
-            Action<GantryAxes, bool> movementEnd = MovementEnd;
-            if (movementEnd == null)
-                return;
-            movementEnd((GantryAxes) axis, res);
+            logger.Info(string.Format("axisMovementEnd {0} {1}", (GantryAxes) axis, res));
+            MovementEnd?.Invoke((GantryAxes) axis, res);
         }
 
-        private void axisStopDone(int axis, bool res)
+        private void AxisStopDone(int axis, bool res)
         {
-            logger.Info(string.Format("axisStopDone {0} {1}", (GantryAxes) axis, res), 3089,
-                nameof(axisStopDone),
-                "C:\\Users\\Garry\\Desktop\\ExternalHardware - 19032021\\AcsWrapper\\AcsWrapper.cs");
-            Action<GantryAxes, bool> stopDone = StopDone;
-            if (stopDone == null)
-                return;
-            stopDone((GantryAxes) axis, res);
+            logger.Info(string.Format("axisStopDone {0} {1}", (GantryAxes) axis, res));
+            StopDone?.Invoke((GantryAxes) axis, res);
         }
 
-        private void axisAbortDone(int axis, bool res)
+        private void AxisAbortDone(int axis, bool res)
         {
-            logger.Info(string.Format("axisAbortDone {0} {1}", (GantryAxes) axis, res), 3094,
-                nameof(axisAbortDone),
-                "C:\\Users\\Garry\\Desktop\\ExternalHardware - 19032021\\AcsWrapper\\AcsWrapper.cs");
-            Action<GantryAxes, bool> abortDone = AbortDone;
-            if (abortDone == null)
-                return;
-            abortDone((GantryAxes) axis, res);
+            logger.Info(string.Format("axisAbortDone {0} {1}", (GantryAxes) axis, res));
+            AbortDone?.Invoke((GantryAxes) axis, res);
         }
 
-        private void axisAtHomeSensorChanged(int axis, bool isAtHomeSensor)
+        private void AxisAtHomeSensorChanged(int axis, bool isAtHomeSensor)
         {
             logger.Info(
-                string.Format("axisAtHomeSensorChanged {0} {1}", (GantryAxes) axis, isAtHomeSensor),
-                3099, nameof(axisAtHomeSensorChanged),
-                "C:\\Users\\Garry\\Desktop\\ExternalHardware - 19032021\\AcsWrapper\\AcsWrapper.cs");
-            Action<GantryAxes, bool> homeSensorChanged = AtHomeSensorChanged;
-            if (homeSensorChanged == null)
-                return;
-            homeSensorChanged((GantryAxes) axis, isAtHomeSensor);
+                string.Format("axisAtHomeSensorChanged {0} {1}", (GantryAxes) axis, isAtHomeSensor));
+            AtHomeSensorChanged?.Invoke((GantryAxes) axis, isAtHomeSensor);
         }
 
-        private void axisAtPositiveHWLimitChanged(int axis, bool isAtPositiveHWLimit)
+        private void AxisAtPositiveHwLimitChanged(int axis, bool isAtPositiveHwLimit)
         {
-            logger.Info(
-                string.Format("axisAtPositiveHWLimitChanged {0} {1}", (GantryAxes) axis,
-                    isAtPositiveHWLimit), 3104, nameof(axisAtPositiveHWLimitChanged),
-                "C:\\Users\\Garry\\Desktop\\ExternalHardware - 19032021\\AcsWrapper\\AcsWrapper.cs");
-            Action<GantryAxes, bool> positiveHwLimitChanged = AtPositiveHWLimitChanged;
-            if (positiveHwLimitChanged == null)
-                return;
-            positiveHwLimitChanged((GantryAxes) axis, isAtPositiveHWLimit);
+            logger.Info(string.Format("axisAtPositiveHWLimitChanged {0} {1}", (GantryAxes) axis, isAtPositiveHwLimit));
+            AtPositiveHwLimitChanged?.Invoke((GantryAxes) axis, isAtPositiveHwLimit);
         }
 
-        private void axisAtNegativeHWLimitChanged(int axis, bool isAtNegativeHWLimit)
+        private void AxisAtNegativeHwLimitChanged(int axis, bool isAtNegativeHwLimit)
         {
-            logger.Info(
-                string.Format("axisAtNegativeHWLimitChanged {0} {1}", (GantryAxes) axis,
-                    isAtNegativeHWLimit), 3109, nameof(axisAtNegativeHWLimitChanged),
-                "C:\\Users\\Garry\\Desktop\\ExternalHardware - 19032021\\AcsWrapper\\AcsWrapper.cs");
-            Action<GantryAxes, bool> negativeHwLimitChanged = AtNegativeHWLimitChanged;
-            if (negativeHwLimitChanged == null)
-                return;
-            negativeHwLimitChanged((GantryAxes) axis, isAtNegativeHWLimit);
+            logger.Info(string.Format("axisAtNegativeHWLimitChanged {0} {1}", (GantryAxes) axis, isAtNegativeHwLimit));
+            AtNegativeHwLimitChanged?.Invoke((GantryAxes) axis, isAtNegativeHwLimit);
         }
 
-        private void axisAtPositiveSWLimitChanged(int axis, bool isAtPositiveSWLimit)
+        private void AxisAtPositiveSwLimitChanged(int axis, bool isAtPositiveSwLimit)
         {
-            logger.Info(
-                string.Format("axisAtPositiveSWLimitChanged {0} {1}", (GantryAxes) axis,
-                    isAtPositiveSWLimit), 3114, nameof(axisAtPositiveSWLimitChanged),
-                "C:\\Users\\Garry\\Desktop\\ExternalHardware - 19032021\\AcsWrapper\\AcsWrapper.cs");
-            Action<GantryAxes, bool> positiveSwLimitChanged = AtPositiveSWLimitChanged;
-            if (positiveSwLimitChanged == null)
-                return;
-            positiveSwLimitChanged((GantryAxes) axis, isAtPositiveSWLimit);
+            logger.Info(string.Format("axisAtPositiveSWLimitChanged {0} {1}", (GantryAxes) axis, isAtPositiveSwLimit));
+            AtPositiveSwLimitChanged?.Invoke((GantryAxes) axis, isAtPositiveSwLimit);
         }
 
-        private void axisAtNegativeSWLimitChanged(int axis, bool isAtNegativeSWLimit)
+        private void AxisAtNegativeSwLimitChanged(int axis, bool isAtNegativeSwLimit)
         {
-            logger.Info(
-                string.Format("axisAtNegativeSWLimitChanged {0} {1}", (GantryAxes) axis,
-                    isAtNegativeSWLimit), 3119, nameof(axisAtNegativeSWLimitChanged),
-                "C:\\Users\\Garry\\Desktop\\ExternalHardware - 19032021\\AcsWrapper\\AcsWrapper.cs");
-            Action<GantryAxes, bool> negativeSwLimitChanged = AtNegativeSWLimitChanged;
-            if (negativeSwLimitChanged == null)
-                return;
-            negativeSwLimitChanged((GantryAxes) axis, isAtNegativeSWLimit);
+            logger.Info(string.Format("axisAtNegativeSWLimitChanged {0} {1}", (GantryAxes) axis, isAtNegativeSwLimit));
+            AtNegativeSwLimitChanged?.Invoke((GantryAxes) axis, isAtNegativeSwLimit);
         }
 
-        private void Axis_AxisHomingBegin(int axis)
+        private void AxisHomingBegin(int axis)
         {
-            logger.Info(string.Format("Axis_AxisHomingBegin {0} ", (GantryAxes) axis), 3125,
-                nameof(Axis_AxisHomingBegin),
-                "C:\\Users\\Garry\\Desktop\\ExternalHardware - 19032021\\AcsWrapper\\AcsWrapper.cs");
-            Action<GantryAxes> axisHomingBegin = AxisHomingBegin;
-            if (axisHomingBegin == null)
-                return;
-            axisHomingBegin((GantryAxes) axis);
+            logger.Info(string.Format("AxisHomingBegin {0} ", (GantryAxes) axis));
+            OnAxisHomingBegin?.Invoke((GantryAxes) axis);
         }
 
-        private void Axis_AxisHomingEnd(int axis, bool res)
+        private void AxisHomingEnd(int axis, bool res)
         {
-            logger.Info(string.Format("Axis_AxisHomingEnd {0} {1}", (GantryAxes) axis, res));
-
-            Action<GantryAxes, bool> axisHomingEnd = AxisHomingEnd;
-            if (axisHomingEnd == null)
-                return;
-            axisHomingEnd((GantryAxes) axis, res);
+            logger.Info(string.Format("AxisHomingEnd {0} {1}", (GantryAxes) axis, res));
+            OnAxisHomingEnd?.Invoke((GantryAxes) axis, res);
         }
 
-        private void conveyorAxisIdleChanged(int axis, bool isIdle)
+        private void ConveyorAxisIdleChanged(int axis, bool isIdle)
         {
             logger.Info(string.Format("axisIdleChanged {0} {1}", (ConveyorAxes) axis, isIdle));
-            Action<ConveyorAxes, bool> conveyorAxisIdleChanged = ConveyorAxisIdleChanged;
-            if (conveyorAxisIdleChanged == null)
-                return;
-            conveyorAxisIdleChanged((ConveyorAxes) axis, isIdle);
+            OnConveyorAxisIdleChanged?.Invoke((ConveyorAxes) axis, isIdle);
         }
 
-        private void conveyorAxisEnabledChanged(int axis, bool isEnabled)
+        private void ConveyorAxisEnabledChanged(int axis, bool isEnabled)
         {
-            logger.Info(
-                string.Format("axisEnabledChanged {0} {1}", (ConveyorAxes) axis, isEnabled), 3146,
-                nameof(conveyorAxisEnabledChanged),
-                "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-            Action<ConveyorAxes, bool> axisEnabledChanged = ConveyorAxisEnabledChanged;
-            if (axisEnabledChanged == null)
-                return;
-            axisEnabledChanged((ConveyorAxes) axis, isEnabled);
+            logger.Info(string.Format("axisEnabledChanged {0} {1}", (ConveyorAxes) axis, isEnabled));
+            OnConveyorAxisEnabledChanged?.Invoke((ConveyorAxes) axis, isEnabled);
         }
 
-        private void conveyorAxisReadyChanged(int axis, bool isReady)
+        private void ConveyorAxisReadyChanged(int axis, bool isReady)
         {
-            logger.Info(string.Format("axisReadyChanged {0} {1}", (ConveyorAxes) axis, isReady),
-                3151, nameof(conveyorAxisReadyChanged),
-                "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-            Action<ConveyorAxes, bool> axisReadyChanged = ConveyorAxisReadyChanged;
-            if (axisReadyChanged == null)
-                return;
-            axisReadyChanged((ConveyorAxes) axis, isReady);
+            logger.Info(string.Format("axisReadyChanged {0} {1}", (ConveyorAxes) axis, isReady));
+            OnConveyorAxisReadyChanged?.Invoke((ConveyorAxes) axis, isReady);
         }
 
-        private void conveyorAxisPositionUpdated(int axis, double pos)
+        private void ConveyorAxisPositionUpdated(int axis, double pos)
         {
-            logger.Info(string.Format("axisPositionUpdated {0} {1}", (ConveyorAxes) axis, pos),
-                3156, nameof(conveyorAxisPositionUpdated),
-                "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-            Action<ConveyorAxes, double> axisPositionUpdated = ConveyorAxisPositionUpdated;
-            if (axisPositionUpdated != null)
-                axisPositionUpdated((ConveyorAxes) axis, pos);
+            logger.Info(string.Format("axisPositionUpdated {0} {1}", (ConveyorAxes) axis, pos));
+            OnConveyorAxisPositionUpdated?.Invoke((ConveyorAxes) axis, pos);
         }
 
-        private void conveyorAxisVelocityUpdated(int axis, double vel)
+        private void ConveyorAxisVelocityUpdated(int axis, double vel)
         {
-            logger.Info(string.Format("axisVelocityUpdated {0} {1}", (ConveyorAxes) axis, vel),
-                3166, nameof(conveyorAxisVelocityUpdated),
-                "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-            Action<ConveyorAxes, double> axisVelocityUpdated = ConveyorAxisVelocityUpdated;
-            if (axisVelocityUpdated == null)
-                return;
-            axisVelocityUpdated((ConveyorAxes) axis, vel);
+            logger.Info(string.Format("axisVelocityUpdated {0} {1}", (ConveyorAxes) axis, vel));
+            Action<ConveyorAxes, double> axisVelocityUpdated = OnConveyorAxisVelocityUpdated;
+            OnConveyorAxisVelocityUpdated?.Invoke((ConveyorAxes) axis, vel);
         }
 
-        private void conveyorAxisMovementBegin(int axis)
+        private void ConveyorAxisMovementBegin(int axis)
         {
-            logger.Info(string.Format("Axis_MovementBegin {0} ", (ConveyorAxes) axis), 3171,
-                nameof(conveyorAxisMovementBegin),
-                "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-            Action<ConveyorAxes> axisMovementBegin = ConveyorAxisMovementBegin;
-            if (axisMovementBegin == null)
-                return;
-            axisMovementBegin((ConveyorAxes) axis);
+            logger.Info(string.Format("Axis_MovementBegin {0} ", (ConveyorAxes) axis));
+            OnConveyorAxisMovementBegin?.Invoke((ConveyorAxes) axis);
         }
 
-        private void conveyorAxisMovementEnd(int axis, bool res)
+        private void ConveyorAxisMovementEnd(int axis, bool res)
         {
             logger.Info(string.Format("axisMovementEnd {0} {1}", (ConveyorAxes) axis, res));
-            Action<ConveyorAxes, bool> conveyorAxisMovementEnd = ConveyorAxisMovementEnd;
-            if (conveyorAxisMovementEnd == null)
-                return;
-            conveyorAxisMovementEnd((ConveyorAxes) axis, res);
+            OnConveyorAxisMovementEnd?.Invoke((ConveyorAxes) axis, res);
         }
 
-        private void conveyorAxisStopDone(int axis, bool res)
+        private void ConveyorAxisStopDone(int axis, bool res)
         {
             logger.Info(string.Format("axisStopDone {0} {1}", (ConveyorAxes) axis, res));
-            Action<ConveyorAxes, bool> conveyorAxisStopDone = ConveyorAxisStopDone;
-            if (conveyorAxisStopDone == null)
-                return;
-            conveyorAxisStopDone((ConveyorAxes) axis, res);
+            OnConveyorAxisStopDone?.Invoke((ConveyorAxes) axis, res);
         }
 
-        private void conveyorAxisAbortDone(int axis, bool res)
+        private void ConveyorAxisAbortDone(int axis, bool res)
         {
             logger.Info(string.Format("axisAbortDone {0} {1}", (ConveyorAxes) axis, res));
-            Action<ConveyorAxes, bool> conveyorAxisAbortDone = ConveyorAxisAbortDone;
-            if (conveyorAxisAbortDone == null)
-                return;
-            conveyorAxisAbortDone((ConveyorAxes) axis, res);
+            OnConveyorAxisAbortDone?.Invoke((ConveyorAxes) axis, res);
         }
 
-        private void conveyorAxisAtHomeSensorChanged(int axis, bool isAtHomeSensor)
+        private void ConveyorAxisAtHomeSensorChanged(int axis, bool isAtHomeSensor)
         {
-            logger.Info(
-                string.Format("axisAtHomeSensorChanged {0} {1}", (ConveyorAxes) axis, isAtHomeSensor),
-                3191, nameof(conveyorAxisAtHomeSensorChanged),
-                "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-            Action<ConveyorAxes, bool> homeSensorChanged = ConveyorAxisAtHomeSensorChanged;
-            if (homeSensorChanged == null)
-                return;
-            homeSensorChanged((ConveyorAxes) axis, isAtHomeSensor);
+            logger.Info(string.Format("axisAtHomeSensorChanged {0} {1}", (ConveyorAxes) axis, isAtHomeSensor));
+            OnConveyorAxisAtHomeSensorChanged?.Invoke((ConveyorAxes) axis, isAtHomeSensor);
         }
 
-        private void conveyorAxisAtPositiveHWLimitChanged(int axis, bool isAtPositiveHWLimit)
+        private void ConveyorAxisAtPositiveHwLimitChanged(int axis, bool isAtPositiveHwLimit)
         {
-            logger.Info(
-                string.Format("axisAtPositiveHWLimitChanged {0} {1}", (ConveyorAxes) axis,
-                    isAtPositiveHWLimit), 3196, nameof(conveyorAxisAtPositiveHWLimitChanged),
-                "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-            Action<ConveyorAxes, bool> positiveHwLimitChanged = ConveyorAxisAtPositiveHwLimitChanged;
-            if (positiveHwLimitChanged == null)
-                return;
-            positiveHwLimitChanged((ConveyorAxes) axis, isAtPositiveHWLimit);
+            logger.Info(string.Format("axisAtPositiveHWLimitChanged {0} {1}", (ConveyorAxes) axis, isAtPositiveHwLimit));
+            OnConveyorAxisAtPositiveHwLimitChanged?.Invoke((ConveyorAxes) axis, isAtPositiveHwLimit);
         }
 
-        private void conveyorAxisAtNegativeHWLimitChanged(int axis, bool isAtNegativeHWLimit)
+        private void ConveyorAxisAtNegativeHwLimitChanged(int axis, bool isAtNegativeHwLimit)
         {
-            logger.Info(
-                string.Format("axisAtNegativeHWLimitChanged {0} {1}", (ConveyorAxes) axis,
-                    isAtNegativeHWLimit), 3201, nameof(conveyorAxisAtNegativeHWLimitChanged),
-                "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-            Action<ConveyorAxes, bool> negativeHwLimitChanged = ConveyorAxisAtNegativeHwLimitChanged;
-            if (negativeHwLimitChanged == null)
-                return;
-            negativeHwLimitChanged((ConveyorAxes) axis, isAtNegativeHWLimit);
+            logger.Info(string.Format("axisAtNegativeHWLimitChanged {0} {1}", (ConveyorAxes) axis, isAtNegativeHwLimit));
+            OnConveyorAxisAtNegativeHwLimitChanged?.Invoke((ConveyorAxes) axis, isAtNegativeHwLimit);
         }
 
-        private void conveyorAxisAtPositiveSWLimitChanged(int axis, bool isAtPositiveSWLimit)
+        private void ConveyorAxisAtPositiveSwLimitChanged(int axis, bool isAtPositiveSwLimit)
         {
-            logger.Info(
-                string.Format("axisAtPositiveSWLimitChanged {0} {1}", (ConveyorAxes) axis,
-                    isAtPositiveSWLimit), 3206, nameof(conveyorAxisAtPositiveSWLimitChanged),
-                "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-            Action<ConveyorAxes, bool> positiveSwLimitChanged = ConveyorAxisAtPositiveSwLimitChanged;
-            if (positiveSwLimitChanged == null)
-                return;
-            positiveSwLimitChanged((ConveyorAxes) axis, isAtPositiveSWLimit);
+            logger.Info(string.Format("axisAtPositiveSWLimitChanged {0} {1}", (ConveyorAxes) axis, isAtPositiveSwLimit));
+            OnConveyorAxisAtPositiveSwLimitChanged?.Invoke((ConveyorAxes) axis, isAtPositiveSwLimit);
         }
 
-        private void conveyorAxisAtNegativeSWLimitChanged(int axis, bool isAtNegativeSWLimit)
+        private void ConveyorAxisAtNegativeSwLimitChanged(int axis, bool isAtNegativeSwLimit)
         {
-            logger.Info(
-                string.Format("axisAtNegativeSWLimitChanged {0} {1}", (ConveyorAxes) axis,
-                    isAtNegativeSWLimit), 3211, nameof(conveyorAxisAtNegativeSWLimitChanged),
-                "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-            Action<ConveyorAxes, bool> negativeSwLimitChanged = ConveyorAxisAtNegativeSwLimitChanged;
-            if (negativeSwLimitChanged == null)
-                return;
-            negativeSwLimitChanged((ConveyorAxes) axis, isAtNegativeSWLimit);
+            logger.Info(string.Format("axisAtNegativeSWLimitChanged {0} {1}", (ConveyorAxes) axis, isAtNegativeSwLimit));
+            OnConveyorAxisAtNegativeSwLimitChanged?.Invoke((ConveyorAxes) axis, isAtNegativeSwLimit);
         }
 
-        private void conveyorAxis_AxisHomingBegin(int axis)
+        private void ConveyorAxisHomingBegin(int axis)
         {
-            logger.Info(string.Format("Axis_AxisHomingBegin {0} ", (ConveyorAxes) axis), 3217,
-                nameof(conveyorAxis_AxisHomingBegin),
-                "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-            Action<ConveyorAxes> conveyorAxisHomingBegin = ConveyorAxisHomingBegin;
-            if (conveyorAxisHomingBegin == null)
-                return;
-            conveyorAxisHomingBegin((ConveyorAxes) axis);
+            logger.Info(string.Format("Axis_AxisHomingBegin {0} ", (ConveyorAxes) axis));
+            OnConveyorAxisHomingBegin?.Invoke((ConveyorAxes) axis);
         }
 
-        private void conveyorAxis_AxisHomingEnd(int axis, bool res)
+        private void ConveyorAxisHomingEnd(int axis, bool res)
         {
-            logger.Info(string.Format("Axis_AxisHomingEnd {0} {1}", (ConveyorAxes) axis, res),
-                3222, nameof(conveyorAxis_AxisHomingEnd),
-                "C:\\Users\\Garry\\source\\repos\\SQ3000plus\\AcsWrapper\\AcsWrapper.cs");
-            Action<ConveyorAxes, bool> conveyorAxisHomingEnd = ConveyorAxisHomingEnd;
-            if (conveyorAxisHomingEnd == null)
-                return;
-            conveyorAxisHomingEnd((ConveyorAxes) axis, res);
+            logger.Info(string.Format("Axis_AxisHomingEnd {0} {1}", (ConveyorAxes) axis, res));
+            OnConveyorAxisHomingEnd?.Invoke((ConveyorAxes) axis, res);
         }
 
         private int CurrentScanningIndex
@@ -1961,9 +1768,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                     return;
                 currentScanningIndex = value;
                 if (currentScanningIndex >= 0) {
-                    Action<int> scanningIndexChange = ScanningIndexChange;
-                    if (scanningIndexChange != null)
-                        scanningIndexChange(currentScanningIndex);
+                    ScanningIndexChange?.Invoke(currentScanningIndex);
                 }
             }
         }
@@ -1977,9 +1782,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                     return;
                 currentMotionCompleteReceived = value;
                 if (currentMotionCompleteReceived == 1) {
-                    Action motionCompleteRecvd = HardwareNotifySingleMoveMotionCompleteReceived;
-                    if (motionCompleteRecvd != null)
-                        motionCompleteRecvd();
+                    HardwareNotifySingleMoveMotionCompleteReceived?.Invoke();
                     acsUtils.WriteVariable(0, "MOVE_MOTION_COMPLETE_RECVD", 9);
                     currentMotionCompleteReceived = 0;
                 }
@@ -1995,9 +1798,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                     return;
                 currentMovePsxAckReceived = value;
                 if (currentMovePsxAckReceived == 1) {
-                    Action singleMovePsxAckRecvd = HardwareNotifySingleMovePSXAckReceived;
-                    if (singleMovePsxAckRecvd != null)
-                        singleMovePsxAckRecvd();
+                    HardwareNotifySingleMovePSXAckReceived?.Invoke();
                     acsUtils.WriteVariable(0, "MOVE_PSX_ACK_RECVD", 9);
                     currentMovePsxAckReceived = 0;
                 }
@@ -2178,6 +1979,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             acsUtils.WriteVariable(Convert.ToInt32(outputs.TowerLightGreen), "TowerLightGreen_Bit");
             acsUtils.WriteVariable(Convert.ToInt32(outputs.TowerLightBlue), "TowerLightBlue_Bit");
             acsUtils.WriteVariable(Convert.ToInt32(outputs.TowerLightBuzzer), "TowerLightBuzzer_Bit");
+            acsUtils.WriteVariable(Convert.ToInt32(outputs.SensorPower), "SensorPowerOnOff_Bit");
             acsUtils.WriteVariable(Convert.ToInt32(outputs.StopSensor), "StopSensor_Bit");
             acsUtils.WriteVariable(Convert.ToInt32(outputs.SmemaUpStreamMachineReady), "SmemaUpStreamMachineReady_Bit");
             acsUtils.WriteVariable(Convert.ToInt32(outputs.DownStreamBoardAvailable), "DownStreamBoardAvailable_Bit");
@@ -2232,10 +2034,10 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         {
             return new ClampSensors
             {
-                FrontClampUp = Convert.ToBoolean(acsUtils.ReadVar("StopperUnlocked_Bit")),
-                RearClampUp = Convert.ToBoolean(acsUtils.ReadVar("FrontClampUp_Bit")),
-                FrontClampDown = Convert.ToBoolean(acsUtils.ReadVar("RearClampDown_Bit")),
-                RearClampDown = Convert.ToBoolean(acsUtils.ReadVar("FrontClampDown_Bit"))
+                RearClampUp = Convert.ToBoolean(acsUtils.ReadVar("RearClampUp_Bit")),
+                FrontClampUp = Convert.ToBoolean(acsUtils.ReadVar("FrontClampUp_Bit")),
+                RearClampDown = Convert.ToBoolean(acsUtils.ReadVar("RearClampDown_Bit")),
+                FrontClampDown = Convert.ToBoolean(acsUtils.ReadVar("FrontClampDown_Bit")),
             };
         }
 

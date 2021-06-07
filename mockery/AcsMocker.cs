@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using CO.Systems.Services.Acs.AcsWrapper.wrapper;
 using CO.Systems.Services.Acs.AcsWrapper.wrapper.models;
 using CO.Systems.Services.Robot.Interface;
@@ -9,15 +11,33 @@ namespace CO.Systems.Services.Acs.AcsWrapper.mockery
 {
     internal class AcsMocker : IAcsWrapper
     {
+        private readonly List<IPvTuple3D> motionPaths;
+        private readonly Dictionary<GantryAxes, double> axesPosition;
+
+        public AcsMocker()
+        {
+            ConveyorStatus = ConveyorStatusCode.SAFE_STATUS;
+            ErrorCode = ConveyorErrorCode.ErrorSafe;
+
+            HasError = HasConveyorError = HasRobotError = false;
+
+            motionPaths = new List<IPvTuple3D>();
+            axesPosition = new Dictionary<GantryAxes, double>
+            {
+                {GantryAxes.X, double.MinValue}, {GantryAxes.Y, double.MinValue}, {GantryAxes.Z, double.MinValue}
+            };
+        }
+
         #region Implementation of IAcsWrapper
 
-        public bool IsConnected { get; }
-        public string FirmwareVersion { get; }
-        public uint NETLibraryVersion { get; }
+        public bool IsConnected => true;
+        public string FirmwareVersion => "Acs Simulator";
+        public uint NETLibraryVersion => 0;
+
         public ConveyorStatusCode ConveyorStatus { get; }
         public bool HasError { get; }
-        public bool HasConveyorError { get; set; }
-        public bool HasRobotError { get; set; }
+        public bool HasConveyorError { get; }
+        public bool HasRobotError { get; }
         public ConveyorErrorCode ErrorCode { get; }
         public event Action<bool> ConnectionStatusChanged;
         public event Action<GantryAxes, bool> IdleChanged;
@@ -28,490 +48,500 @@ namespace CO.Systems.Services.Acs.AcsWrapper.mockery
         public event Action<GantryAxes, bool> StopDone;
         public event Action<GantryAxes, bool> AbortDone;
         public event Action<GantryAxes, bool> AtHomeSensorChanged;
-        public event Action<GantryAxes, bool> AtPositiveHWLimitChanged;
-        public event Action<GantryAxes, bool> AtNegativeHWLimitChanged;
-        public event Action<GantryAxes, bool> AtPositiveSWLimitChanged;
-        public event Action<GantryAxes, bool> AtNegativeSWLimitChanged;
+        public event Action<GantryAxes, bool> AtPositiveHwLimitChanged;
+        public event Action<GantryAxes, bool> AtNegativeHwLimitChanged;
+        public event Action<GantryAxes, bool> AtPositiveSwLimitChanged;
+        public event Action<GantryAxes, bool> AtNegativeSwLimitChanged;
         public event Action<GantryAxes> MovementBegin;
         public event Action<GantryAxes, bool> MovementEnd;
-        public event Action<GantryAxes> AxisHomingBegin;
-        public event Action<GantryAxes, bool> AxisHomingEnd;
+        public event Action<GantryAxes> OnAxisHomingBegin;
+        public event Action<GantryAxes, bool> OnAxisHomingEnd;
         public event Action ScanningBegin;
         public event Action HardwareNotifySingleMoveMotionCompleteReceived;
         public event Action HardwareNotifySingleMovePSXAckReceived;
         public event Action<int> ScanningIndexChange;
         public event Action ScanningEnd;
+
         public void Connect()
         {
-            throw new NotImplementedException();
         }
 
         public bool Disconnect()
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public bool IsIdle(GantryAxes axis)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public bool Enabled(GantryAxes axis)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public bool Homed(GantryAxes axis)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public bool Ready(GantryAxes axis)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public double Position(GantryAxes axis)
         {
-            throw new NotImplementedException();
+            return axesPosition[axis];
         }
 
         public double Velocity(GantryAxes axis)
         {
-            throw new NotImplementedException();
+            return 0;
         }
 
         public bool AtHomeSensor(GantryAxes axis)
         {
-            throw new NotImplementedException();
+            return false;
         }
 
         public bool AtPositiveHwLimit(GantryAxes axis)
         {
-            throw new NotImplementedException();
+            return false;
         }
 
         public bool AtNegativeHwLimit(GantryAxes axis)
         {
-            throw new NotImplementedException();
+            return false;
         }
 
         public bool AtPositiveSwLimit(GantryAxes axis)
         {
-            throw new NotImplementedException();
+            return false;
         }
 
         public bool AtNegativeSwLimit(GantryAxes axis)
         {
-            throw new NotImplementedException();
+            return false;
         }
 
         public bool PrepareScanning(List<IPvTuple3D> pvTuple3DList, int triggerToCameraStartPort, int triggerToCameraStartBit,
             int triggerFromCameraContinuePort, int triggerFromCameraContinueBit, int triggerFromCameraTimeOut)
         {
-            throw new NotImplementedException();
+            motionPaths.Clear();
+            motionPaths.AddRange(pvTuple3DList);
+            return true;
         }
 
         public bool StartScanning(AxesScanParameters scanParameters)
         {
-            throw new NotImplementedException();
+            int scanningIndex = 0;
+
+            Task.Run(() =>
+            {
+                foreach (var path in motionPaths) {
+                    Thread.Sleep(200);
+
+                    axesPosition[GantryAxes.X] = path.PvTuple[(int) GantryAxes.X].Position;
+                    axesPosition[GantryAxes.Y] = path.PvTuple[(int) GantryAxes.Y].Position;
+                    axesPosition[GantryAxes.Z] = path.PvTuple[(int) GantryAxes.Z].Position;
+                    ScanningIndexChange?.Invoke(++scanningIndex);
+                    HardwareNotifySingleMoveMotionCompleteReceived?.Invoke();
+
+                    Thread.Sleep(50);
+                    HardwareNotifySingleMovePSXAckReceived?.Invoke();
+                }
+
+                ScanningEnd?.Invoke();
+            });
+
+            return true;
         }
 
         public bool StartConveyorBuffer(AcsBuffers buffer)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public bool SetReleaseCommandReceived(bool commandReceived)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public bool InitConveyorBufferParameters(BypassModeBufferParameters parameters)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public bool InitConveyorBufferParameters(ChangeWidthBufferParameters parameters)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public bool InitConveyorBufferParameters(FreePanelBufferParameters parameters)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public bool InitConveyorBufferParameters(InternalMachineLoadBufferParameters parameters)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public bool InitConveyorBufferParameters(LoadPanelBufferParameters parameters)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public bool InitConveyorBufferParameters(PowerOnRecoverFromEmergencyStopBufferParameters parameters)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public bool InitConveyorBufferParameters(PreReleasePanelBufferParameters parameters)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public bool InitConveyorBufferParameters(ReleasePanelBufferParameters parameters)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public bool InitConveyorBufferParameters(ReloadPanelBufferParameters parameters)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public bool InitConveyorBufferParameters(SecurePanelBufferParameters parameters)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public bool InitConveyorBufferParameters(HomeConveyorWidthParameters parameters)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public bool InitConveyorBufferParameters(DBufferParameters parameters)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public void Reset()
         {
-            throw new NotImplementedException();
         }
 
         public void ClearError(GantryAxes axis)
         {
-            throw new NotImplementedException();
         }
 
         public bool Enable(GantryAxes axis)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public bool Disable(GantryAxes axis)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public bool ReloadConfigParameters(bool forZOnly = false)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public bool ReloadConfigParameters(GantryAxes axis)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public bool Init(bool forZOnly = false)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public bool Init(List<AxisInitParameters> initParameters, bool forZOnly = false)
         {
-            throw new NotImplementedException();
+            Task.Run(() =>
+            {
+                OnAxisHomingBegin?.Invoke(GantryAxes.X);
+                OnAxisHomingBegin?.Invoke(GantryAxes.Y);
+                OnAxisHomingBegin?.Invoke(GantryAxes.Z);
+
+                Thread.Sleep(5000);
+
+                OnAxisHomingEnd?.Invoke(GantryAxes.X, true);
+                OnAxisHomingEnd?.Invoke(GantryAxes.Y, true);
+                OnAxisHomingEnd?.Invoke(GantryAxes.Z, true);
+            });
+
+            return true;
         }
 
         public bool Init(GantryAxes axis)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public bool Init(AxisInitParameters initParameters)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public bool MoveAbsolute(List<AxisMoveParameters> axesToMove)
         {
-            throw new NotImplementedException();
+            foreach (var parameter in axesToMove) {
+                axesPosition[parameter.Axis] = parameter.TargetPos;
+            }
+            return true;
         }
 
         public bool MoveAbsolute(GantryAxes axis, double targetPos, double vel = 0, double acc = 0, double dec = 0)
         {
-            throw new NotImplementedException();
+            axesPosition[axis] = targetPos;
+            return true;
         }
 
         public bool MoveRelative(List<AxisMoveParameters> axesToMove)
         {
-            throw new NotImplementedException();
+            foreach (var parameter in axesToMove) {
+                axesPosition[parameter.Axis] += parameter.TargetPos;
+            }
+            return true;
         }
 
         public bool MoveRelative(GantryAxes axis, double relativePosition, double vel = 0, double acc = 0, double dec = 0)
         {
-            throw new NotImplementedException();
+            axesPosition[axis] += relativePosition;
+            return true;
         }
 
         public bool Jog(GantryAxes axis, double vel = 0, double acc = 0, double dec = 0)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public bool StopAll()
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public bool Stop(GantryAxes axis)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public bool Abort(GantryAxes axis)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public void SetRPos(GantryAxes axis, double pos)
         {
-            throw new NotImplementedException();
+            axesPosition[axis] = pos;
         }
 
         public void StartPanelLoad(LoadPanelBufferParameters parameters,
             double panelLength,
             int timeout)
         {
-            throw new NotImplementedException();
+            Thread.Sleep(1000);
         }
 
         public void StartPanelReload(ReloadPanelBufferParameters parameters, double panelLength, int timeout)
         {
-            throw new NotImplementedException();
+            Thread.Sleep(1000);
         }
 
         public void StopPanelLoad()
         {
-            throw new NotImplementedException();
         }
 
         public void StartPanelPreRelease(PreReleasePanelBufferParameters parameters, int timeout)
         {
-            throw new NotImplementedException();
+            Thread.Sleep(1000);
         }
 
         public void StartPanelRelease(ReleasePanelBufferParameters parameters, int timeout)
         {
-            throw new NotImplementedException();
+            Thread.Sleep(1000);
         }
 
         public IoStatus GetIoStatus()
         {
-            throw new NotImplementedException();
+            return new IoStatus();
         }
 
         public void SetOutputs(SetOutputParameters outputs)
         {
-            throw new NotImplementedException();
         }
 
         public void ChangeConveyorWidth(ChangeWidthBufferParameters parameters, int timeout)
         {
-            throw new NotImplementedException();
         }
 
         public void ApplicationError()
         {
-            throw new NotImplementedException();
         }
 
         public void ResetError()
         {
-            throw new NotImplementedException();
         }
 
         public double GetConveyorWidthAxisPosition()
         {
-            throw new NotImplementedException();
+            return 0;
         }
 
         public void PowerOnRecoverFromEmergencyStop(PowerOnRecoverFromEmergencyStopBufferParameters parameter, int timeout)
         {
-            throw new NotImplementedException();
         }
 
         public PanelButtons GetPanelButtonsStatus()
         {
-            throw new NotImplementedException();
+            return new PanelButtons();
         }
 
         public ClampSensors GetClampSensorsStatus()
         {
-            throw new NotImplementedException();
+            return new ClampSensors();
         }
 
         public PresentSensors GetPresentSensorsStatus()
         {
-            throw new NotImplementedException();
+            return new PresentSensors();
         }
 
         public SmemaIo GetSmemaIoStatus()
         {
-            throw new NotImplementedException();
+            return new SmemaIo();
         }
 
         public bool IsBypassSignalSet()
         {
-            throw new NotImplementedException();
+            return false;
         }
 
         public void BypassModeOn(BypassModeBufferParameters parameter)
         {
-            throw new NotImplementedException();
         }
 
         public void BypassModeOff()
         {
-            throw new NotImplementedException();
         }
 
         public void SetTowerLightRed(AcsIndicatorState state)
         {
-            throw new NotImplementedException();
         }
 
         public void SetTowerLightYellow(AcsIndicatorState state)
         {
-            throw new NotImplementedException();
         }
 
         public void SetTowerLightGreen(AcsIndicatorState state)
         {
-            throw new NotImplementedException();
         }
 
         public void SetTowerLightBlue(AcsIndicatorState state)
         {
-            throw new NotImplementedException();
         }
 
         public void SetTowerLightBuzzer(AcsIndicatorState state)
         {
-            throw new NotImplementedException();
         }
 
         public void SetStartButtonIndicator(AcsIndicatorState state)
         {
-            throw new NotImplementedException();
         }
 
         public void SetStopButtonIndicator(AcsIndicatorState state)
         {
-            throw new NotImplementedException();
         }
 
         public void SetMachineReady()
         {
-            throw new NotImplementedException();
         }
 
         public void ResetMachineReady()
         {
-            throw new NotImplementedException();
         }
 
         public bool IsConveyorAxisEnable()
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public bool IsConveyorWidthAxisEnable()
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public void HomeConveyorWidthAxis(HomeConveyorWidthParameters parameter)
         {
-            throw new NotImplementedException();
         }
 
         public void EnableConveyorAxis()
         {
-            throw new NotImplementedException();
         }
 
         public void DisableConveyorAxis()
         {
-            throw new NotImplementedException();
         }
 
         public void EnableConveyorWidthAxis()
         {
-            throw new NotImplementedException();
         }
 
         public void DisableConveyorWidthAxis()
         {
-            throw new NotImplementedException();
         }
 
         public void JogConveyorAxisLeftToRight(double velocity, double acceleration, double deceleration)
         {
-            throw new NotImplementedException();
         }
 
         public void JogConveyorAxisRightToLeft(double velocity, double acceleration, double deceleration)
         {
-            throw new NotImplementedException();
         }
 
         public void StopConveyorAxis()
         {
-            throw new NotImplementedException();
         }
 
         public void EnableConveyorLifterAxis()
         {
-            throw new NotImplementedException();
         }
 
         public void DisableConveyorLifterAxis()
         {
-            throw new NotImplementedException();
         }
 
         public void HomeConveyorLifterAxis()
         {
-            throw new NotImplementedException();
         }
 
         public void MoveConveyorLifter(double targetPosition)
         {
-            throw new NotImplementedException();
         }
 
         public bool IsConveyorLifterAxisEnabled()
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public double GetConveyorLifterAxisPosition()
         {
-            throw new NotImplementedException();
+            return 0;
         }
 
         public void SetAdditionalSettlingTime(int settlingTime)
         {
-            throw new NotImplementedException();
         }
 
         public void SetBeforeMoveDelay(int beforeMoveDelay)
         {
-            throw new NotImplementedException();
         }
 
         #endregion

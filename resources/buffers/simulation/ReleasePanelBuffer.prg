@@ -16,6 +16,10 @@ WAIT 3000
 ERROR_CODE = ERROR_SAFE
 CURRENT_STATUS = RELEASED_STATUS
 PanelFreed = 1
+RearClampUp_Bit = 0
+FrontClampUp_Bit = 0
+RearClampDown_Bit = 1
+FrontClampDown_Bit = 1
 STOP
 
 

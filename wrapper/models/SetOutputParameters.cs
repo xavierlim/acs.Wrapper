@@ -15,6 +15,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
         public bool TowerLightGreen;
         public bool TowerLightBlue;
         public bool TowerLightBuzzer;
+        public bool SensorPower;
         public bool StopSensor;
         public bool SmemaUpStreamMachineReady;
         public bool DownStreamBoardAvailable;
