@@ -232,10 +232,10 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
 
         private double CurrentAccel
         {
+            get { return currentAccel; }
             set
             {
-                if (value == currentAccel)
-                    return;
+                if (Math.Abs(value - currentAccel) < 0.01) return;
                 currentAccel = value;
                 api.SetAcceleration(AcsAxisId, currentAccel);
             }
@@ -243,10 +243,10 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
 
         private double CurrentDecel
         {
+            get { return currentDecel; }
             set
             {
-                if (value == currentDecel)
-                    return;
+                if (Math.Abs(value - currentDecel) < 0.01) return;
                 currentDecel = value;
                 api.SetDeceleration(AcsAxisId, currentDecel);
             }
@@ -873,6 +873,11 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
                     initializing = false;
                 ok = false;
             }
+
+            // ACS controller will set homing acceleration and deceleration during homing process, resend the operational
+            // acceleration and deceleration value to controller here after homing done
+            api.SetAcceleration(AcsAxisId, CurrentAccel);
+            api.SetDeceleration(AcsAxisId, CurrentDecel);
 
             if (!waitProgramEnd)
                 return;
