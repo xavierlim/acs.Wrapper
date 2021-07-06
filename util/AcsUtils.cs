@@ -1,5 +1,4 @@
 using System;
-using System.Threading;
 using ACS.SPiiPlusNET;
 using CO.Common.Logger;
 
@@ -32,59 +31,6 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
             }
 
             return (int) num;
-        }
-
-        public void RunBuffer(ProgramBuffer buffer, string label = null)
-        {
-            if (!api.IsConnected) {
-                logger.Info("AcsUtil.ReadVar: Controller not connected");
-            }
-            else {
-                try {
-                    if (IsProgramRunning(buffer)) {
-                        StopBuffer(buffer);
-                        Thread.Sleep(100);
-                    }
-
-                    api.RunBuffer(buffer, label);
-                }
-                catch (Exception ex) {
-                    logger.Error(
-                        string.Format("AcsUtil.ReadVar: Failed to run buffer {0}:{1} {2}", buffer,
-                            label == null ? "the top" : (object) label, ex.Message));
-                }
-            }
-        }
-
-        public void StopBuffer(ProgramBuffer buffer)
-        {
-            if (!api.IsConnected) {
-                logger.Info("AcsUtil.ReadVar: Controller not connected");
-            }
-            else {
-                try {
-                    api.StopBuffer(buffer);
-                }
-                catch (Exception ex) {
-                    logger.Error(string.Format("AcsUtil.ReadVar: Failed to stop buffer {0}: {1}", buffer, ex.Message));
-                }
-            }
-        }
-
-        public bool IsProgramRunning(ProgramBuffer buffer)
-        {
-            if (!api.IsConnected) {
-                logger.Info("AcsUtil.ReadVar: Controller not connected");
-                return false;
-            }
-
-            try {
-                return (uint) (api.GetProgramState(buffer) & ProgramStates.ACSC_PST_RUN) > 0U;
-            }
-            catch (Exception ex) {
-                logger.Error(string.Format("AcsUtil.ReadVar: Exception {0}: {1}", buffer, ex.Message));
-                return false;
-            }
         }
 
         public object ReadVar(string varName, ProgramBuffer bufferIndex = ProgramBuffer.ACSC_NONE,

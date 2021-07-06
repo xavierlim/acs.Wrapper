@@ -51,8 +51,9 @@ FDEF(Axis).#RL=0
 !********Search for the negetive limit******
 enable Axis
 wait 100
-jog/v Axis , V_Limit_Search
-till SAFINI(Axis).#LL=1
+! Simulation
+!jog/v Axis , V_Limit_Search
+!till SAFINI(Axis).#LL=1
 halt Axis
 till ^MST(Axis).#MOVE
 wait 10

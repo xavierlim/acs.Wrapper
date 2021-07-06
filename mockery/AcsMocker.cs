@@ -30,8 +30,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.mockery
 
         #region Implementation of IAcsWrapper
 
+        public bool IsSimulation => true;
         public bool IsConnected => true;
-        public string FirmwareVersion => "Acs Simulator";
+        public string FirmwareVersion => "Mocked";
         public uint NETLibraryVersion => 0;
 
         public ConveyorStatusCode ConveyorStatus { get; }
@@ -57,8 +58,8 @@ namespace CO.Systems.Services.Acs.AcsWrapper.mockery
         public event Action<GantryAxes> OnAxisHomingBegin;
         public event Action<GantryAxes, bool> OnAxisHomingEnd;
         public event Action ScanningBegin;
-        public event Action HardwareNotifySingleMoveMotionCompleteReceived;
-        public event Action HardwareNotifySingleMovePSXAckReceived;
+        public event Action<int> HardwareNotifySingleMoveMotionCompleteReceived;
+        public event Action<int> HardwareNotifySingleMovePSXAckReceived;
         public event Action<int> ScanningIndexChange;
         public event Action ScanningEnd;
 
@@ -147,10 +148,10 @@ namespace CO.Systems.Services.Acs.AcsWrapper.mockery
                     axesPosition[GantryAxes.Y] = path.PvTuple[(int) GantryAxes.Y].Position;
                     axesPosition[GantryAxes.Z] = path.PvTuple[(int) GantryAxes.Z].Position;
                     ScanningIndexChange?.Invoke(++scanningIndex);
-                    HardwareNotifySingleMoveMotionCompleteReceived?.Invoke();
+                    HardwareNotifySingleMoveMotionCompleteReceived?.Invoke(scanningIndex);
 
                     Thread.Sleep(50);
-                    HardwareNotifySingleMovePSXAckReceived?.Invoke();
+                    HardwareNotifySingleMovePSXAckReceived?.Invoke(scanningIndex);
                 }
 
                 ScanningEnd?.Invoke();

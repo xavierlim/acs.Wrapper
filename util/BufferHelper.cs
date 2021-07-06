@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using ACS.SPiiPlusNET;
+using CO.Common.Logger;
 using CO.Systems.Services.Acs.AcsWrapper.wrapper.exceptions;
 using CO.Systems.Services.Acs.AcsWrapper.wrapper.models;
 using CO.Systems.Services.Robot.RobotBase;
@@ -13,11 +15,13 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
 {
     internal class BufferHelper
     {
+        private const string DefaultBuffersDirectory = "AppData\\acs\\buffers";
         private const string BuffersRealSubDir = "real";
         private const string BuffersSimulationSubDir = "simulation";
         private const string BufferExtension = ".prg";
 
-        private readonly string buffersDirectory = "AppData\\acs\\buffers";
+        private readonly string buffersDirectory;
+        private readonly ILogger logger;
 
         private bool changesMadeToBuffer;
 
@@ -26,14 +30,16 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
         private Api Api { get; }
         private AcsUtils AcsUtils { get; }
 
-        public BufferHelper(Api acsApi, AcsUtils acsUtils, bool isSimulation, string buffersDirectory = null)
+        public BufferHelper(Api acsApi, AcsUtils acsUtils, ILogger logger, bool isSimulation, string buffersDirectory = null)
         {
             Api = acsApi;
             AcsUtils = acsUtils;
             IsSimulation = isSimulation;
 
+            this.logger = logger;
+
             if (buffersDirectory == null) {
-                this.buffersDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, this.buffersDirectory);
+                this.buffersDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, DefaultBuffersDirectory);
             }
             else {
                 this.buffersDirectory = buffersDirectory;
@@ -43,6 +49,50 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
                 IsSimulation ? BuffersSimulationSubDir : BuffersRealSubDir);
         }
 
+        public bool IsProgramRunning(ProgramBuffer index)
+        {
+            try {
+                return (uint) (Api.GetProgramState(index) & ProgramStates.ACSC_PST_RUN) > 0U;
+            }
+            catch (Exception ex) {
+                logger.Error(string.Format("BufferHelper.IsProgramRunning: Exception {0}: {1}", index, ex.Message));
+                return false;
+            }
+        }
+
+        public void RunBuffer(ProgramBuffer index, string label = null)
+        {
+            if (!Api.IsConnected) {
+                logger.Info("BufferHelper.RunBuffer: Controller not connected");
+                return;
+            }
+
+            try {
+                StopBufferIfRunning(index);
+                Api.RunBuffer(index, label);
+            }
+            catch (Exception ex) {
+                logger.Error(
+                    string.Format("BufferHelper.RunBuffer: Failed to run buffer {0}:{1} {2}", index,
+                        label == null ? "the top" : (object) label, ex.Message));
+            }
+        }
+
+        public void StopBuffer(ProgramBuffer index)
+        {
+            if (!Api.IsConnected) {
+                logger.Info("BufferHelper.StopBuffer: Controller not connected");
+                return;
+            }
+
+            try {
+                Api.StopBuffer(index);
+            }
+            catch (Exception ex) {
+                logger.Error(string.Format("AcsUtil.ReadVar: Failed to stop buffer {0}: {1}", index, ex.Message));
+            }
+        }
+
         public void StopAllBuffers()
         {
             try {
@@ -50,6 +100,14 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
             }
             catch (Exception e) {
                 throw new AcsException("Failed to stop all buffer. Exception: " + e.Message);
+            }
+        }
+
+        private void StopBufferIfRunning(ProgramBuffer index)
+        {
+            if (IsProgramRunning(index)) {
+                Api.StopBuffer(index);
+                Thread.Sleep(100);
             }
         }
 
@@ -217,6 +275,8 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
 
             var index = (ProgramBuffer) bufferNumber;
             if (!CompareBuffer(index, buffer)) return;
+
+            StopBufferIfRunning(index);
             try {
                 Api.LoadBuffer(index, buffer);
                 Api.CompileBuffer(index);
@@ -230,6 +290,8 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
         private void WriteBuffer(ProgramBuffer index, string buffer)
         {
             if (!CompareBuffer(index, buffer)) return;
+
+            StopBufferIfRunning(index);
             try {
                 Api.LoadBuffer(index, buffer);
                 Api.CompileBuffer(index);
@@ -253,6 +315,13 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
             return buffer == null;
         }
 
+        /// <summary>
+        /// compare buffer to be written with existing buffer on the ACS controller (if any)
+        /// </summary>
+        /// <param name="bufferIndex">index of the buffer</param>
+        /// <param name="toWrite">buffer to be written</param>
+        /// <returns>true when there's different between the buffer, or the buffer on the controller is empty</returns>
+        /// <exception cref="AcsException">triggered when buffer uploading failed</exception>
         private bool CompareBuffer(ProgramBuffer bufferIndex, string toWrite)
         {
             string toCompare;
@@ -273,8 +342,13 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
             do {
                 writeLine = writeReader.ReadLine();
                 compareLine = compareReader.ReadLine();
-                if (writeLine == null && compareLine == null) return false;
-                if (writeLine == null || compareLine == null) return true;
+
+                if (writeLine == null) {
+                    return compareLine != null;
+                }
+                if (compareLine == null) {
+                    return true;
+                }
             } while (writeLine.CompareTo(compareLine) == 0);
 
             return true;

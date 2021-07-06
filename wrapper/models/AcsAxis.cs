@@ -13,6 +13,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
     {
         private readonly Api api;
         private readonly AcsUtils acsUtils;
+        private readonly BufferHelper bufferHelper;
         private readonly IRobotControlSetting axisConfig;
         private readonly ILogger logger = LoggersManager.SystemLogger;
 
@@ -41,9 +42,11 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
         private double maxPos;
         private bool initializingBufferRun;
 
-        internal AcsAxis(Api api, AcsUtils utils, GantryAxes axisId, Axis acsAxisId, IRobotControlSetting config)
+        internal AcsAxis(Api api, AcsUtils utils, BufferHelper bufferHelper, GantryAxes axisId, Axis acsAxisId,
+            IRobotControlSetting config)
         {
             this.api = api;
+            this.bufferHelper = bufferHelper;
             acsUtils = utils;
             axisConfig = config;
             ApplicationAxisId = (int) axisId;
@@ -75,9 +78,10 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
             }
         }
 
-        internal AcsAxis(Api api, AcsUtils utils, ConveyorAxes axisId, Axis acsAxisId)
+        internal AcsAxis(Api api, AcsUtils utils, BufferHelper bufferHelper, ConveyorAxes axisId, Axis acsAxisId)
         {
             this.api = api;
+            this.bufferHelper = bufferHelper;
             acsUtils = utils;
             ApplicationAxisId = (int) axisId;
             AcsAxisId = acsAxisId;
@@ -607,7 +611,6 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
                     dec = DefaultDecel;
                 CurrentAccel = acc;
                 CurrentDecel = dec;
-                vel = Math.Abs(vel);
                 JogImpl(waitProgramEnd, vel);
                 return true;
             }
@@ -667,7 +670,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
                 bool flag = (motorState & MotorStates.ACSC_MST_MOVE) != MotorStates.ACSC_MST_MOVE &&
                             !ScanningBufferRun;
                 if (initializing) {
-                    InitializingBufferRun = acsUtils.IsProgramRunning((ProgramBuffer) HomeBuffer);
+                    InitializingBufferRun = bufferHelper.IsProgramRunning((ProgramBuffer) HomeBuffer);
                     flag = flag && !InitializingBufferRun;
                 }
 
@@ -838,7 +841,8 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
         {
             logger.Info(string.Format("haltOrKill {0} ", halt));
             try {
-                api.StopBuffer((ProgramBuffer) HomeBuffer);
+                if (bufferHelper.IsProgramRunning((ProgramBuffer) HomeBuffer)) api.StopBuffer((ProgramBuffer) HomeBuffer);
+
                 if (halt)
                     api.Halt(AcsAxisId);
                 else
@@ -861,7 +865,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
             if (axisHomingBegin != null)
                 axisHomingBegin(ApplicationAxisId);
             try {
-                acsUtils.RunBuffer((ProgramBuffer) HomeBuffer);
+                bufferHelper.RunBuffer((ProgramBuffer) HomeBuffer);
                 if (waitProgramEnd)
                     api.WaitProgramEnd((ProgramBuffer) HomeBuffer,
                         (int) (100000.0 * Math.Max(Math.Abs((MaxPos - MinPos) / HomeVelIn), 1.0)));

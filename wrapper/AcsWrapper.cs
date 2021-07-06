@@ -28,14 +28,14 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         private readonly AutoResetEvent waitExitFromPoling = new AutoResetEvent(false);
 
         private bool scanLoopRunning;
-        private const int SleepInterval = 50;
-        private const int DataRefreshCounter = 6;
+        private const int SleepInterval = 1;
+        private const int DataRefreshInterval = 300;
+        private const int DataRefreshCounter = DataRefreshInterval / SleepInterval;
 
         private readonly Dictionary<GantryAxes, AcsAxis> axesCache = new Dictionary<GantryAxes, AcsAxis>();
         private readonly Dictionary<ConveyorAxes, AcsAxis> conveyorAxesCache = new Dictionary<ConveyorAxes, AcsAxis>();
         private readonly object lockObject = new object();
 
-        private readonly bool isSimulation;
         private bool isScanningBufferRun;
         private bool isConveyorBufferRun;
         private bool isConnected;
@@ -43,16 +43,20 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         private int currentMotionCompleteReceived;
         private int currentMovePsxAckReceived;
 
+        private Thread _acsPollingThread = null;
+
         internal AcsWrapper(ILogger logger, IRobotControlSetting robotSettings)
         {
-            isSimulation = AcsSimHelper.IsEnable();
+            IsSimulation = AcsSimHelper.IsEnable();
             this.robotSettings = robotSettings;
             this.logger = logger;
 
             api = new Api();
             acsUtils = new AcsUtils(api, logger);
-            bufferHelper = new BufferHelper(api, acsUtils, isSimulation);
+            bufferHelper = new BufferHelper(api, acsUtils, logger, IsSimulation);
         }
+
+        public bool IsSimulation { get; }
 
         public bool IsConnected
         {
@@ -109,9 +113,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public event Action ScanningBegin;
 
-        public event Action HardwareNotifySingleMoveMotionCompleteReceived;
+        public event Action<int> HardwareNotifySingleMoveMotionCompleteReceived;
 
-        public event Action HardwareNotifySingleMovePSXAckReceived;
+        public event Action<int> HardwareNotifySingleMovePSXAckReceived;
 
         public event Action<int> ScanningIndexChange;
 
@@ -151,7 +155,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public void Connect()
         {
-            string ip = isSimulation ? "localhost" : "10.0.0.100";
+            string ip = IsSimulation ? "localhost" : "10.0.0.100";
             logger.Info($"AcsWrapper: Connect. IP {ip}");
 
             lock (lockObject) {
@@ -176,9 +180,28 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 InitConveyorAxesCache();
                 InitAxisNumbersAtController();
                 InitBuffers();
-                ThreadPool.QueueUserWorkItem(s => ScanLoop());
+                //ThreadPool.QueueUserWorkItem(s => ScanLoop());
+                StartPolling();
             }
         }
+
+        private void StartPolling()
+        {
+            logger.Debug($"AcsWrapper: StartPolling");
+            if (_acsPollingThread == null)
+            {
+                logger.Debug($"AcsWrapper: StartPolling; _acsPollingThread is null so spawn thread to run ScanLoop");
+                _acsPollingThread = new Thread(ScanLoop);
+                _acsPollingThread.IsBackground = true;
+                _acsPollingThread.Start();
+            }
+            else
+            {
+                logger.Debug($"AcsWrapper: StartPolling; _acsPollingThread is running....");
+            }
+        }
+
+
 
         public bool Disconnect()
         {
@@ -199,6 +222,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
                 scanLoopRunning = false;
                 waitExitFromPoling.WaitOne(5000);
+                _acsPollingThread = null;
                 return !IsConnected;
             }
         }
@@ -466,8 +490,8 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             CurrentScanningIndex = -1;
             CurrentMotionCompleteReceived = 0;
             CurrentMovePsxAckReceived = 0;
-            acsUtils.RunBuffer(ProgramBuffer.ACSC_BUFFER_9);
-            isScanningBufferRun = acsUtils.IsProgramRunning(ProgramBuffer.ACSC_BUFFER_9);
+            bufferHelper.RunBuffer(ProgramBuffer.ACSC_BUFFER_9);
+            isScanningBufferRun = bufferHelper.IsProgramRunning(ProgramBuffer.ACSC_BUFFER_9);
 
             if (isScanningBufferRun) {
                 foreach (KeyValuePair<GantryAxes, AcsAxis> keyValuePair in axesCache)
@@ -486,8 +510,8 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 return false;
             }
 
-            acsUtils.RunBuffer((ProgramBuffer) buffer);
-            isConveyorBufferRun = acsUtils.IsProgramRunning((ProgramBuffer) buffer);
+            bufferHelper.RunBuffer((ProgramBuffer) buffer);
+            isConveyorBufferRun = bufferHelper.IsProgramRunning((ProgramBuffer) buffer);
             return isConveyorBufferRun;
         }
 
@@ -996,7 +1020,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 return false;
             }
 
-            acsUtils.StopBuffer(ProgramBuffer.ACSC_BUFFER_9);
+            bufferHelper.StopBuffer(ProgramBuffer.ACSC_BUFFER_9);
             foreach (KeyValuePair<GantryAxes, AcsAxis> keyValuePair in axesCache)
                 keyValuePair.Value.Stop();
             return true;
@@ -1023,7 +1047,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 return false;
             }
 
-            acsUtils.StopBuffer(ProgramBuffer.ACSC_BUFFER_9);
+            bufferHelper.StopBuffer(ProgramBuffer.ACSC_BUFFER_9);
 
             if (axesCache.ContainsKey(axis))
                 return axesCache[axis].Abort();
@@ -1227,7 +1251,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             }
 
             if (conveyorAxesCache.ContainsKey(axis))
-                return conveyorAxesCache[axis].Jog(true, vel, acc, dec);
+                return conveyorAxesCache[axis].Jog(false, vel, acc, dec);
             throw new ArgumentException("Axis not exist ");
         }
 
@@ -1241,11 +1265,13 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
             for (AcsBuffers acsBuffers = AcsBuffers.ConveyorHoming;
                 acsBuffers <= AcsBuffers.InternalErrorExit;
-                ++acsBuffers)
-                acsUtils.StopBuffer((ProgramBuffer) acsBuffers);
-            acsUtils.StopBuffer(ProgramBuffer.ACSC_BUFFER_55);
-            acsUtils.StopBuffer(ProgramBuffer.ACSC_BUFFER_56);
-            acsUtils.StopBuffer(ProgramBuffer.ACSC_BUFFER_57);
+                ++acsBuffers) {
+                bufferHelper.StopBuffer((ProgramBuffer) acsBuffers);
+            }
+
+            bufferHelper.StopBuffer(ProgramBuffer.ACSC_BUFFER_55);
+            bufferHelper.StopBuffer(ProgramBuffer.ACSC_BUFFER_56);
+            bufferHelper.StopBuffer(ProgramBuffer.ACSC_BUFFER_57);
             foreach (KeyValuePair<ConveyorAxes, AcsAxis> keyValuePair in conveyorAxesCache)
                 keyValuePair.Value.Stop();
             return true;
@@ -1272,7 +1298,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 return false;
             }
 
-            acsUtils.StopBuffer(ProgramBuffer.ACSC_BUFFER_9);
+            bufferHelper.StopBuffer(ProgramBuffer.ACSC_BUFFER_9);
             if (conveyorAxesCache.ContainsKey(axis))
                 return conveyorAxesCache[axis].Abort();
             throw new ArgumentException("Axis not exist ");
@@ -1295,7 +1321,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         {
             scanLoopRunning = true;
             var refreshCounter = DataRefreshCounter;
-
+            logger.Debug($"+AcsWrapper:ScanLoop starts running....");
             while (scanLoopRunning) {
                 lock (lockObject) {
                     try {
@@ -1322,15 +1348,15 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 }
 
                 if (isScanningBufferRun) {
-                    CurrentScanningIndex =
-                        Convert.ToInt32(acsUtils.ReadVar("CURRENT_STEP_INDEX", ProgramBuffer.ACSC_BUFFER_9));
                     CurrentMotionCompleteReceived =
                         Convert.ToInt32(
                             acsUtils.ReadVar("MOVE_MOTION_COMPLETE_RECVD", ProgramBuffer.ACSC_BUFFER_9));
                     CurrentMovePsxAckReceived =
                         Convert.ToInt32(acsUtils.ReadVar("MOVE_PSX_ACK_RECVD", ProgramBuffer.ACSC_BUFFER_9));
+                    CurrentScanningIndex =
+                        Convert.ToInt32(acsUtils.ReadVar("CURRENT_STEP_INDEX", ProgramBuffer.ACSC_BUFFER_9));
 
-                    if (!acsUtils.IsProgramRunning(ProgramBuffer.ACSC_BUFFER_9)) {
+                    if (!bufferHelper.IsProgramRunning(ProgramBuffer.ACSC_BUFFER_9)) {
                         isScanningBufferRun = false;
                         ScanningEnd?.Invoke();
                         foreach (var keyValuePair in axesCache) {
@@ -1351,8 +1377,8 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
                 Thread.Sleep(SleepInterval);
             }
-
             waitExitFromPoling.Set();
+            logger.Debug($"-AcsWrapper:ScanLoop exits");
         }
 
         private void EnableAcsEvents()
@@ -1423,7 +1449,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         {
             axesCache.Clear();
             for (var gantryAxes = GantryAxes.Z; gantryAxes < GantryAxes.All; ++gantryAxes) {
-                var acsAxis = new AcsAxis(api, acsUtils, gantryAxes, GetAcsAxisIndex(gantryAxes), robotSettings);
+                var acsAxis = new AcsAxis(api, acsUtils, bufferHelper, gantryAxes, GetAcsAxisIndex(gantryAxes), robotSettings);
 
                 axesCache[gantryAxes] = acsAxis;
                 acsAxis.IdleChanged += AxisIdleChanged;
@@ -1453,7 +1479,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         {
             conveyorAxesCache.Clear();
             for (var conveyorAxes = ConveyorAxes.Conveyor; conveyorAxes <= ConveyorAxes.Lifter; ++conveyorAxes) {
-                var acsAxis = new AcsAxis(api, acsUtils, conveyorAxes, GetAcsAxisIndex(conveyorAxes));
+                var acsAxis = new AcsAxis(api, acsUtils, bufferHelper, conveyorAxes, GetAcsAxisIndex(conveyorAxes));
 
                 conveyorAxesCache[conveyorAxes] = acsAxis;
                 acsAxis.IdleChanged += ConveyorAxisIdleChanged;
@@ -1537,7 +1563,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
                 bufferHelper.FlashAllBuffers();
 
-                acsUtils.RunBuffer((ProgramBuffer) AcsBuffers.initIO);
+                bufferHelper.RunBuffer((ProgramBuffer) AcsBuffers.initIO);
             }
             catch (Exception e) {
                 logger.Error("AcsWrapper: initBuffers Exception: " + e.Message);
@@ -1676,50 +1702,42 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         private void ConveyorAxisReadyChanged(int axis, bool isReady)
         {
-            logger.Info(string.Format("axisReadyChanged {0} {1}", (ConveyorAxes) axis, isReady));
             OnConveyorAxisReadyChanged?.Invoke((ConveyorAxes) axis, isReady);
         }
 
         private void ConveyorAxisPositionUpdated(int axis, double pos)
         {
-            logger.Info(string.Format("axisPositionUpdated {0} {1}", (ConveyorAxes) axis, pos));
             OnConveyorAxisPositionUpdated?.Invoke((ConveyorAxes) axis, pos);
         }
 
         private void ConveyorAxisVelocityUpdated(int axis, double vel)
         {
-            logger.Info(string.Format("axisVelocityUpdated {0} {1}", (ConveyorAxes) axis, vel));
             Action<ConveyorAxes, double> axisVelocityUpdated = OnConveyorAxisVelocityUpdated;
             OnConveyorAxisVelocityUpdated?.Invoke((ConveyorAxes) axis, vel);
         }
 
         private void ConveyorAxisMovementBegin(int axis)
         {
-            logger.Info(string.Format("Axis_MovementBegin {0} ", (ConveyorAxes) axis));
             OnConveyorAxisMovementBegin?.Invoke((ConveyorAxes) axis);
         }
 
         private void ConveyorAxisMovementEnd(int axis, bool res)
         {
-            logger.Info(string.Format("axisMovementEnd {0} {1}", (ConveyorAxes) axis, res));
             OnConveyorAxisMovementEnd?.Invoke((ConveyorAxes) axis, res);
         }
 
         private void ConveyorAxisStopDone(int axis, bool res)
         {
-            logger.Info(string.Format("axisStopDone {0} {1}", (ConveyorAxes) axis, res));
             OnConveyorAxisStopDone?.Invoke((ConveyorAxes) axis, res);
         }
 
         private void ConveyorAxisAbortDone(int axis, bool res)
         {
-            logger.Info(string.Format("axisAbortDone {0} {1}", (ConveyorAxes) axis, res));
             OnConveyorAxisAbortDone?.Invoke((ConveyorAxes) axis, res);
         }
 
         private void ConveyorAxisAtHomeSensorChanged(int axis, bool isAtHomeSensor)
         {
-            logger.Info(string.Format("axisAtHomeSensorChanged {0} {1}", (ConveyorAxes) axis, isAtHomeSensor));
             OnConveyorAxisAtHomeSensorChanged?.Invoke((ConveyorAxes) axis, isAtHomeSensor);
         }
 
@@ -1749,13 +1767,11 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         private void ConveyorAxisHomingBegin(int axis)
         {
-            logger.Info(string.Format("Axis_AxisHomingBegin {0} ", (ConveyorAxes) axis));
             OnConveyorAxisHomingBegin?.Invoke((ConveyorAxes) axis);
         }
 
         private void ConveyorAxisHomingEnd(int axis, bool res)
         {
-            logger.Info(string.Format("Axis_AxisHomingEnd {0} {1}", (ConveyorAxes) axis, res));
             OnConveyorAxisHomingEnd?.Invoke((ConveyorAxes) axis, res);
         }
 
@@ -1773,34 +1789,43 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             }
         }
 
+        private readonly object _currentMotionCompleteReceivedLocker = new object();
+
         private int CurrentMotionCompleteReceived
         {
             get { return currentMotionCompleteReceived; }
             set
             {
-                if (value == currentMotionCompleteReceived)
-                    return;
-                currentMotionCompleteReceived = value;
-                if (currentMotionCompleteReceived == 1) {
-                    HardwareNotifySingleMoveMotionCompleteReceived?.Invoke();
-                    acsUtils.WriteVariable(0, "MOVE_MOTION_COMPLETE_RECVD", 9);
-                    currentMotionCompleteReceived = 0;
+                lock (_currentMotionCompleteReceivedLocker)
+                {
+                    if (value == currentMotionCompleteReceived)
+                        return;
+                    currentMotionCompleteReceived = value;
+                    if (currentMotionCompleteReceived > 0)
+                    {
+                        HardwareNotifySingleMoveMotionCompleteReceived?.Invoke(currentMotionCompleteReceived);
+                    }
                 }
+
             }
         }
+
+        private readonly object _currentMovePsxAckReceivedLocker = new object();
 
         private int CurrentMovePsxAckReceived
         {
             get { return currentMovePsxAckReceived; }
             set
             {
-                if (value == currentMovePsxAckReceived)
-                    return;
-                currentMovePsxAckReceived = value;
-                if (currentMovePsxAckReceived == 1) {
-                    HardwareNotifySingleMovePSXAckReceived?.Invoke();
-                    acsUtils.WriteVariable(0, "MOVE_PSX_ACK_RECVD", 9);
-                    currentMovePsxAckReceived = 0;
+                lock (_currentMovePsxAckReceivedLocker)
+                {
+                    if (value == currentMovePsxAckReceived)
+                        return;
+                    currentMovePsxAckReceived = value;
+                    if (currentMovePsxAckReceived > 0)
+                    {
+                        HardwareNotifySingleMovePSXAckReceived?.Invoke(currentMovePsxAckReceived);
+                    }
                 }
             }
         }
@@ -1866,7 +1891,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             WritePanelLength(panelLength);
             WriteLifterDistances(parameters.Stage_1_LifterOnlyDistance, parameters.Stage_2_LifterAndClamperDistance);
 
-            acsUtils.RunBuffer((ProgramBuffer) AcsBuffers.LoadPanel);
+            bufferHelper.RunBuffer((ProgramBuffer) AcsBuffers.LoadPanel);
             api.WaitProgramEnd((ProgramBuffer) AcsBuffers.LoadPanel, timeout);
 
             UpdateConveyorStatus();
@@ -1878,7 +1903,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             WritePanelLength(panelLength);
             WriteLifterDistances(parameters.Stage_1_LifterOnlyDistance, parameters.Stage_2_LifterAndClamperDistance);
 
-            acsUtils.RunBuffer((ProgramBuffer) AcsBuffers.ReloadPanel);
+            bufferHelper.RunBuffer((ProgramBuffer) AcsBuffers.ReloadPanel);
             api.WaitProgramEnd((ProgramBuffer) AcsBuffers.ReloadPanel, timeout);
 
             UpdateConveyorStatus();
@@ -1897,14 +1922,14 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public void StopPanelLoad()
         {
-            acsUtils.StopBuffer((ProgramBuffer) AcsBuffers.LoadPanel);
+            bufferHelper.StopBuffer((ProgramBuffer) AcsBuffers.LoadPanel);
         }
 
         public void StartPanelPreRelease(PreReleasePanelBufferParameters parameters, int timeout)
         {
             InitConveyorBufferParameters(parameters);
 
-            acsUtils.RunBuffer((ProgramBuffer) AcsBuffers.PreReleasePanel);
+            bufferHelper.RunBuffer((ProgramBuffer) AcsBuffers.PreReleasePanel);
             api.WaitProgramEnd((ProgramBuffer) AcsBuffers.PreReleasePanel, timeout);
 
             UpdateConveyorStatus();
@@ -1914,7 +1939,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         {
             InitConveyorBufferParameters(parameters);
 
-            acsUtils.RunBuffer((ProgramBuffer) AcsBuffers.ReleasePanel);
+            bufferHelper.RunBuffer((ProgramBuffer) AcsBuffers.ReleasePanel);
             api.WaitProgramEnd((ProgramBuffer) AcsBuffers.ReleasePanel, timeout);
 
             UpdateConveyorStatus();
@@ -1993,7 +2018,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             // change conveyor width
             InitConveyorBufferParameters(parameters);
 
-            acsUtils.RunBuffer((ProgramBuffer) AcsBuffers.ChangeWidth);
+            bufferHelper.RunBuffer((ProgramBuffer) AcsBuffers.ChangeWidth);
             api.WaitProgramEnd((ProgramBuffer) AcsBuffers.ChangeWidth, timeout);
 
             UpdateConveyorStatus();
@@ -2011,7 +2036,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             try {
                 InitConveyorBufferParameters(parameter);
 
-                acsUtils.RunBuffer((ProgramBuffer) AcsBuffers.PowerOnRecoverFromEmergencyStop);
+                bufferHelper.RunBuffer((ProgramBuffer) AcsBuffers.PowerOnRecoverFromEmergencyStop);
                 api.WaitProgramEnd((ProgramBuffer) AcsBuffers.PowerOnRecoverFromEmergencyStop, timeout);
             }
             catch (Exception ex) {
@@ -2075,7 +2100,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             // activate Bypass mode
             try {
                 InitConveyorBufferParameters(parameter);
-                acsUtils.RunBuffer((ProgramBuffer) AcsBuffers.BypassMode);
+                bufferHelper.RunBuffer((ProgramBuffer) AcsBuffers.BypassMode);
             }
             catch (Exception ex) {
                 throw new AcsException(ex.Message);
@@ -2086,7 +2111,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         {
             // deactivate Bypass mode
             try {
-                acsUtils.StopBuffer((ProgramBuffer) AcsBuffers.BypassMode);
+                bufferHelper.StopBuffer((ProgramBuffer) AcsBuffers.BypassMode);
             }
             catch (Exception ex) {
                 throw new AcsException(ex.Message);
@@ -2203,7 +2228,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         {
             try {
                 InitConveyorBufferParameters(parameter);
-                acsUtils.RunBuffer((ProgramBuffer) AcsBuffers.WidthHoming);
+                bufferHelper.RunBuffer((ProgramBuffer) AcsBuffers.WidthHoming);
             }
             catch (Exception ex) {
                 throw new AcsException(ex.Message);
@@ -2258,7 +2283,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         public void HomeConveyorLifterAxis()
         {
             try {
-                acsUtils.RunBuffer((ProgramBuffer) AcsBuffers.LifterHoming);
+                bufferHelper.RunBuffer((ProgramBuffer) AcsBuffers.LifterHoming);
             }
             catch (Exception ex) {
                 throw new AcsException(ex.Message);

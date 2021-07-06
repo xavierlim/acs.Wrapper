@@ -167,6 +167,10 @@ LowerLifter:
 	LockStopper_Bit = 0
 	RaiseBoardStopStopper_Bit = 0
 	Lifter_Lowered = 1
+
+	!Simulation
+	RearClampDown_Bit = 1
+	FrontClampDown_Bit = 1
 RET
 
 

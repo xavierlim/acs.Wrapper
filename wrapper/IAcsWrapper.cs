@@ -17,6 +17,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 {
     public interface IAcsWrapper
     {
+        bool IsSimulation { get; }
         bool IsConnected { get; }
         string FirmwareVersion { get; }
         uint NETLibraryVersion { get; }
@@ -64,8 +65,8 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         event Action<GantryAxes> OnAxisHomingBegin;
         event Action<GantryAxes, bool> OnAxisHomingEnd;
         event Action ScanningBegin;
-        event Action HardwareNotifySingleMoveMotionCompleteReceived;
-        event Action HardwareNotifySingleMovePSXAckReceived;
+        event Action<int> HardwareNotifySingleMoveMotionCompleteReceived;
+        event Action<int> HardwareNotifySingleMovePSXAckReceived;
         event Action<int> ScanningIndexChange;
         event Action ScanningEnd;
         void Connect();
