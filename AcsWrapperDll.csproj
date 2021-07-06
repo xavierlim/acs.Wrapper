@@ -138,7 +138,15 @@
     <Content Include="resources\buffers\simulation\ScanningBuffer.prg" />
     <Content Include="resources\buffers\simulation\SecurePanelBuffer.prg" />
     <Content Include="resources\buffers\simulation\WidthHoming.prg" />
-    <Content Include="resources\buffers\simulation\WidthLifterConveyorReset.prg" />
+    <Content Include="resources\buffers\simulation\WidthLifterConveyorReset.prg"/>
+    <Content Include="resources\images\acsplatformsimulator.png"/>
+    <Content Include="resources\images\config.png"/>
+    <Content Include="resources\images\mmiapplicationstudio.png"/>
+    <Content Include="resources\images\simulationmode.png"/>
+    <Content Include="resources\images\simulationmodemocked.png"/>
+    <Content Include="resources\images\umdconnectedtab.png"/>
+    <Content Include="resources\images\umdsimulatorstarted.png"/>
+    <Content Include="resources\images\umdsimulatortab.png"/>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
