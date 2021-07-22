@@ -15,6 +15,8 @@ ReleasePanelSmemaError = 605
 WAIT 3000
 ERROR_CODE = ERROR_SAFE
 CURRENT_STATUS = RELEASED_STATUS
+!ERROR_CODE = ReleasePanelStateError
+!CURRENT_STATUS = ERROR_STATUS
 PanelFreed = 1
 RearClampUp_Bit = 0
 FrontClampUp_Bit = 0

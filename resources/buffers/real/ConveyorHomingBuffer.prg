@@ -7,6 +7,8 @@ MFLAGS(Axis).#HOME = 0
 
 Axis= 5
 Slave_Number = 2
+ACC(Axis) = 10000
+DEC(Axis) = 16000
 
 int EC_Offset
 

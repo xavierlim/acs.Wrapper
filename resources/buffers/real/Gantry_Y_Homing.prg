@@ -6,7 +6,7 @@ global real CnvTY(5), CnvAY(5) !CnvB(612)!CnvB(420)
 
 Axis_Y = 1
 
-MFLAGS(Axis_Y).#HOME = 0
+!MFLAGS(Axis_Y).#HOME = 0
 
 disable Axis_Y
 
@@ -121,7 +121,7 @@ RESTORE_TUNING_PARA:
 	XCURV(Axis_Y) = 100
 	XCURI(Axis_Y) = 50
 
-	SLAFF(Axis_Y) = 460
+	SLAFF(Axis_Y) = 400
 	SLSBORD(Axis_Y) = 1
 RET
 

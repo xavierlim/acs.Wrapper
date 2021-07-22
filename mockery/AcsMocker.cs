@@ -12,7 +12,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.mockery
     internal class AcsMocker : IAcsWrapper
     {
         private readonly List<IPvTuple3D> motionPaths;
-        private readonly Dictionary<GantryAxes, double> axesPosition;
+        private readonly Dictionary<AcsAxes, double> axesPosition;
 
         public AcsMocker()
         {
@@ -22,9 +22,14 @@ namespace CO.Systems.Services.Acs.AcsWrapper.mockery
             HasError = HasConveyorError = HasRobotError = false;
 
             motionPaths = new List<IPvTuple3D>();
-            axesPosition = new Dictionary<GantryAxes, double>
+            axesPosition = new Dictionary<AcsAxes, double>
             {
-                {GantryAxes.X, double.MinValue}, {GantryAxes.Y, double.MinValue}, {GantryAxes.Z, double.MinValue}
+                {AcsAxes.GantryX, 0.0},
+                {AcsAxes.GantryY, 0.0},
+                {AcsAxes.GantryZ, 0.0},
+                {AcsAxes.ConveyorBelt, 0.0},
+                {AcsAxes.ConveyorWidth, 0.0},
+                {AcsAxes.ConveyorLifter, 0.0}
             };
         }
 
@@ -92,9 +97,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.mockery
             return true;
         }
 
-        public double Position(GantryAxes axis)
+        public double GetGantryPosition(GantryAxes axis)
         {
-            return axesPosition[axis];
+            return axesPosition[ConvertAxis(axis)];
         }
 
         public double Velocity(GantryAxes axis)
@@ -144,9 +149,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.mockery
                 foreach (var path in motionPaths) {
                     Thread.Sleep(200);
 
-                    axesPosition[GantryAxes.X] = path.PvTuple[(int) GantryAxes.X].Position;
-                    axesPosition[GantryAxes.Y] = path.PvTuple[(int) GantryAxes.Y].Position;
-                    axesPosition[GantryAxes.Z] = path.PvTuple[(int) GantryAxes.Z].Position;
+                    axesPosition[AcsAxes.GantryX] = path.PvTuple[(int) GantryAxes.X].Position;
+                    axesPosition[AcsAxes.GantryY] = path.PvTuple[(int) GantryAxes.Y].Position;
+                    axesPosition[AcsAxes.GantryZ] = path.PvTuple[(int) GantryAxes.Z].Position;
                     ScanningIndexChange?.Invoke(++scanningIndex);
                     HardwareNotifySingleMoveMotionCompleteReceived?.Invoke(scanningIndex);
 
@@ -294,28 +299,28 @@ namespace CO.Systems.Services.Acs.AcsWrapper.mockery
         public bool MoveAbsolute(List<AxisMoveParameters> axesToMove)
         {
             foreach (var parameter in axesToMove) {
-                axesPosition[parameter.Axis] = parameter.TargetPos;
+                axesPosition[ConvertAxis(parameter.Axis)] = parameter.TargetPos;
             }
             return true;
         }
 
         public bool MoveAbsolute(GantryAxes axis, double targetPos, double vel = 0, double acc = 0, double dec = 0)
         {
-            axesPosition[axis] = targetPos;
+            axesPosition[ConvertAxis(axis)] = targetPos;
             return true;
         }
 
         public bool MoveRelative(List<AxisMoveParameters> axesToMove)
         {
             foreach (var parameter in axesToMove) {
-                axesPosition[parameter.Axis] += parameter.TargetPos;
+                axesPosition[ConvertAxis(parameter.Axis)] += parameter.TargetPos;
             }
             return true;
         }
 
         public bool MoveRelative(GantryAxes axis, double relativePosition, double vel = 0, double acc = 0, double dec = 0)
         {
-            axesPosition[axis] += relativePosition;
+            axesPosition[ConvertAxis(axis)] += relativePosition;
             return true;
         }
 
@@ -341,7 +346,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.mockery
 
         public void SetRPos(GantryAxes axis, double pos)
         {
-            axesPosition[axis] = pos;
+            axesPosition[ConvertAxis(axis)] = pos;
         }
 
         public void StartPanelLoad(LoadPanelBufferParameters parameters,
@@ -481,6 +486,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.mockery
 
         public void HomeConveyorWidthAxis(HomeConveyorWidthParameters parameter)
         {
+            axesPosition[AcsAxes.ConveyorWidth] = 0;
         }
 
         public void EnableConveyorAxis()
@@ -521,10 +527,12 @@ namespace CO.Systems.Services.Acs.AcsWrapper.mockery
 
         public void HomeConveyorLifterAxis()
         {
+            axesPosition[AcsAxes.ConveyorLifter] = 0;
         }
 
         public void MoveConveyorLifter(double targetPosition)
         {
+            axesPosition[AcsAxes.ConveyorLifter] = targetPosition;
         }
 
         public bool IsConveyorLifterAxisEnabled()
@@ -534,7 +542,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.mockery
 
         public double GetConveyorLifterAxisPosition()
         {
-            return 0;
+            return axesPosition[AcsAxes.ConveyorLifter];
         }
 
         public void SetAdditionalSettlingTime(int settlingTime)
@@ -546,5 +554,28 @@ namespace CO.Systems.Services.Acs.AcsWrapper.mockery
         }
 
         #endregion
+
+        private AcsAxes ConvertAxis(GantryAxes axis)
+        {
+            switch (axis) {
+                case GantryAxes.Z:
+                    return AcsAxes.GantryZ;
+                default:
+                case GantryAxes.X:
+                    return AcsAxes.GantryX;
+                case GantryAxes.Y:
+                    return AcsAxes.GantryY;
+            }
+        }
+    }
+
+    enum AcsAxes
+    {
+        GantryX,
+        GantryY,
+        GantryZ,
+        ConveyorBelt,
+        ConveyorWidth,
+        ConveyorLifter,
     }
 }

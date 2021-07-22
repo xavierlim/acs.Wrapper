@@ -12,7 +12,7 @@ FMASK(Axis_Z).#LL = 1
 FDEF(Axis_Z).#RL = 0
 FDEF(Axis_Z).#LL = 0
 
-MFLAGS(Axis_Z).#HOME = 0
+!MFLAGS(Axis_Z).#HOME = 0
 
 ACC (Axis_Z) = 2000
 DEC (Axis_Z) = 2000
@@ -46,6 +46,9 @@ XCURV(Axis_Z) = 45
 XCURI(Axis_Z) = 16
 
 ptp/ve Axis_Z,0,100
+wait 1000
+ptp/ve Axis_Z,-5,10
+SET FPOS(Axis_Z) = 0
 
 ACC (Axis_Z) = 5000
 DEC (Axis_Z) = 5000

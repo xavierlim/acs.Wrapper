@@ -53,7 +53,9 @@ if (PingPongMode = 0)	!if not pingpong mode
 else																							!if pingpong mode
 	if CURRENT_STATUS = PRERELEASED_STATUS
 		CURRENT_STATUS = RELEASING_STATUS
+		if ExitOpto_Bit = 0
 		CALL ContinueFrom_SetConveyorBeltsDownstreamSpeedToRelease
+		end
 
 	else
 		if 	CURRENT_STATUS = PRERELEASING_STATUS
@@ -121,6 +123,8 @@ ClearDownstreamSmemaBoardAvailable:
 RET
 
 SetConveyorBeltsDownstreamSpeedToRelease:
+	ACC (CONVEYOR_AXIS) = 10000
+	DEC (CONVEYOR_AXIS) = 16000
 	JOG/v CONVEYOR_AXIS,ConveyorBeltReleaseSpeed*ConveyorDirection
 RET
 
@@ -154,10 +158,14 @@ RET
 
 
 StartConveyorBeltsDownstreamInternalSpeed:
+	ACC (CONVEYOR_AXIS) = 10000
+	DEC (CONVEYOR_AXIS) = 16000
 	JOG/v CONVEYOR_AXIS,ConveyorBeltReleaseSpeed*ConveyorDirection
 RET
 
 AdjustConveyorBeltSpeedToSlow:
+	ACC (CONVEYOR_AXIS) = 10000
+	DEC (CONVEYOR_AXIS) = 16000
 	JOG/v CONVEYOR_AXIS,ConveyorBeltSlowSpeed*ConveyorDirection
 
 RET

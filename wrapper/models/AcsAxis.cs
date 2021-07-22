@@ -199,12 +199,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
             get { return position; }
             private set
             {
-                if (position == value)
-                    return;
+                if (Math.Abs(position - value) < 0.01) return;
                 position = value;
-                Action<int, double> positionUpdated = PositionUpdated;
-                if (positionUpdated != null)
-                    positionUpdated(ApplicationAxisId, position);
+                PositionUpdated?.Invoke(ApplicationAxisId, position);
             }
         }
 
@@ -605,12 +602,10 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
                     vel = DefaultVelocity;
                 if (Math.Abs(vel) >= MaxVelocity * 0.99)
                     vel = vel >= 0.0 ? MaxVelocity * 0.99 : MaxVelocity * 0.99 * -1.0;
-                if (acc == 0.0 || double.IsNaN(acc))
-                    acc = DefaultAccel;
-                if (dec == 0.0 || double.IsNaN(dec))
-                    dec = DefaultDecel;
-                CurrentAccel = acc;
-                CurrentDecel = dec;
+
+                if (acc > 0.0) CurrentAccel = acc;
+                if (dec > 0.0) CurrentDecel = dec;
+
                 JogImpl(waitProgramEnd, vel);
                 return true;
             }
@@ -1023,6 +1018,12 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
             }
 
             return false;
+        }
+
+        public double GetPosition()
+        {
+            Position = api.GetRPosition(AcsAxisId);
+            return Position;
         }
     }
 }

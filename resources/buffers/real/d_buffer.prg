@@ -27,6 +27,7 @@ global int PRERELEASING_STATUS = 10, RELEASING_STATUS = 11,BYPASS_STATUS = 12
 
 global int ControlWord_Conveyor, ControlWord_Width, ControlWord_Lifter 
 global real ActualPos_Conveyor, ActualPos_Width, ActualPos_Lifter
+global int Touch_Probe_Function 
 
 global ERROR_SAFE = 0
 global int CURRENT_STATUS
@@ -90,6 +91,7 @@ global real DistanceBetweenSlowPositionAndExitSensor = 50
 global real DistanceBetweenSlowPositionAndEntrySensor = 50
 global real DistanceBetweenEntryAndStopSensor = 620
 global real DistanceBetweenStopSensorAndExitSensor = 620
+global real DistanceBetweenEntrySensorAndExitSensor = 1150
 
 global real Stage_1_LifterOnlyDistance
 global real Stage_2_LifterAndClamperDistance
@@ -123,7 +125,7 @@ global int BypassNormal_Bit ! done I 0.7
 global int UpstreamBoardAvailableSignal_Bit ! done I 1.4
 global int UpstreamFailedBoardAvailableSignal_Bit ! done I 1.5
 global int DownstreamMachineReadySignal_Bit ! done I 1.6
-!global int CustomerDISignal_Bit ! done I 1.7
+global int CustomerDISignal_Bit ! done I 1.7
 
 
 global int EntryOpto_Bit ! done I 2.0
@@ -168,7 +170,7 @@ global int SmemaUpStreamMachineReady_Bit ! done 0 1.3
 global int DownStreamBoardAvailable_Bit ! done 0 1.4
 global int SmemaDownStreamFailedBoardAvailable_Bit ! done 0 1.5
 !global int CustomerDOSignal_Bit ! done O 1.6
-!global int CustomerDOSignal_Bit ! done O 1.7
+global int CustomerDOSignal_Bit ! done O 1.7
 
 global int ClampPanel_Bit ! done 0 2.0
 global int LockStopper_Bit ! done 0 2.1
@@ -190,6 +192,7 @@ global int PanelFreed
 global int PanelSecured
 
 global int ConveyorWidthHomed
+global int ConveyorLifterHomed
 
 global int InternalMachineLoadBufferIndex
 global int InternalErrorExitBufferIndex
@@ -201,6 +204,7 @@ global int LoadPanelBufferIndex
 global int ReleasePanelBufferIndex = 20
 global int ReloadPanelBufferIndex = 21
 global int ConveyorResetBufferIndex = 7
+global int LifterHomingBufferIndex = 6
 global int WidthHomingBufferIndex = 5
 
 global real ConveyorBeltAcquireSpeed = 350

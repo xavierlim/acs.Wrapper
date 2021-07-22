@@ -5,7 +5,7 @@ int Axis_X1, Axis_X2
 Axis_X1 = 0
 Axis_X2 = 2
 
-MFLAGS(Axis_X1).#HOME = 0
+!MFLAGS(Axis_X1).#HOME = 0
 
 disable Axis_X1
 disable Axis_X2
@@ -54,7 +54,7 @@ INPUTSHAPING_ON:
 RET
 
 NONGANTRY_SETTINGS:
-	MFLAGS(Axis_X1).#HOME = 0
+	!MFLAGS(Axis_X1).#HOME = 0
 
 	FMASK(Axis_X1).#RL = 1
 	FMASK(Axis_X1).#LL = 1
