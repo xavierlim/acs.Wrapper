@@ -58,25 +58,35 @@ till ^MST(Axis).#MOVE
 wait 10
 !*******************************************
 
-int Touch_Probe_Status
+int Touch_Probe_Status = 0, Touch_Probe_Offset = 376
+ecout( Touch_Probe_Offset, Touch_Probe_Function )
 real Index_Position
 
 !********Initiating touch probe******************
-coewrite/2 (Slave_Number,0x60B8,0,0)
+!while ^(Touch_Probe_Status = 65)
+!coewrite/2 (Slave_Number,0x60B8,0,0)
+!wait 200
+!coewrite/2 (Slave_Number,0x60B8,0,21)
+!Touch_Probe_Status=coeread/2 (Slave_Number,0x60B9,0)
+!end
+while ^(Touch_Probe_Status = 65)
+Touch_Probe_Function = 0
 wait 200
-coewrite/2 (Slave_Number,0x60B8,0,21)
-Touch_Probe_Status=coeread/2 (Slave_Number,0x60B9,0)
+Touch_Probe_Function = 21
+wait 200
+Touch_Probe_Status = coeread/2(Slave_Number, 0x60B9, 0)
+end
 !**********************************************************
 
-!*************Looking for index*****************
+!*************Looking for index*****************\
 jog/v Axis,V_Index_Search
 while (Touch_Probe_Status=65)
 Touch_Probe_Status=coeread/2 (Slave_Number,0x60B9,0)
 if ^(Touch_Probe_Status = 65 )
-end
-end
 kill Axis
 wait 200
+end
+end
 !************************************************
 
 ecin (366, ActualPos_Width)

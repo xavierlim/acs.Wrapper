@@ -57,14 +57,22 @@ till ^MST(Axis).#MOVE
 wait 10
 !*******************************************
 
-int Touch_Probe_Status
+int Touch_Probe_Status = 0, Touch_Probe_Offset = 390
+ecout( Touch_Probe_Offset, Touch_Probe_Function )
 real Index_Position
 
 !********Initiating touch probe******************
-coewrite/2 (Slave_Number,0x60B8,0,0)
+!coewrite/2 (Slave_Number,0x60B8,0,0)
+!wait 200
+!coewrite/2 (Slave_Number,0x60B8,0,21)
+!Touch_Probe_Status=coeread/2 (Slave_Number,0x60B9,0)
+while ^(Touch_Probe_Status = 65)
+Touch_Probe_Function = 0
 wait 200
-coewrite/2 (Slave_Number,0x60B8,0,21)
-Touch_Probe_Status=coeread/2 (Slave_Number,0x60B9,0)
+Touch_Probe_Function = 21
+wait 200
+Touch_Probe_Status = coeread/2(Slave_Number, 0x60B9, 0)
+end
 !**********************************************************
 
 !*************Looking for index*****************
@@ -72,10 +80,31 @@ jog/v Axis,V_Index_Search
 while (Touch_Probe_Status=65)
 Touch_Probe_Status=coeread/2 (Slave_Number,0x60B9,0)
 if ^(Touch_Probe_Status = 65 )
-end
-end
 kill Axis
 wait 200
+end
+end
+!************************************************
+
+!********Initiating 2nd touch probe******************
+while ^(Touch_Probe_Status = 65)
+Touch_Probe_Function = 0
+wait 200
+Touch_Probe_Function = 21
+wait 200
+Touch_Probe_Status = coeread/2(Slave_Number, 0x60B9, 0)
+end
+!**********************************************************
+
+!*************Looking for 2nd index*****************
+jog/v Axis,V_Index_Search
+while (Touch_Probe_Status=65)
+Touch_Probe_Status=coeread/2 (Slave_Number,0x60B9,0)
+if ^(Touch_Probe_Status = 65 )
+kill Axis
+wait 200
+end
+end
 !************************************************
 
 ecin (380, ActualPos_Lifter)
@@ -87,10 +116,13 @@ ptp/v Axis,0,10
 till ^MST(Axis).#MOVE
 wait 200
 
+
+
 !*****Enable default limit response******
 FDEF(Axis).#LL=1
 FDEF(Axis).#RL=1
 !*****************************************
 
 MFLAGS(Axis).#HOME = 1
+ConveyorLifterHomed = 1
 stop

@@ -59,9 +59,13 @@ RET
 
 
 StartConveyorBeltsDownstreamAndS_Acq:
+	ACC (CONVEYOR_AXIS) = 10000
+	DEC (CONVEYOR_AXIS) = 16000
 	JOG/v CONVEYOR_AXIS,ConveyorBeltAcquireSpeed*ConveyorDirection
 RET
 AdjustConveyorBeltSpeedToInternalSpeed:
+	ACC (CONVEYOR_AXIS) = 10000
+	DEC (CONVEYOR_AXIS) = 16000
 	JOG/v CONVEYOR_AXIS,ConveyorBeltLoadingSpeed*ConveyorDirection
 RET
 ClearUpstreamSmemaMachineReady:
@@ -94,6 +98,8 @@ StopConveyorBelts:
 	HALT CONVEYOR_AXIS
 RET
 StartConveyorBeltsDownstreamInternalSpeed:
+	ACC (CONVEYOR_AXIS) = 10000
+	DEC (CONVEYOR_AXIS) = 16000
 	JOG/v CONVEYOR_AXIS,ConveyorBeltLoadingSpeed*ConveyorDirection
 RET
 
@@ -132,6 +138,8 @@ ClearDownstreamSmemaBoardAvailable:
 	DownStreamBoardAvailable_Bit = 0
 RET
 SetConveyorBeltsDownstreamSpeedToRelease:
+	ACC (CONVEYOR_AXIS) = 10000
+	DEC (CONVEYOR_AXIS) = 16000
 	JOG/v CONVEYOR_AXIS,ConveyorBeltReleaseSpeed*ConveyorDirection
 RET
 

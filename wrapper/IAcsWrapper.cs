@@ -75,7 +75,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         bool Enabled(GantryAxes axis);
         bool Homed(GantryAxes axis);
         bool Ready(GantryAxes axis);
-        double Position(GantryAxes axis);
+        double GetGantryPosition(GantryAxes axis);
         double Velocity(GantryAxes axis);
         bool AtHomeSensor(GantryAxes axis);
         bool AtPositiveHwLimit(GantryAxes axis);
@@ -179,8 +179,23 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         void DisableConveyorAxis();
         void EnableConveyorWidthAxis();
         void DisableConveyorWidthAxis();
+        
+        /// <summary>
+        /// begin conveyor belt jogging in left to right direction
+        /// </summary>
+        /// <param name="velocity">desired belt speed</param>
+        /// <param name="acceleration">desired acceleration. If value is 0, existing acceleration set in controller will be used</param>
+        /// <param name="deceleration">desired deceleration. If value is 0, existing deceleration set in controller will be used</param>
         void JogConveyorAxisLeftToRight(double velocity, double acceleration, double deceleration);
+
+        /// <summary>
+        /// begin conveyor belt jogging in right to left direction
+        /// </summary>
+        /// <param name="velocity">desired belt speed</param>
+        /// <param name="acceleration">desired acceleration. If value is 0, existing acceleration set in controller will be used</param>
+        /// <param name="deceleration">desired deceleration. If value is 0, existing deceleration set in controller will be used</param>
         void JogConveyorAxisRightToLeft(double velocity, double acceleration, double deceleration);
+
         void StopConveyorAxis();
         void EnableConveyorLifterAxis();
         void DisableConveyorLifterAxis();

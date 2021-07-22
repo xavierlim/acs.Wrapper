@@ -110,6 +110,17 @@ ecunmapin(EC_Offset)
 ecunmapout(EC_Offset)
 !***********Fault Clear***********
 
+wait 2000
+!***********2nd Fault Clear***********
+ecout(EC_Offset,ControlWord_Conveyor)
+ControlWord_Conveyor = 0x8F
+wait 500
+ControlWord_Conveyor = 0x0F
+coewrite/1(Slave_Number,0x6060,0,8)
+ecunmapin(EC_Offset)
+ecunmapout(EC_Offset)
+!***********Fault Clear***********
+
 enable Axis
 till MST(Axis).#ENABLED
 wait 100

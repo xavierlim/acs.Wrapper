@@ -35,7 +35,7 @@ ECOUT/b(3184,ClampPanel_Bit)!0 2.0
 ECOUT/b(3185,LockStopper_Bit)!0 2.1
 ECOUT/b(3186,RaiseBoardStopStopper_Bit)!0 2.2
 ECOUT/b(3187,BeltShroudVaccumON_Bit)!0 2.3
-!ECOUT/b(3188,VacuumChuckEjector_Bit)!0 2.4
+ECOUT/b(3188,VacuumChuckEjector_Bit)!0 2.4
 !ECOUT/b(3189,VacuumChuckGeneratorOnOff_Bit)!0 2.5
 !ECOUT/b(3190,VacuumReleaseChuckOnOff_Bit)!0 2.6
 !ECOUT/b(3191,HighVacuumGeneratorOnOff_Bit)!0 2.7
@@ -93,6 +93,11 @@ ECIN/b(3197,StopperUnlocked_Bit)!I 3.5
 !ECIN/b(3198,ConveyorPressureSwitchFeedback_Bit)!I 3.6
 !ECIN/b(3299,Spare)!I 3.7
 
+VacuumChuckEjector_Bit = 1
+BeltShroudVaccumON_Bit = 1
+SensorPowerOnOff_Bit = 1
+!ResetButtonLight_Bit = 1
+
 stop
 
 
@@ -119,6 +124,18 @@ RET
 ON LifterLowered_Bit = 1
 SAFINI(7).#LL= 1
 RET
+
+ON EstopAndDoorOpenFeedback_Bit = 0
+ResetButtonLight_Bit = 1
+RET
+ON EstopAndDoorOpenFeedback_Bit = 1
+ResetButtonLight_Bit = 0
+RET
+
+ON AlarmCancelPushButton_Bit = 1
+TowerLightBuzzer_Bit = 0
+RET
+
 
 ON TowerLightRedFlashing_Bit = 1 | TowerLightYellowFlashing_Bit = 1 | TowerLightGreenFlashing_Bit = 1 |TowerLightBlueFlashing_Bit = 1
 

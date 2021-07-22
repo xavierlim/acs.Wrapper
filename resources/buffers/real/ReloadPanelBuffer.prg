@@ -44,7 +44,7 @@ else																	!ELSE IF CURRENT STATE IS NOT = LOADED STATE
 		CURRENT_STATUS = RELOADING_STATUS									!SET CURRENT STATUS = RELOADING STATUS
 
 		absPosTemp = RPOS(CONVEYOR_AXIS)
-		SlowPosition = absPosTemp - ((DistanceBetweenEntryAndStopSensor + DistanceBetweenStopSensorAndExitSensor )-DistanceBetweenSlowPositionAndEntrySensor-PanelLength )
+		SlowPosition = absPosTemp - (DistanceBetweenEntrySensorAndExitSensor-DistanceBetweenSlowPositionAndEntrySensor-PanelLength )
 
 		CALL ContinueReloading												!CALL CONTINUERELOADING 
 
@@ -52,6 +52,10 @@ else																	!ELSE IF CURRENT STATE IS NOT = LOADED STATE
 		CURRENT_STATUS = RELEASED_STATUS									!SET CURRENT_STATUS = RELEASED_STATUS TO PREPARE FOR LOADPANELBUFFER
 		START LoadPanelBufferIndex,1										!CALL LOADPANELBUFFER
 		TILL ^ PST(LoadPanelBufferIndex).#RUN								!UNTIL FREE PANEL COMPLETE
+
+	elseif CURRENT_STATUS = RELEASED_STATUS	& EntryOpto_Bit = 1
+		START LoadPanelBufferIndex,1
+		TILL ^ PST(LoadPanelBufferIndex).#RUN
 
 	else																!!!!!!!!!!!!!!!ELSE IF NONE OF THE CURRENT STATE CONDITIONS MET!!!!!!!!!!!!!!!!!		
 		CALL LowerBoardStop												!CALL LOWERBOARDSTOPPER
@@ -62,7 +66,9 @@ else																	!ELSE IF CURRENT STATE IS NOT = LOADED STATE
 			
 			absPosTemp = RPOS(CONVEYOR_AXIS)
 			SlowPosition = absPosTemp - (DistanceBetweenEntryAndStopSensor-DistanceBetweenSlowPositionAndEntrySensor-PanelLength)
-
+			if ExitOpto_Bit = 1
+			SlowPosition = absPosTemp - (DistanceBetweenEntrySensorAndExitSensor-DistanceBetweenSlowPositionAndEntrySensor-PanelLength)
+			end
 			CALL ContinueReloading											!CALL CONTINUERELOADING
 
 		end
@@ -96,6 +102,8 @@ RET
 
 
 StartConveyorBeltsDownstreamInternalSpeed:
+	ACC (CONVEYOR_AXIS) = 10000
+	DEC (CONVEYOR_AXIS) = 16000
 	JOG/v CONVEYOR_AXIS,ConveyorBeltLoadingSpeed*ConveyorDirection
 RET
 
@@ -120,10 +128,14 @@ StopConveyorBelts:
 RET
 
 StartConveyorBeltsUpstreamInternalSpeed:
+	ACC (CONVEYOR_AXIS) = 10000
+	DEC (CONVEYOR_AXIS) = 16000
 	JOG/v CONVEYOR_AXIS,-ConveyorBeltLoadingSpeed*ConveyorDirection
 RET
 
 AdjustConveyorBeltsUpstreamInternalSpeedToSlow:
+	ACC (CONVEYOR_AXIS) = 10000
+	DEC (CONVEYOR_AXIS) = 16000
 	JOG/v CONVEYOR_AXIS,-ConveyorBeltSlowSpeed*ConveyorDirection
 RET
 

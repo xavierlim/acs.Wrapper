@@ -16,7 +16,7 @@ LoadPanelSlowSensorError = 404
 REPANEL_LOADING:
 
 if CURRENT_STATUS = RELEASED_STATUS
-	if (EntryOpto_Bit = 0 & ExitOpto_Bit = 0 & BoardStopPanelAlignSensor_Bit = 0)
+	if (ExitOpto_Bit = 0 & BoardStopPanelAlignSensor_Bit = 0)
 		CURRENT_STATUS = LOADING_STATUS
 
 		if (PingPongMode = 0) !if not pingpong mode
@@ -48,9 +48,6 @@ if CURRENT_STATUS = RELEASED_STATUS
 			ERROR_CODE = LoadPanelAcqError
 			CALL ErrorExit
 		end
-	else
-		ERROR_CODE = LoadPanelSensorBlockedError
-		CALL ErrorExit
 	end
 
 
@@ -88,6 +85,9 @@ elseif CURRENT_STATUS = RELEASING_STATUS & ExitOpto_Bit = 1
 		end	
 			START ReloadPanelBufferIndex,1 
 			TILL ^ PST(ReloadPanelBufferIndex).#RUN
+
+elseif CURRENT_STATUS = ERROR_STATUS
+	CALL ErrorExit
 			
 else			
 	ERROR_CODE = LoadPanelNotReleasedError
@@ -119,9 +119,13 @@ RaiseBoardStop:
 RET
 
 StartConveyorBeltsDownstream:
+	ACC (CONVEYOR_AXIS) = 10000
+	DEC (CONVEYOR_AXIS) = 16000
 	JOG/v CONVEYOR_AXIS,ConveyorBeltAcquireSpeed*ConveyorDirection
 RET
 
 AdjustConveyorBeltSpeedToInternalSpeed:
+	ACC (CONVEYOR_AXIS) = 10000
+	DEC (CONVEYOR_AXIS) = 16000
 	JOG/v CONVEYOR_AXIS,ConveyorBeltLoadingSpeed*ConveyorDirection
 RET

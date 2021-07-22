@@ -29,7 +29,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         private bool scanLoopRunning;
         private const int SleepInterval = 1;
-        private const int DataRefreshInterval = 300;
+        private const int DataRefreshInterval = 100;
         private const int DataRefreshCounter = DataRefreshInterval / SleepInterval;
 
         private readonly Dictionary<GantryAxes, AcsAxis> axesCache = new Dictionary<GantryAxes, AcsAxis>();
@@ -299,22 +299,18 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             return false;
         }
 
-        public double Position(GantryAxes axis)
+        public double GetGantryPosition(GantryAxes axis)
         {
-            logger.Info(string.Format("Position(axis = {0})", axis));
+            logger.Info(string.Format("GetGantryPosition(axis = {0})", axis));
 
-            if (IsConnected) return axesCache[axis].Position;
-            logger.Info("Controller not connected");
-            return 0.0;
+            return axesCache[axis].GetPosition();
         }
 
-        public double Position(ConveyorAxes axis)
+        public double GetConveyorPosition(ConveyorAxes axis)
         {
-            logger.Info(string.Format("Position(axis = {0})", axis));
+            logger.Info(string.Format("GetConveyorPosition(axis = {0})", axis));
 
-            if (IsConnected) return conveyorAxesCache[axis].Position;
-            logger.Info("Controller not connected");
-            return 0.0;
+            return conveyorAxesCache[axis].GetPosition();
         }
 
         public double Velocity(GantryAxes axis)
@@ -1864,13 +1860,13 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public double GetConveyorWidthAxisPosition()
         {
-            var width = Position(ConveyorAxes.Width);
+            var width = GetConveyorPosition(ConveyorAxes.Width);
             return width;
         }
 
         public double GetConveyorLifterAxisPosition()
         {
-            var lifter = Position(ConveyorAxes.Lifter);
+            var lifter = GetConveyorPosition(ConveyorAxes.Lifter);
             return lifter;
         }
 
