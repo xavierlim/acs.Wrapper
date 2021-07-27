@@ -263,9 +263,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
                 if (atHomeSensor == value)
                     return;
                 atHomeSensor = value;
-                Action<int, bool> homeSensorChanged = AtHomeSensorChanged;
-                if (homeSensorChanged != null)
-                    homeSensorChanged(ApplicationAxisId, atHomeSensor);
+                AtHomeSensorChanged?.Invoke(ApplicationAxisId, atHomeSensor);
             }
         }
 
@@ -277,9 +275,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
                 if (atPositiveHwLimit == value)
                     return;
                 atPositiveHwLimit = value;
-                Action<int, bool> positiveHwLimitChanged = AtPositiveHwLimitChanged;
-                if (positiveHwLimitChanged != null)
-                    positiveHwLimitChanged(ApplicationAxisId, atPositiveHwLimit);
+                AtPositiveHwLimitChanged?.Invoke(ApplicationAxisId, atPositiveHwLimit);
             }
         }
 
@@ -291,9 +287,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
                 if (atNegativeHwLimit == value)
                     return;
                 atNegativeHwLimit = value;
-                Action<int, bool> negativeHwLimitChanged = AtNegativeHwLimitChanged;
-                if (negativeHwLimitChanged != null)
-                    negativeHwLimitChanged(ApplicationAxisId, atNegativeHwLimit);
+                AtNegativeHwLimitChanged?.Invoke(ApplicationAxisId, atNegativeHwLimit);
             }
         }
 
@@ -305,9 +299,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
                 if (atPositiveSwLimit == value)
                     return;
                 atPositiveSwLimit = value;
-                Action<int, bool> positiveSwLimitChanged = AtPositiveSwLimitChanged;
-                if (positiveSwLimitChanged != null)
-                    positiveSwLimitChanged(ApplicationAxisId, atPositiveSwLimit);
+                AtPositiveSwLimitChanged?.Invoke(ApplicationAxisId, atPositiveSwLimit);
             }
         }
 
@@ -319,9 +311,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
                 if (atNegativeSwLimit == value)
                     return;
                 atNegativeSwLimit = value;
-                Action<int, bool> negativeSwLimitChanged = AtNegativeSwLimitChanged;
-                if (negativeSwLimitChanged != null)
-                    negativeSwLimitChanged(ApplicationAxisId, atNegativeSwLimit);
+                AtNegativeSwLimitChanged?.Invoke(ApplicationAxisId, atNegativeSwLimit);
             }
         }
 
@@ -655,11 +645,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
             }
             else {
                 acsUtils.ReadInt("MFLAGS", (int) AcsAxisId);
-                SafetyControlMasks fault = api.GetFault(AcsAxisId);
-                AtPositiveHwLimit = (fault & SafetyControlMasks.ACSC_SAFETY_RL) > SafetyControlMasks.ACSC_NONE;
-                AtNegativeHwLimit = (fault & SafetyControlMasks.ACSC_SAFETY_LL) > SafetyControlMasks.ACSC_NONE;
-                AtPositiveSwLimit = (fault & SafetyControlMasks.ACSC_SAFETY_SRL) > SafetyControlMasks.ACSC_NONE;
-                AtNegativeSwLimit = (fault & SafetyControlMasks.ACSC_SAFETY_SLL) > SafetyControlMasks.ACSC_NONE;
+                UpdateFaultFromController();
                 MotorStates motorState = api.GetMotorState(AcsAxisId);
                 Enabled = (motorState & MotorStates.ACSC_MST_ENABLE) == MotorStates.ACSC_MST_ENABLE;
                 bool flag = (motorState & MotorStates.ACSC_MST_MOVE) != MotorStates.ACSC_MST_MOVE &&
@@ -676,6 +662,15 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
                 CurrentVelocity = Math.Round(api.GetRVelocity(AcsAxisId));
                 Ready = Enabled && Homed;
             }
+        }
+
+        public void UpdateFaultFromController()
+        {
+            var fault = api.GetFault(AcsAxisId);
+            AtPositiveHwLimit = (fault & SafetyControlMasks.ACSC_SAFETY_RL) > SafetyControlMasks.ACSC_NONE;
+            AtNegativeHwLimit = (fault & SafetyControlMasks.ACSC_SAFETY_LL) > SafetyControlMasks.ACSC_NONE;
+            AtPositiveSwLimit = (fault & SafetyControlMasks.ACSC_SAFETY_SRL) > SafetyControlMasks.ACSC_NONE;
+            AtNegativeSwLimit = (fault & SafetyControlMasks.ACSC_SAFETY_SLL) > SafetyControlMasks.ACSC_NONE;
         }
 
         private bool InitializingBufferRun
