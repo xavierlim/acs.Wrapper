@@ -43,9 +43,14 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         bool HasRobotError { get; }
 
         /// <summary>
-        /// Error Code
+        /// Error Code for Conveyor
         /// </summary>
         ConveyorErrorCode ErrorCode { get; }
+
+        /// <summary>
+        /// Error Code for Robot
+        /// </summary>
+        RobotErrorCode RobotErrorCode { get; }
 
         event Action<bool> ConnectionStatusChanged;
         event Action<GantryAxes, bool> IdleChanged;

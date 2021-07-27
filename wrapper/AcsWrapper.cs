@@ -43,7 +43,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         private int currentMotionCompleteReceived;
         private int currentMovePsxAckReceived;
 
-        private Thread _acsPollingThread = null;
+        private Thread acsPollingThread;
 
         internal AcsWrapper(ILogger logger, IRobotControlSetting robotSettings)
         {
@@ -76,6 +76,10 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         public ConveyorStatusCode ConveyorStatus { get; private set; }
 
         public ConveyorErrorCode ErrorCode { get; private set; }
+
+        public RobotStatusCode RobotStatus { get; private set; }
+
+        public RobotErrorCode RobotErrorCode { get; private set; }
 
         public event Action<bool> ConnectionStatusChanged;
 
@@ -188,12 +192,12 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         private void StartPolling()
         {
             logger.Debug($"AcsWrapper: StartPolling");
-            if (_acsPollingThread == null)
+            if (acsPollingThread == null)
             {
                 logger.Debug($"AcsWrapper: StartPolling; _acsPollingThread is null so spawn thread to run ScanLoop");
-                _acsPollingThread = new Thread(ScanLoop);
-                _acsPollingThread.IsBackground = true;
-                _acsPollingThread.Start();
+                acsPollingThread = new Thread(ScanLoop);
+                acsPollingThread.IsBackground = true;
+                acsPollingThread.Start();
             }
             else
             {
@@ -222,7 +226,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
                 scanLoopRunning = false;
                 waitExitFromPoling.WaitOne(5000);
-                _acsPollingThread = null;
+                acsPollingThread = null;
                 return !IsConnected;
             }
         }
@@ -939,6 +943,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             }
 
             Task.WaitAll(taskList.ToArray());
+            UpdateRobotStatus();
             return true;
         }
 
@@ -952,8 +957,12 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 return false;
             }
 
-            if (axesCache.ContainsKey(axis))
-                return axesCache[axis].MoveAbsolute(targetPos, true, vel, acc, dec);
+            if (axesCache.ContainsKey(axis)) {
+                var  moveResult = axesCache[axis].MoveAbsolute(targetPos, true, vel, acc, dec);
+                UpdateRobotStatus();
+                return  moveResult;
+            }
+
             throw new ArgumentException("Axis not exist ");
         }
 
@@ -975,6 +984,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             }
 
             Task.WaitAll(taskList.ToArray());
+            UpdateRobotStatus();
             return true;
         }
 
@@ -989,8 +999,12 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 return false;
             }
 
-            if (axesCache.ContainsKey(axis))
-                return axesCache[axis].MoveRelative(true, relativePosition, vel, acc, dec);
+            if (axesCache.ContainsKey(axis)) {
+                var moveResult = axesCache[axis].MoveRelative(true, relativePosition, vel, acc, dec);
+                UpdateRobotStatus();
+                return moveResult;
+            }
+
             throw new ArgumentException("Axis not exist ");
         }
 
@@ -1650,26 +1664,30 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         private void AxisAtPositiveHwLimitChanged(int axis, bool isAtPositiveHwLimit)
         {
-            logger.Info(string.Format("axisAtPositiveHWLimitChanged {0} {1}", (GantryAxes) axis, isAtPositiveHwLimit));
-            AtPositiveHwLimitChanged?.Invoke((GantryAxes) axis, isAtPositiveHwLimit);
+            var gantryAxes = (GantryAxes) axis;
+            logger.Info(string.Format("axisAtPositiveHWLimitChanged {0} {1}", gantryAxes, isAtPositiveHwLimit));
+            AtPositiveHwLimitChanged?.Invoke(gantryAxes, isAtPositiveHwLimit);
         }
 
         private void AxisAtNegativeHwLimitChanged(int axis, bool isAtNegativeHwLimit)
         {
-            logger.Info(string.Format("axisAtNegativeHWLimitChanged {0} {1}", (GantryAxes) axis, isAtNegativeHwLimit));
-            AtNegativeHwLimitChanged?.Invoke((GantryAxes) axis, isAtNegativeHwLimit);
+            var gantryAxes = (GantryAxes) axis;
+            logger.Info(string.Format("axisAtNegativeHWLimitChanged {0} {1}", gantryAxes, isAtNegativeHwLimit));
+            AtNegativeHwLimitChanged?.Invoke(gantryAxes, isAtNegativeHwLimit);
         }
 
         private void AxisAtPositiveSwLimitChanged(int axis, bool isAtPositiveSwLimit)
         {
-            logger.Info(string.Format("axisAtPositiveSWLimitChanged {0} {1}", (GantryAxes) axis, isAtPositiveSwLimit));
-            AtPositiveSwLimitChanged?.Invoke((GantryAxes) axis, isAtPositiveSwLimit);
+            var gantryAxes = (GantryAxes) axis;
+            logger.Info(string.Format("axisAtPositiveSWLimitChanged {0} {1}", gantryAxes, isAtPositiveSwLimit));
+            AtPositiveSwLimitChanged?.Invoke(gantryAxes, isAtPositiveSwLimit);
         }
 
         private void AxisAtNegativeSwLimitChanged(int axis, bool isAtNegativeSwLimit)
         {
-            logger.Info(string.Format("axisAtNegativeSWLimitChanged {0} {1}", (GantryAxes) axis, isAtNegativeSwLimit));
-            AtNegativeSwLimitChanged?.Invoke((GantryAxes) axis, isAtNegativeSwLimit);
+            var gantryAxes = (GantryAxes) axis;
+            logger.Info(string.Format("axisAtNegativeSWLimitChanged {0} {1}", gantryAxes, isAtNegativeSwLimit));
+            AtNegativeSwLimitChanged?.Invoke(gantryAxes, isAtNegativeSwLimit);
         }
 
         private void AxisHomingBegin(int axis)
@@ -1828,7 +1846,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public bool HasError => HasConveyorError || HasRobotError;
         public bool HasConveyorError => ErrorCode != ConveyorErrorCode.ErrorSafe;
-        public bool HasRobotError { get; private set; }
+        public bool HasRobotError => RobotErrorCode != RobotErrorCode.NoError;
 
         public void ApplicationError()
         {
@@ -2024,6 +2042,72 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         {
             ConveyorStatus = (ConveyorStatusCode) Convert.ToInt16(acsUtils.ReadVar("CURRENT_STATUS"));
             ErrorCode = (ConveyorErrorCode) Convert.ToInt16(acsUtils.ReadVar("ERROR_CODE"));
+        }
+
+        private void UpdateRobotStatus()
+        {
+            RobotStatus = (RobotStatusCode) Convert.ToInt16(acsUtils.ReadVar("ROBOT_STATUS"));
+            RobotErrorCode = RobotStatus == RobotStatusCode.Error
+                ? (RobotErrorCode) Convert.ToInt16(acsUtils.ReadVar("ROBOT_ERROR"))
+                : RobotErrorCode.NoError;
+
+            UpdateXAxisFault();
+            UpdateYAxisFault();
+            UpdateZAxisFault();
+        }
+
+        private void UpdateXAxisFault()
+        {
+            var axis = axesCache[GantryAxes.X];
+            axis.UpdateFaultFromController();
+            if (axis.AtNegativeHwLimit) {
+                RobotErrorCode = RobotErrorCode.XNegativeHardLimitHit;
+            }
+            else if (axis.AtNegativeSwLimit) {
+                RobotErrorCode = RobotErrorCode.XNegativeSoftLimitHit;
+            }
+            else if (axis.AtPositiveHwLimit) {
+                RobotErrorCode = RobotErrorCode.XPositiveHardLimitHit;
+            }
+            else if (axis.AtPositiveSwLimit) {
+                RobotErrorCode = RobotErrorCode.XPositiveSoftLimitHit;
+            }
+        }
+
+        private void UpdateYAxisFault()
+        {
+            var axis = axesCache[GantryAxes.Y];
+            axis.UpdateFaultFromController();
+            if (axis.AtNegativeHwLimit) {
+                RobotErrorCode = RobotErrorCode.YNegativeHardLimitHit;
+            }
+            else if (axis.AtNegativeSwLimit) {
+                RobotErrorCode = RobotErrorCode.YNegativeSoftLimitHit;
+            }
+            else if (axis.AtPositiveHwLimit) {
+                RobotErrorCode = RobotErrorCode.YPositiveHardLimitHit;
+            }
+            else if (axis.AtPositiveSwLimit) {
+                RobotErrorCode = RobotErrorCode.YPositiveSoftLimitHit;
+            }
+        }
+
+        private void UpdateZAxisFault()
+        {
+            var axis = axesCache[GantryAxes.Z];
+            axis.UpdateFaultFromController();
+            if (axis.AtNegativeHwLimit) {
+                RobotErrorCode = RobotErrorCode.ZNegativeHardLimitHit;
+            }
+            else if (axis.AtNegativeSwLimit) {
+                RobotErrorCode = RobotErrorCode.ZNegativeSoftLimitHit;
+            }
+            else if (axis.AtPositiveHwLimit) {
+                RobotErrorCode = RobotErrorCode.ZPositiveHardLimitHit;
+            }
+            else if (axis.AtPositiveSwLimit) {
+                RobotErrorCode = RobotErrorCode.ZPositiveSoftLimitHit;
+            }
         }
 
         public void PowerOnRecoverFromEmergencyStop(PowerOnRecoverFromEmergencyStopBufferParameters parameter,

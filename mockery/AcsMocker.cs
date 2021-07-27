@@ -45,6 +45,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.mockery
         public bool HasConveyorError { get; }
         public bool HasRobotError { get; }
         public ConveyorErrorCode ErrorCode { get; }
+        public RobotErrorCode RobotErrorCode { get; }
         public event Action<bool> ConnectionStatusChanged;
         public event Action<GantryAxes, bool> IdleChanged;
         public event Action<GantryAxes, bool> EnabledChanged;

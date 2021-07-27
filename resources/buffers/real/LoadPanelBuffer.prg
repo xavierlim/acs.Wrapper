@@ -69,6 +69,11 @@ elseif 	CURRENT_STATUS = PRERELEASED_STATUS & ExitOpto_Bit = 0
 elseif 	CURRENT_STATUS = PRERELEASED_STATUS & ExitOpto_Bit = 1
 			START ReloadPanelBufferIndex,1 
 			TILL ^ PST(ReloadPanelBufferIndex).#RUN
+
+!after machine power up and after width homed and in Released state, use load panel at exit and pressed start button.			
+elseif 	CURRENT_STATUS = RELEASED_STATUS & ExitOpto_Bit = 1
+			START ReloadPanelBufferIndex,1 
+			TILL ^ PST(ReloadPanelBufferIndex).#RUN
 			
 !after panel is at Releasing state and stop button is pressed. When panel was removed from exit opto and start button is pressed.
 elseif CURRENT_STATUS = RELEASING_STATUS & ExitOpto_Bit = 0

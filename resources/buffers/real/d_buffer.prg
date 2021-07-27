@@ -32,6 +32,8 @@ global int Touch_Probe_Function
 global ERROR_SAFE = 0
 global int CURRENT_STATUS
 global int ERROR_CODE
+global int ROBOT_STATUS
+global int ROBOT_ERROR
 
 !BypassSensorBlockedError = 101
 !BypassAcqError = 102
