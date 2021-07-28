@@ -87,11 +87,13 @@
     <Compile Include="wrapper\models\AxisParameters.cs" />
     <Compile Include="wrapper\models\BuffersParameters.cs" />
     <Compile Include="wrapper\models\ConveyorAxes.cs" />
-    <Compile Include="wrapper\models\ConveyorErrorCode.cs" />
-    <Compile Include="wrapper\models\ConveyorStatusCode.cs" />
     <Compile Include="wrapper\models\CurrentandErrorStatusfromACS.cs" />
     <Compile Include="wrapper\models\IoStatus.cs" />
     <Compile Include="wrapper\models\SetOutputParameters.cs" />
+    <Compile Include="wrapper\status\ConveyorErrorCode.cs" />
+    <Compile Include="wrapper\status\ConveyorStatusCode.cs" />
+    <Compile Include="wrapper\status\GantryErrorCode.cs" />
+    <Compile Include="wrapper\status\GantryStatusCode.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="README.md" />
@@ -138,15 +140,15 @@
     <Content Include="resources\buffers\simulation\ScanningBuffer.prg" />
     <Content Include="resources\buffers\simulation\SecurePanelBuffer.prg" />
     <Content Include="resources\buffers\simulation\WidthHoming.prg" />
-    <Content Include="resources\buffers\simulation\WidthLifterConveyorReset.prg"/>
-    <Content Include="resources\images\acsplatformsimulator.png"/>
-    <Content Include="resources\images\config.png"/>
-    <Content Include="resources\images\mmiapplicationstudio.png"/>
-    <Content Include="resources\images\simulationmode.png"/>
-    <Content Include="resources\images\simulationmodemocked.png"/>
-    <Content Include="resources\images\umdconnectedtab.png"/>
-    <Content Include="resources\images\umdsimulatorstarted.png"/>
-    <Content Include="resources\images\umdsimulatortab.png"/>
+    <Content Include="resources\buffers\simulation\WidthLifterConveyorReset.prg" />
+    <Content Include="resources\images\acsplatformsimulator.png" />
+    <Content Include="resources\images\config.png" />
+    <Content Include="resources\images\mmiapplicationstudio.png" />
+    <Content Include="resources\images\simulationmode.png" />
+    <Content Include="resources\images\simulationmodemocked.png" />
+    <Content Include="resources\images\umdconnectedtab.png" />
+    <Content Include="resources\images\umdsimulatorstarted.png" />
+    <Content Include="resources\images\umdsimulatortab.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
