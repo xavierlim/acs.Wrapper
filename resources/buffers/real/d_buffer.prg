@@ -32,8 +32,15 @@ global int Touch_Probe_Function
 global ERROR_SAFE = 0
 global int CURRENT_STATUS
 global int ERROR_CODE
-global int ROBOT_STATUS
-global int ROBOT_ERROR
+
+!Gantry State Definition
+global int GANTRY_STATE_NORMAL = 0, GANTRY_STATE_HOMING = 1, GANTRY_STATE_SCANNING = 2, GANTRY_STATE_ERROR = 3
+
+!Gantry Error Definition
+global int GANTRY_ERROR_GENERAL = 0
+
+global int GANTRY_STATUS
+global int GANTRY_ERROR
 
 !BypassSensorBlockedError = 101
 !BypassAcqError = 102

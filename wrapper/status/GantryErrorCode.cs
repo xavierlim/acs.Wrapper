@@ -7,11 +7,23 @@
 // This copyright notice must not be removed.
 //===================================================================================
 
-namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
+namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.status
 {
-    public enum RobotStatusCode
+    public enum GantryErrorCode
     {
-        Normal,
-        Error
+        General,
+
+        ZPositiveHardLimitHit,
+        XPositiveHardLimitHit,
+        YPositiveHardLimitHit,
+        ZNegativeHardLimitHit,
+        XNegativeHardLimitHit,
+        YNegativeHardLimitHit,
+        ZPositiveSoftLimitHit,
+        XPositiveSoftLimitHit,
+        YPositiveSoftLimitHit,
+        ZNegativeSoftLimitHit,
+        XNegativeSoftLimitHit,
+        YNegativeSoftLimitHit,
     }
 }
