@@ -1,5 +1,5 @@
 
-namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
+namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.status
 {
     public enum ConveyorStatusCode
     {

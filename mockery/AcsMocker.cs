@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CO.Systems.Services.Acs.AcsWrapper.wrapper;
 using CO.Systems.Services.Acs.AcsWrapper.wrapper.models;
+using CO.Systems.Services.Acs.AcsWrapper.wrapper.status;
 using CO.Systems.Services.Robot.Interface;
 using CO.Systems.Services.Robot.RobotBase;
 
@@ -45,7 +46,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.mockery
         public bool HasConveyorError { get; }
         public bool HasRobotError { get; }
         public ConveyorErrorCode ErrorCode { get; }
-        public RobotErrorCode RobotErrorCode { get; }
+        public GantryErrorCode GantryErrorCode { get; }
         public event Action<bool> ConnectionStatusChanged;
         public event Action<GantryAxes, bool> IdleChanged;
         public event Action<GantryAxes, bool> EnabledChanged;

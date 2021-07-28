@@ -88,13 +88,13 @@
     <Compile Include="wrapper\models\AxisParameters.cs" />
     <Compile Include="wrapper\models\BuffersParameters.cs" />
     <Compile Include="wrapper\models\ConveyorAxes.cs" />
-    <Compile Include="wrapper\models\ConveyorErrorCode.cs" />
-    <Compile Include="wrapper\models\ConveyorStatusCode.cs" />
     <Compile Include="wrapper\models\CurrentandErrorStatusfromACS.cs" />
     <Compile Include="wrapper\models\IoStatus.cs" />
-    <Compile Include="wrapper\models\RobotErrorCode.cs" />
-    <Compile Include="wrapper\models\RobotStatusCode.cs" />
     <Compile Include="wrapper\models\SetOutputParameters.cs" />
+    <Compile Include="wrapper\status\ConveyorErrorCode.cs" />
+    <Compile Include="wrapper\status\ConveyorStatusCode.cs" />
+    <Compile Include="wrapper\status\GantryErrorCode.cs" />
+    <Compile Include="wrapper\status\GantryStatusCode.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Configuration\Configuration.csproj">

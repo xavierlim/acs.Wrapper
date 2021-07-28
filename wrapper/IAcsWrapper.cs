@@ -10,6 +10,7 @@
 using System;
 using System.Collections.Generic;
 using CO.Systems.Services.Acs.AcsWrapper.wrapper.models;
+using CO.Systems.Services.Acs.AcsWrapper.wrapper.status;
 using CO.Systems.Services.Robot.Interface;
 using CO.Systems.Services.Robot.RobotBase;
 
@@ -50,7 +51,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         /// <summary>
         /// Error Code for Robot
         /// </summary>
-        RobotErrorCode RobotErrorCode { get; }
+        GantryErrorCode GantryErrorCode { get; }
 
         event Action<bool> ConnectionStatusChanged;
         event Action<GantryAxes, bool> IdleChanged;

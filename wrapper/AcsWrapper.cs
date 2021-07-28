@@ -11,6 +11,7 @@ using CO.Systems.Services.Acs.AcsWrapper.config;
 using CO.Systems.Services.Acs.AcsWrapper.util;
 using CO.Systems.Services.Acs.AcsWrapper.wrapper.exceptions;
 using CO.Systems.Services.Acs.AcsWrapper.wrapper.models;
+using CO.Systems.Services.Acs.AcsWrapper.wrapper.status;
 using CO.Systems.Services.Configuration.Settings;
 using CO.Systems.Services.Robot.Interface;
 using CO.Systems.Services.Robot.RobotBase;
@@ -77,9 +78,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public ConveyorErrorCode ErrorCode { get; private set; }
 
-        public RobotStatusCode RobotStatus { get; private set; }
+        public GantryStatusCode GantryStatus { get; private set; }
 
-        public RobotErrorCode RobotErrorCode { get; private set; }
+        public GantryErrorCode GantryErrorCode { get; private set; }
 
         public event Action<bool> ConnectionStatusChanged;
 
@@ -1846,7 +1847,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public bool HasError => HasConveyorError || HasRobotError;
         public bool HasConveyorError => ErrorCode != ConveyorErrorCode.ErrorSafe;
-        public bool HasRobotError => RobotErrorCode != RobotErrorCode.NoError;
+        public bool HasRobotError => GantryErrorCode != GantryErrorCode.General;
 
         public void ApplicationError()
         {
@@ -2046,10 +2047,10 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         private void UpdateRobotStatus()
         {
-            RobotStatus = (RobotStatusCode) Convert.ToInt16(acsUtils.ReadVar("ROBOT_STATUS"));
-            RobotErrorCode = RobotStatus == RobotStatusCode.Error
-                ? (RobotErrorCode) Convert.ToInt16(acsUtils.ReadVar("ROBOT_ERROR"))
-                : RobotErrorCode.NoError;
+            GantryStatus = (GantryStatusCode) Convert.ToInt16(acsUtils.ReadVar("GANTRY_STATUS"));
+            GantryErrorCode = GantryStatus == GantryStatusCode.Error
+                ? (GantryErrorCode) Convert.ToInt16(acsUtils.ReadVar("GANTRY_ERROR"))
+                : GantryErrorCode.General;
 
             UpdateXAxisFault();
             UpdateYAxisFault();
@@ -2061,16 +2062,16 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             var axis = axesCache[GantryAxes.X];
             axis.UpdateFaultFromController();
             if (axis.AtNegativeHwLimit) {
-                RobotErrorCode = RobotErrorCode.XNegativeHardLimitHit;
+                GantryErrorCode = GantryErrorCode.XNegativeHardLimitHit;
             }
             else if (axis.AtNegativeSwLimit) {
-                RobotErrorCode = RobotErrorCode.XNegativeSoftLimitHit;
+                GantryErrorCode = GantryErrorCode.XNegativeSoftLimitHit;
             }
             else if (axis.AtPositiveHwLimit) {
-                RobotErrorCode = RobotErrorCode.XPositiveHardLimitHit;
+                GantryErrorCode = GantryErrorCode.XPositiveHardLimitHit;
             }
             else if (axis.AtPositiveSwLimit) {
-                RobotErrorCode = RobotErrorCode.XPositiveSoftLimitHit;
+                GantryErrorCode = GantryErrorCode.XPositiveSoftLimitHit;
             }
         }
 
@@ -2079,16 +2080,16 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             var axis = axesCache[GantryAxes.Y];
             axis.UpdateFaultFromController();
             if (axis.AtNegativeHwLimit) {
-                RobotErrorCode = RobotErrorCode.YNegativeHardLimitHit;
+                GantryErrorCode = GantryErrorCode.YNegativeHardLimitHit;
             }
             else if (axis.AtNegativeSwLimit) {
-                RobotErrorCode = RobotErrorCode.YNegativeSoftLimitHit;
+                GantryErrorCode = GantryErrorCode.YNegativeSoftLimitHit;
             }
             else if (axis.AtPositiveHwLimit) {
-                RobotErrorCode = RobotErrorCode.YPositiveHardLimitHit;
+                GantryErrorCode = GantryErrorCode.YPositiveHardLimitHit;
             }
             else if (axis.AtPositiveSwLimit) {
-                RobotErrorCode = RobotErrorCode.YPositiveSoftLimitHit;
+                GantryErrorCode = GantryErrorCode.YPositiveSoftLimitHit;
             }
         }
 
@@ -2097,16 +2098,16 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             var axis = axesCache[GantryAxes.Z];
             axis.UpdateFaultFromController();
             if (axis.AtNegativeHwLimit) {
-                RobotErrorCode = RobotErrorCode.ZNegativeHardLimitHit;
+                GantryErrorCode = GantryErrorCode.ZNegativeHardLimitHit;
             }
             else if (axis.AtNegativeSwLimit) {
-                RobotErrorCode = RobotErrorCode.ZNegativeSoftLimitHit;
+                GantryErrorCode = GantryErrorCode.ZNegativeSoftLimitHit;
             }
             else if (axis.AtPositiveHwLimit) {
-                RobotErrorCode = RobotErrorCode.ZPositiveHardLimitHit;
+                GantryErrorCode = GantryErrorCode.ZPositiveHardLimitHit;
             }
             else if (axis.AtPositiveSwLimit) {
-                RobotErrorCode = RobotErrorCode.ZPositiveSoftLimitHit;
+                GantryErrorCode = GantryErrorCode.ZPositiveSoftLimitHit;
             }
         }
 
