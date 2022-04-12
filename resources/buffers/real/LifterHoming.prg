@@ -1,11 +1,18 @@
 ﻿!Homing LIFTER
 
+int LifterECOffset_ControlWord
+int LifterECOffset_TouchProbeFunction
+int LifterECOffset_ActualPosition
 int Axis
 int Slave_Number
-
 Axis= 7
 Slave_Number = 4
 
+LifterECOffset_ControlWord = ECGETOFFSET ("Control Word" , Slave_Number)
+LifterECOffset_TouchProbeFunction = ECGETOFFSET ("Touch Probe Function" , Slave_Number)
+LifterECOffset_ActualPosition = ECGETOFFSET ("Actual Position" , Slave_Number)
+
+ConveyorLifterHomed = 0
 MFLAGS(Axis).#HOME = 0
 
 !******Motion parameters for homing***********
@@ -27,18 +34,17 @@ till ^MST(Axis).#ENABLED
 wait 200
 
 !*********Unmapping ethercat offset for control word******
-ecunmapin(EC_Offset)
-ecunmapout(EC_Offset)
+ecunmapin(LifterECOffset_ControlWord)
+ecunmapout(LifterECOffset_ControlWord)
 !***************************************
 
 !***********Fault Clear***********
-ecout(EC_Offset,ControlWord_Lifter)
+ecout(LifterECOffset_ControlWord,ControlWord_Lifter)
 ControlWord_Lifter = 0x8F
 wait 500
 ControlWord_Lifter = 0x0F
-coewrite/1(Slave_Number,0x6060,0,8)
-ecunmapin(EC_Offset)
-ecunmapout(EC_Offset)
+ecunmapin(LifterECOffset_ControlWord)
+ecunmapout(LifterECOffset_ControlWord)
 !***********Fault Clear***********
 
 
@@ -57,8 +63,8 @@ till ^MST(Axis).#MOVE
 wait 10
 !*******************************************
 
-int Touch_Probe_Status = 0, Touch_Probe_Offset = 390
-ecout( Touch_Probe_Offset, Touch_Probe_Function )
+int Touch_Probe_Status = 0
+ecout( LifterECOffset_TouchProbeFunction, Touch_Probe_Function )
 real Index_Position
 
 !********Initiating touch probe******************
@@ -107,7 +113,7 @@ end
 end
 !************************************************
 
-ecin (380, ActualPos_Lifter)
+ecin (LifterECOffset_ActualPosition, ActualPos_Lifter)
 set FPOS(Axis)=ActualPos_Lifter/1000
 Index_Position=(coeread/4 (Slave_Number,0x60BA,0))/1000
 set FPOS(Axis)=(FPOS(Axis)-Index_Position)

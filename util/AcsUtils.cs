@@ -45,7 +45,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
                 return api.ReadVariable(varName, bufferIndex, indFrom, indFromTo);
             }
             catch (Exception ex) {
-                logger.Error($"AcsUtil.ReadVar: Exception while accessing '{varName}': " + ex.Message);
+                logger.Error($"AcsUtil.ReadVar: Exception while accessing '{varName}', index from '{indFrom}' to '{indFromTo}': " + ex.Message);
                 return null;
             }
         }

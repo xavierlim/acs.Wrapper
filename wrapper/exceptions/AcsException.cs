@@ -1,6 +1,5 @@
 
 using System;
-using CO.Systems.Services.Acs.AcsWrapper.wrapper.models;
 using CO.Systems.Services.Acs.AcsWrapper.wrapper.status;
 
 namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.exceptions

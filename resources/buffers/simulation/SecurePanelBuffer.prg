@@ -57,8 +57,9 @@ RET
 Stage_2_LifterAndClamper:
 	CALL ClampPanel
 	ptp/v (LIFTER_AXIS), Stage_2_LifterAndClamperDistance, Stage_2_LifterSpeed
-	TILL (RearClampUp_Bit & FrontClampUp_Bit),SecurePanelBuffer_ClampLiftDelayTime
-	if (RearClampUp_Bit & FrontClampUp_Bit)
+	WAIT SecurePanelBuffer_ClampLiftDelayTime
+	!TILL (RearClampUp_Bit & FrontClampUp_Bit),SecurePanelBuffer_ClampLiftDelayTime
+	if (^RearClampDown_Bit & ^FrontClampDown_Bit)
 		till ^AST(LIFTER_AXIS).#MOVE,SecurePanelBuffer_WaitTimeToLifted
 
 		if (AST(LIFTER_AXIS).#MOVE)

@@ -9,9 +9,13 @@
 
 namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.status
 {
+    /// <summary>
+    /// Error code for gantry operation. Error code for possible fault during scanning buffer
+    /// run are also included here
+    /// </summary>
     public enum GantryErrorCode
     {
-        General,
+        NoError,
 
         ZPositiveHardLimitHit,
         XPositiveHardLimitHit,
@@ -25,5 +29,21 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.status
         ZNegativeSoftLimitHit,
         XNegativeSoftLimitHit,
         YNegativeSoftLimitHit,
+        
+        CameraBusyMissing = 901,
+        CameraBusyStuck = 902,
+        ConveyorAxisError = 903,
+        
+        XEncoderError = 904,
+        XOverHeat,
+        XOverCurrent,
+        XCriticalPositionError,
+        XHitLimit,
+        YEncoderError,
+        YOverHeat,
+        YOverCurrent,
+        YCriticalPositionError,
+        YHitLimit,
+        ZError,
     }
 }

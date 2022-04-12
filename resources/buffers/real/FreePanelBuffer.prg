@@ -20,19 +20,23 @@ if StopperArmDown_Bit = 1
 		CALL LowerLifter 
 		TILL Lifter_Lowered = 1,FreePanelBuffer_WaitTimeToUnlift
 		if Lifter_Lowered <> 1
+			CALL ErrorExit
 			ERROR_CODE = FreePanelToUnliftError
 		else
 			TILL RearClampDown_Bit & FrontClampDown_Bit,FreePanelBuffer_WaitTimeToUnclamp
 			if(RearClampDown_Bit & FrontClampDown_Bit)
 				PanelFreed = 1
 			else
+				CALL ErrorExit
 				ERROR_CODE = FreePanelToUnclampError
 			end
 		end
 	else
+		CALL ErrorExit
 		ERROR_CODE = FreePanelOptoBlockedError
 	end
 else
+	CALL ErrorExit
 	ERROR_CODE = FreePanelStopUpError
 end
 
@@ -54,4 +58,9 @@ RET
 
 UnclampPanel:
 	ClampPanel_Bit = 0
+RET
+
+ErrorExit:
+	START InternalErrorExitBufferIndex,1
+	TILL ^ PST(InternalErrorExitBufferIndex).#RUN
 RET

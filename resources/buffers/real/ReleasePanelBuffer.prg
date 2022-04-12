@@ -82,7 +82,21 @@ end
 STOP
 
 SetDownstreamBoardAvailable:
-	DownStreamBoardAvailable_Bit = 1
+
+if (SmemaFailedBoardMode = SmemaFailedBoardModeNormal)
+    ! trigger failed board output to downstream according to FailedBoard flag
+    SmemaDownStreamFailedBoardAvailable_Bit = FailedBoard
+elseif (SmemaFailedBoardMode = SmemaFailedBoardModeCustom)
+    ! ignore
+elseif (SmemaFailedBoardMode = SmemaFailedBoardModeNotifyUpstream)
+    ! ignore
+elseif (SmemaFailedBoardMode = SmemaFailedBoardModeInverseLogic)
+    ! trigger failed board output to downstream according to FailedBoard flag, inverted
+    SmemaDownStreamFailedBoardAvailable_Bit = ^FailedBoard
+end
+
+wait 200
+DownStreamBoardAvailable_Bit = 1
 RET
 
 ContinueFrom_SetConveyorBeltsDownstreamSpeedToRelease:
@@ -102,9 +116,9 @@ RET3:	TILL ExitOpto_Bit = 0,ReleasePanelBuffer_WaitTimeToRelease
 					CALL ErrorExit
 				else
 					CALL TurnOffConveyorBelts
-					BeltShroudVaccumON_Bit = 1
+					!BeltShroudVaccumON_Bit = 1
 					Wait ReleasePanelBuffer_WaitTimeToBeltVacuum
-					BeltShroudVaccumON_Bit = 0
+					!BeltShroudVaccumON_Bit = 0
 					CURRENT_STATUS = RELEASED_STATUS
 				end
 			end
@@ -119,13 +133,26 @@ TurnOffConveyorBelts:
 RET
 
 ClearDownstreamSmemaBoardAvailable:
-	DownStreamBoardAvailable_Bit = 0
+    DownStreamBoardAvailable_Bit = 0
+    SmemaDownStreamFailedBoardAvailable_Bit = 0
+	
+	if (SmemaFailedBoardMode = SmemaFailedBoardModeNormal)
+    SmemaDownStreamFailedBoardAvailable_Bit = 0
+	elseif (SmemaFailedBoardMode = SmemaFailedBoardModeCustom)
+    ! ignore
+	elseif (SmemaFailedBoardMode = SmemaFailedBoardModeNotifyUpstream)
+    ! ignore
+	elseif (SmemaFailedBoardMode = SmemaFailedBoardModeInverseLogic)
+    ! trigger failed board output to downstream according to FailedBoard flag, inverted
+    SmemaDownStreamFailedBoardAvailable_Bit = 1
+	end
+
 RET
 
 SetConveyorBeltsDownstreamSpeedToRelease:
 	ACC (CONVEYOR_AXIS) = 10000
 	DEC (CONVEYOR_AXIS) = 16000
-	JOG/v CONVEYOR_AXIS,ConveyorBeltReleaseSpeed*ConveyorDirection
+	JOG/v CONVEYOR_AXIS,ConveyorBeltReleaseSpeed
 RET
 
 ContinueFrom_SetDownstreamSmemaBoardAvailable:
@@ -139,6 +166,12 @@ ContinueFrom_SetDownstreamSmemaBoardAvailable:
 		else
 			CALL StopConveyorBelts
 			TILL DownstreamMachineReadySignal_Bit = 1
+			if ConveyorSimultaneousLoadUnload = 1
+			if SqTriggerSmemaUpStreamMachineReady = 1
+			SmemaUpStreamMachineReady_Bit = 1
+			end
+			START 24, 1
+			end
 			CALL ContinueFrom_SetConveyorBeltsDownstreamSpeedToRelease
 		end
 	else
@@ -153,20 +186,34 @@ StopConveyorBelts:
 RET
 
 SetDownstreamSmemaBoardAvailable:
-	DownStreamBoardAvailable_Bit = 1
+
+if (SmemaFailedBoardMode = SmemaFailedBoardModeNormal)
+    ! trigger failed board output to downstream according to FailedBoard flag
+    SmemaDownStreamFailedBoardAvailable_Bit = FailedBoard
+elseif (SmemaFailedBoardMode = SmemaFailedBoardModeCustom)
+    ! ignore
+elseif (SmemaFailedBoardMode = SmemaFailedBoardModeNotifyUpstream)
+    ! ignore
+elseif (SmemaFailedBoardMode = SmemaFailedBoardModeInverseLogic)
+    ! trigger failed board output to downstream according to FailedBoard flag, inverted
+    SmemaDownStreamFailedBoardAvailable_Bit = ^FailedBoard
+end
+
+wait 200
+DownStreamBoardAvailable_Bit = 1
 RET
 
 
 StartConveyorBeltsDownstreamInternalSpeed:
 	ACC (CONVEYOR_AXIS) = 10000
 	DEC (CONVEYOR_AXIS) = 16000
-	JOG/v CONVEYOR_AXIS,ConveyorBeltReleaseSpeed*ConveyorDirection
+	JOG/v CONVEYOR_AXIS,ConveyorBeltReleaseSpeed
 RET
 
 AdjustConveyorBeltSpeedToSlow:
 	ACC (CONVEYOR_AXIS) = 10000
 	DEC (CONVEYOR_AXIS) = 16000
-	JOG/v CONVEYOR_AXIS,ConveyorBeltSlowSpeed*ConveyorDirection
+	JOG/v CONVEYOR_AXIS,ConveyorBeltSlowSpeed
 
 RET
 
@@ -187,9 +234,9 @@ ContinueFrom_SetConveyorBeltsDownstreamSpeedToRelease_PingPongMode:
 
 			if		ExitOpto_Bit = 1
 					CALL TurnOffConveyorBelts
-					BeltShroudVaccumON_Bit = 1
+					!BeltShroudVaccumON_Bit = 1
 					Wait ReleasePanelBuffer_WaitTimeToBeltVacuum
-					BeltShroudVaccumON_Bit = 0
+					!BeltShroudVaccumON_Bit = 0
 					CURRENT_STATUS = RELEASED_STATUS
 
 			else

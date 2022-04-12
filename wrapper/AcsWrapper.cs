@@ -24,6 +24,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         private readonly AcsUtils acsUtils;
         private readonly BufferHelper bufferHelper;
         private readonly IRobotControlSetting robotSettings;
+        private readonly MachineCalibrationSetting machineCalSettings;
         private readonly ILogger logger;
 
         private readonly AutoResetEvent waitExitFromPoling = new AutoResetEvent(false);
@@ -46,10 +47,12 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         private Thread acsPollingThread;
 
-        internal AcsWrapper(ILogger logger, IRobotControlSetting robotSettings)
+        internal AcsWrapper(ILogger logger, IRobotControlSetting robotSettings,
+            MachineCalibrationSetting machineCalSettings)
         {
             IsSimulation = AcsSimHelper.IsEnable();
             this.robotSettings = robotSettings;
+            this.machineCalSettings = machineCalSettings;
             this.logger = logger;
 
             api = new Api();
@@ -185,7 +188,6 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 InitConveyorAxesCache();
                 InitAxisNumbersAtController();
                 InitBuffers();
-                //ThreadPool.QueueUserWorkItem(s => ScanLoop());
                 StartPolling();
             }
         }
@@ -230,6 +232,20 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 acsPollingThread = null;
                 return !IsConnected;
             }
+        }
+
+        public void Disengage() {
+            if (!IsConnected) return;
+            
+            Disable(GantryAxes.X);
+            Disable(GantryAxes.Y);
+            Disable(GantryAxes.Z);
+
+            Disable(ConveyorAxes.Conveyor);
+            Disable(ConveyorAxes.Lifter);
+            Disable(ConveyorAxes.Width);
+
+            Disconnect();
         }
 
         public bool IsIdle(GantryAxes axis)
@@ -455,7 +471,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             }
         }
 
-        public bool PrepareScanning(List<IPvTuple3D> pvTuple3DList, int triggerToCameraStartPort,
+        public bool PrepareScanning(List<IPvTuple3D> motionPaths, int triggerToCameraStartPort,
             int triggerToCameraStartBit, int triggerFromCameraContinuePort, int triggerFromCameraContinueBit,
             int triggerFromCameraTimeOut)
         {
@@ -470,7 +486,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 return false;
             }
 
-            bufferHelper.PrepareScanningBuffer(pvTuple3DList, triggerToCameraStartPort, triggerToCameraStartBit,
+            bufferHelper.PrepareScanningBuffer(motionPaths, triggerToCameraStartPort, triggerToCameraStartBit,
                 triggerFromCameraContinuePort, triggerFromCameraContinueBit, triggerFromCameraTimeOut);
             return true;
         }
@@ -700,9 +716,10 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 return false;
             }
 
-            acsUtils.WriteGlobalReal(parameters.HOME_VEL_IN, "HOME_VEL_IN", (int)ConveyorAxes.Width);
-            acsUtils.WriteGlobalReal(parameters.HOME_VEL_OUT, "HOME_VEL_OUT", (int)ConveyorAxes.Width);
-            acsUtils.WriteGlobalReal(parameters.HOME_OFFSET, "HOME_OFFSET", (int)ConveyorAxes.Width);
+            acsUtils.WriteVariable(Convert.ToInt32(parameters.AutoWidthEnable), "AutoWidthEnable", acsUtils.GetDBufferIndex());
+            acsUtils.WriteGlobalReal(parameters.HomeInVelocity, "HOME_VEL_IN", (int)ConveyorAxes.Width);
+            acsUtils.WriteGlobalReal(parameters.HomeOutVelocity, "HOME_VEL_OUT", (int)ConveyorAxes.Width);
+            acsUtils.WriteGlobalReal(parameters.HomeOffset, "HOME_OFFSET", (int)ConveyorAxes.Width);
 
             return true;
         }
@@ -722,7 +739,10 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             acsUtils.WriteVariable(parameters.ConveyorBeltSlowSpeed, "ConveyorBeltSlowSpeed", buffer);
             acsUtils.WriteVariable(parameters.ConveyorBeltReleaseSpeed, "ConveyorBeltReleaseSpeed", buffer);
             acsUtils.WriteVariable(parameters.ConveyorBeltUnloadingSpeed, "ConveyorBeltUnloadingSpeed", buffer);
-            acsUtils.WriteVariable(Convert.ToInt32(parameters.PingPongMode), "PingPongMode", buffer);
+            acsUtils.WriteVariable(Convert.ToInt32(parameters.ConveyorSimultaneousLoadUnload), "ConveyorSimultaneousLoadUnload", buffer);
+            
+            acsUtils.WriteVariable(Convert.ToInt32(parameters.OperationMode), "OperationMode", buffer);
+            acsUtils.WriteVariable(parameters.SmemaFailedBoardMode, "SmemaFailedBoardMode", buffer);
 
             acsUtils.WriteVariable(parameters.ConveyorDirection, "ConveyorDirection", buffer);
             acsUtils.WriteVariable(parameters.ConveyorWaitTimeToAlign, "InternalMachineLoadBuffer_WaitTimeToAlign", buffer);
@@ -1574,12 +1594,20 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
                 bufferHelper.FlashAllBuffers();
 
-                bufferHelper.RunBuffer((ProgramBuffer) AcsBuffers.initIO);
+                InitVariables();
+
+                bufferHelper.RunBuffer((ProgramBuffer) AcsBuffers.InitIo);
             }
             catch (Exception e) {
                 logger.Error("AcsWrapper: initBuffers Exception: " + e.Message);
                 throw;
             }
+        }
+
+        private void InitVariables()
+        {
+            var conveyorInSimulationMode = machineCalSettings.ConveyorType.Value == (int)ConveyorType.Simulated ? 1 : 0;
+            acsUtils.WriteVariable(conveyorInSimulationMode, "ConveyorInSimulationMode");
         }
 
         private bool TerminateOldConnections()
@@ -1846,8 +1874,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         }
 
         public bool HasError => HasConveyorError || HasRobotError;
-        public bool HasConveyorError => ErrorCode != ConveyorErrorCode.ErrorSafe;
-        public bool HasRobotError => GantryErrorCode != GantryErrorCode.General;
+        public bool HasConveyorError => ConveyorStatus == ConveyorStatusCode.ERROR_STATUS ||
+                                        ErrorCode != ConveyorErrorCode.ErrorSafe;
+        public bool HasRobotError => GantryErrorCode != GantryErrorCode.NoError;
 
         public void ApplicationError()
         {
@@ -1902,6 +1931,8 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public void StartPanelLoad(LoadPanelBufferParameters parameters, double panelLength, int timeout)
         {
+            logger.Debug($"AcsWrapper:StartPanelLoad. ConveyorStatus: {ConveyorStatus}, ErrorCode: {ErrorCode}");
+            
             InitConveyorBufferParameters(parameters);
             WritePanelLength(panelLength);
             WriteLifterDistances(parameters.Stage_1_LifterOnlyDistance, parameters.Stage_2_LifterAndClamperDistance);
@@ -1914,6 +1945,8 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public void StartPanelReload(ReloadPanelBufferParameters parameters, double panelLength, int timeout)
         {
+            logger.Debug($"AcsWrapper:StartPanelReload. ConveyorStatus: {ConveyorStatus}, ErrorCode: {ErrorCode}");
+
             InitConveyorBufferParameters(parameters);
             WritePanelLength(panelLength);
             WriteLifterDistances(parameters.Stage_1_LifterOnlyDistance, parameters.Stage_2_LifterAndClamperDistance);
@@ -1935,13 +1968,22 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             acsUtils.WriteVariable(lifterAndClamperDistance, "Stage_2_LifterAndClamperDistance");
         }
 
-        public void StopPanelLoad()
+        public void StopPanelHandling()
         {
-            bufferHelper.StopBuffer((ProgramBuffer) AcsBuffers.LoadPanel);
+            acsUtils.WriteVariable(1, "StopPanelHandling", acsUtils.GetDBufferIndex());
+            
+            // wait for panel load/release buffer to end execution
+            bufferHelper.WaitProgramEnd((ProgramBuffer) AcsBuffers.LoadPanel, -1);
+            bufferHelper.WaitProgramEnd((ProgramBuffer) AcsBuffers.ReloadPanel, -1);
+
+            bufferHelper.WaitProgramEnd((ProgramBuffer) AcsBuffers.PreReleasePanel, -1);
+            bufferHelper.WaitProgramEnd((ProgramBuffer) AcsBuffers.ReleasePanel, -1);
         }
 
         public void StartPanelPreRelease(PreReleasePanelBufferParameters parameters, int timeout)
         {
+            logger.Debug($"AcsWrapper:StartPanelPreRelease. ConveyorStatus: {ConveyorStatus}, ErrorCode: {ErrorCode}");
+
             InitConveyorBufferParameters(parameters);
 
             bufferHelper.RunBuffer((ProgramBuffer) AcsBuffers.PreReleasePanel);
@@ -1952,6 +1994,8 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public void StartPanelRelease(ReleasePanelBufferParameters parameters, int timeout)
         {
+            logger.Debug($"AcsWrapper:StartPanelRelease. ConveyorStatus: {ConveyorStatus}, ErrorCode: {ErrorCode}");
+            
             InitConveyorBufferParameters(parameters);
 
             bufferHelper.RunBuffer((ProgramBuffer) AcsBuffers.ReleasePanel);
@@ -1964,6 +2008,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         {
             return new IoStatus
             {
+                // inputs
                 EntryOpto = Convert.ToBoolean(acsUtils.ReadVar("EntryOpto_Bit")),
                 ExitOpto = Convert.ToBoolean(acsUtils.ReadVar("ExitOpto_Bit")),
                 LifterLowered = Convert.ToBoolean(acsUtils.ReadVar("LifterLowered_Bit")),
@@ -1976,6 +2021,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 FrontClampUp = Convert.ToBoolean(acsUtils.ReadVar("FrontClampUp_Bit")),
                 RearClampDown = Convert.ToBoolean(acsUtils.ReadVar("RearClampDown_Bit")),
                 FrontClampDown = Convert.ToBoolean(acsUtils.ReadVar("FrontClampDown_Bit")),
+                ConveyorPressure = Convert.ToBoolean(acsUtils.ReadVar("ConveyorPressureSwitchFeedback_Bit")),
                 ResetButton = Convert.ToBoolean(acsUtils.ReadVar("Reset_Button_Bit")),
                 StartButton = Convert.ToBoolean(acsUtils.ReadVar("Start_Button_Bit")),
                 StopButton = Convert.ToBoolean(acsUtils.ReadVar("Stop_Button_Bit")),
@@ -1983,11 +2029,16 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 UpstreamBoardAvailableSignal = Convert.ToBoolean(acsUtils.ReadVar("UpstreamBoardAvailableSignal_Bit")),
                 UpstreamFailedBoardAvailableSignal = Convert.ToBoolean(acsUtils.ReadVar("UpstreamFailedBoardAvailableSignal_Bit")),
                 DownstreamMachineReadySignal = Convert.ToBoolean(acsUtils.ReadVar("DownstreamMachineReadySignal_Bit")),
-                BypassNormal = Convert.ToBoolean(acsUtils.ReadVar("BypassNormal_Bit")),
+                BypassNormal = Convert.ToBoolean(acsUtils.ReadVar("ByPassR2L")),
+                BypassDirection = Convert.ToBoolean(acsUtils.ReadVar("ByPassL2R")),
+                EstopRight = Convert.ToBoolean(acsUtils.ReadVar("Estop_R_Bit")), 
+                EstopLeft = Convert.ToBoolean(acsUtils.ReadVar("Estop_L_Bit")),
                 EstopAndDoorOpenFeedback = Convert.ToBoolean(acsUtils.ReadVar("EstopAndDoorOpenFeedback_Bit")),
 
+                // outputs
                 LockStopper = Convert.ToBoolean(acsUtils.ReadVar("LockStopper_Bit")),
                 RaiseBoardStopStopper = Convert.ToBoolean(acsUtils.ReadVar("RaiseBoardStopStopper_Bit")),
+                VacuumChuckValve = Convert.ToBoolean(acsUtils.ReadVar("HighVacummValve")),
                 ClampPanel = Convert.ToBoolean(acsUtils.ReadVar("ClampPanel_Bit")),
                 ResetButtonLight = Convert.ToBoolean(acsUtils.ReadVar("ResetButtonLight_Bit")),
                 StartButtonLight = Convert.ToBoolean(acsUtils.ReadVar("StartButtonLight_Bit")),
@@ -1998,11 +2049,14 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 TowerLightBlue = Convert.ToBoolean(acsUtils.ReadVar("TowerLightBlue_Bit")),
                 TowerLightBuzzer = Convert.ToBoolean(acsUtils.ReadVar("TowerLightBuzzer_Bit")),
                 SensorPower = Convert.ToBoolean(acsUtils.ReadVar("SensorPowerOnOff_Bit")),
-                BeltShroudVaccumOn = Convert.ToBoolean(acsUtils.ReadVar("BeltShroudVaccumON_Bit")),
                 StopSensor = Convert.ToBoolean(acsUtils.ReadVar("StopSensor_Bit")),
                 SmemaUpStreamMachineReady = Convert.ToBoolean(acsUtils.ReadVar("SmemaUpStreamMachineReady_Bit")),
                 DownStreamBoardAvailable = Convert.ToBoolean(acsUtils.ReadVar("DownStreamBoardAvailable_Bit")),
                 SmemaDownStreamFailedBoardAvailable = Convert.ToBoolean(acsUtils.ReadVar("SmemaDownStreamFailedBoardAvailable_Bit")),
+
+                // invert vacuum output
+                BeltShroudVaccumOn = !Convert.ToBoolean(acsUtils.ReadVar("BeltShroudVaccumON_Bit")),
+                VacuumChuckEjector = !Convert.ToBoolean(acsUtils.ReadVar("VacuumChuckEjector_Bit")),
             };
         }
 
@@ -2010,6 +2064,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         {
             acsUtils.WriteVariable(Convert.ToInt32(outputs.LockStopper), "LockStopper_Bit");
             acsUtils.WriteVariable(Convert.ToInt32(outputs.RaiseBoardStopStopper), "RaiseBoardStopStopper_Bit");
+            acsUtils.WriteVariable(Convert.ToInt32(outputs.VacuumChuckValve), "HighVacummValve");
             acsUtils.WriteVariable(Convert.ToInt32(outputs.ClampPanel), "ClampPanel_Bit");
             acsUtils.WriteVariable(Convert.ToInt32(outputs.ResetButtonLight), "ResetButtonLight_Bit");
             acsUtils.WriteVariable(Convert.ToInt32(outputs.StartButtonLight), "StartButtonLight_Bit");
@@ -2025,12 +2080,16 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             acsUtils.WriteVariable(Convert.ToInt32(outputs.DownStreamBoardAvailable), "DownStreamBoardAvailable_Bit");
             acsUtils.WriteVariable(Convert.ToInt32(outputs.SmemaDownStreamFailedBoardAvailable),
                 "SmemaDownStreamFailedBoardAvailable_Bit");
-            acsUtils.WriteVariable(Convert.ToInt32(outputs.BeltShroudVacuumOn), "BeltShroudVaccumON_Bit");
+
+            // invert vacuum output
+            acsUtils.WriteVariable(Convert.ToInt32(!outputs.BeltShroudVacuumOn), "BeltShroudVaccumON_Bit");
+            acsUtils.WriteVariable(Convert.ToInt32(!outputs.VacuumChuckEjector), "VacuumChuckEjector_Bit");
         }
 
         public void ChangeConveyorWidth(ChangeWidthBufferParameters parameters, int timeout)
         {
-            // change conveyor width
+            logger.Debug($"AcsWrapper:ChangeConveyorWidth. ConveyorStatus: {ConveyorStatus}, ErrorCode: {ErrorCode}");
+
             InitConveyorBufferParameters(parameters);
 
             bufferHelper.RunBuffer((ProgramBuffer) AcsBuffers.ChangeWidth);
@@ -2043,6 +2102,8 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         {
             ConveyorStatus = (ConveyorStatusCode) Convert.ToInt16(acsUtils.ReadVar("CURRENT_STATUS"));
             ErrorCode = (ConveyorErrorCode) Convert.ToInt16(acsUtils.ReadVar("ERROR_CODE"));
+            
+            logger.Debug($"AcsWrapper:UpdateConveyorStatus. ConveyorStatus: {ConveyorStatus}, ErrorCode: {ErrorCode}");
         }
 
         private void UpdateRobotStatus()
@@ -2050,11 +2111,15 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             GantryStatus = (GantryStatusCode) Convert.ToInt16(acsUtils.ReadVar("GANTRY_STATUS"));
             GantryErrorCode = GantryStatus == GantryStatusCode.Error
                 ? (GantryErrorCode) Convert.ToInt16(acsUtils.ReadVar("GANTRY_ERROR"))
-                : GantryErrorCode.General;
+                : GantryErrorCode.NoError;
+
+            if (GantryErrorCode != GantryErrorCode.NoError) return;
 
             UpdateXAxisFault();
             UpdateYAxisFault();
             UpdateZAxisFault();
+            
+            logger.Debug($"AcsWrapper:UpdateRobotStatus. Status: {GantryStatus}, ErrorCode: {GantryErrorCode}");
         }
 
         private void UpdateXAxisFault()
@@ -2116,9 +2181,12 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         {
             try {
                 InitConveyorBufferParameters(parameter);
+                UpdateConveyorStatus();
 
                 bufferHelper.RunBuffer((ProgramBuffer) AcsBuffers.PowerOnRecoverFromEmergencyStop);
                 api.WaitProgramEnd((ProgramBuffer) AcsBuffers.PowerOnRecoverFromEmergencyStop, timeout);
+                
+                UpdateConveyorStatus();
             }
             catch (Exception ex) {
                 throw new AcsException(ex.Message);
@@ -2132,7 +2200,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 StartButton = Convert.ToBoolean(acsUtils.ReadVar("Start_Button_Bit")),
                 StopButton = Convert.ToBoolean(acsUtils.ReadVar("Stop_Button_Bit")),
                 ResetButton = Convert.ToBoolean(acsUtils.ReadVar("Reset_Button_Bit")),
-                EStopButton = Convert.ToBoolean(acsUtils.ReadVar("EstopAndDoorOpenFeedback_Bit")),
+                EstopRight = Convert.ToBoolean(acsUtils.ReadVar("Estop_R_Bit")),
+                EstopLeft = Convert.ToBoolean(acsUtils.ReadVar("Estop_L_Bit")),
+                SafetyRelay = Convert.ToBoolean(acsUtils.ReadVar("EstopAndDoorOpenFeedback_Bit")),
             };
         }
 
@@ -2173,7 +2243,12 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public bool IsBypassSignalSet()
         {
-            return Convert.ToBoolean(acsUtils.ReadVar("BypassNormal_Bit"));
+            return Convert.ToBoolean(acsUtils.ReadVar("ByPassR2L")) || Convert.ToBoolean(acsUtils.ReadVar("ByPassL2R"));
+        }
+
+        public bool IsBypassDirectionRightToLeft()
+        {
+            return Convert.ToBoolean(acsUtils.ReadVar("ByPassR2L"));
         }
 
         public void BypassModeOn(BypassModeBufferParameters parameter)
@@ -2285,6 +2360,16 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             }
         }
 
+        public void SetPartialManualSmemaMode()
+        {
+            acsUtils.WriteVariable(1, "SqTriggerSmemaUpStreamMachineReady");
+        }
+
+        public void ResetPartialManualSmemaMode()
+        {
+            acsUtils.WriteVariable(0, "SqTriggerSmemaUpStreamMachineReady");
+        }
+
         public void SetMachineReady()
         {
             acsUtils.WriteVariable(1, "SmemaUpStreamMachineReady_Bit");
@@ -2293,6 +2378,24 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         public void ResetMachineReady()
         {
             acsUtils.WriteVariable(0, "SmemaUpStreamMachineReady_Bit");
+        }
+
+        public void SetSmemaDownStreamFailedBoardAvailable() {
+            acsUtils.WriteVariable(1, "SmemaDownStreamFailedBoardAvailable_Bit");
+        }
+
+        public void ResetSmemaDownStreamFailedBoardAvailable() {
+            acsUtils.WriteVariable(0, "SmemaDownStreamFailedBoardAvailable_Bit");
+        }
+
+        public void SetFailedBoard()
+        {
+            acsUtils.WriteVariable(1, "FailedBoard");
+        }
+
+        public void ResetFailedBoard()
+        {
+            acsUtils.WriteVariable(0, "FailedBoard");
         }
 
         public bool IsConveyorAxisEnable()
@@ -2338,12 +2441,23 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 
         public void JogConveyorAxisLeftToRight(double velocity, double acceleration, double deceleration)
         {
-            Jog(ConveyorAxes.Conveyor, velocity, acceleration, deceleration);
+            if (conveyorAxesCache[ConveyorAxes.Conveyor].EncoderInverted)
+            {
+                Jog(ConveyorAxes.Conveyor, velocity * -1, acceleration, deceleration);
+            }
+            else {
+                Jog(ConveyorAxes.Conveyor, velocity, acceleration, deceleration);
+            }
         }
 
         public void JogConveyorAxisRightToLeft(double velocity, double acceleration, double deceleration)
         {
-            Jog(ConveyorAxes.Conveyor, velocity * -1, acceleration, deceleration);
+            if (conveyorAxesCache[ConveyorAxes.Conveyor].EncoderInverted) {
+                Jog(ConveyorAxes.Conveyor, velocity, acceleration, deceleration);
+            }
+            else {
+                Jog(ConveyorAxes.Conveyor, velocity * -1, acceleration, deceleration);
+            }
         }
 
         public void StopConveyorAxis()

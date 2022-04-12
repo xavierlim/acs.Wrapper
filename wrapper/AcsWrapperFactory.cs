@@ -9,7 +9,8 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 {
     public static class AcsWrapperFactory
     {
-        public static IAcsWrapper CreateInstance(ILogger logger, IRobotControlSetting robotSettings)
+        public static IAcsWrapper CreateInstance(ILogger logger, IRobotControlSetting robotSettings,
+            MachineCalibrationSetting machineCalSettings)
         {
             AcsWrapper acs;
 
@@ -19,7 +20,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                     return new AcsMocker();
                 }
                 else {
-                    acs = new AcsWrapper(logger, robotSettings);
+                    acs = new AcsWrapper(logger, robotSettings, machineCalSettings);
                     try {
                         acs.Connect();
                         return acs;
@@ -31,7 +32,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                 }
             }
 
-            acs = new AcsWrapper(logger, robotSettings);
+            acs = new AcsWrapper(logger, robotSettings, machineCalSettings);
             acs.Connect();
             return acs;
         }

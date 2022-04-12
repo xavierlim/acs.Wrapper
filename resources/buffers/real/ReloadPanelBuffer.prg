@@ -1,8 +1,10 @@
 !ReloadPanelBuffer
 
 ERROR_CODE = ERROR_SAFE
+StopFlag = 0
 
 global int ReloadPanelStateError,ReloadPanelFreeError,ReloadPanelSearchError,ReloadPanelSlowSensorError,FreePanelToUnliftError,FreePanelToUnclampError
+Panel_Count = 1 !!!!! IssacTest
 
 FreePanelToUnliftError = 303
 FreePanelToUnclampError = 304
@@ -61,6 +63,11 @@ else																	!ELSE IF CURRENT STATE IS NOT = LOADED STATE
 		START LoadPanelBufferIndex,1										!CALL LOADPANELBUFFER
 		TILL ^ PST(LoadPanelBufferIndex).#RUN								!UNTIL FREE PANEL COMPLETE
 
+	elseif 	CURRENT_STATUS = RELEASED_STATUS	& ExitOpto_Bit = 0		!ELSE IF CURRENT STATE IS RELEASED STATUS AND EXIT OPTO NOT BLOCKED	
+		CURRENT_STATUS = RELEASED_STATUS									!SET CURRENT_STATUS = RELEASED_STATUS TO PREPARE FOR LOADPANELBUFFER
+		START LoadPanelBufferIndex,1										!CALL LOADPANELBUFFER
+		TILL ^ PST(LoadPanelBufferIndex).#RUN								!UNTIL FREE PANEL COMPLETE
+		
 	elseif CURRENT_STATUS = RELEASED_STATUS	& EntryOpto_Bit = 1
 		START LoadPanelBufferIndex,1
 		TILL ^ PST(LoadPanelBufferIndex).#RUN
@@ -112,16 +119,16 @@ RET
 StartConveyorBeltsDownstreamInternalSpeed:
 	ACC (CONVEYOR_AXIS) = 10000
 	DEC (CONVEYOR_AXIS) = 16000
-	JOG/v CONVEYOR_AXIS,ConveyorBeltLoadingSpeed*ConveyorDirection
+	JOG/v CONVEYOR_AXIS,ConveyorBeltLoadingSpeed
 RET
 
 RaiseBoardStop:
 	RaiseBoardStopStopper_Bit = 1
 	TILL StopperArmUp_Bit = 1
-	wait 1000
-	LockStopper_Bit = 1
-	TILL StopperLocked_Bit = 1
-	
+	Start 11,1
+!	wait 1000
+!	LockStopper_Bit = 1
+!	TILL StopperLocked_Bit = 1
 RET
 
 LowerBoardStop:	
@@ -138,13 +145,13 @@ RET
 StartConveyorBeltsUpstreamInternalSpeed:
 	ACC (CONVEYOR_AXIS) = 10000
 	DEC (CONVEYOR_AXIS) = 16000
-	JOG/v CONVEYOR_AXIS,-ConveyorBeltLoadingSpeed*ConveyorDirection
+	JOG/v CONVEYOR_AXIS,-ConveyorBeltLoadingSpeed
 RET
 
 AdjustConveyorBeltsUpstreamInternalSpeedToSlow:
 	ACC (CONVEYOR_AXIS) = 10000
 	DEC (CONVEYOR_AXIS) = 16000
-	JOG/v CONVEYOR_AXIS,-ConveyorBeltSlowSpeed*ConveyorDirection
+	JOG/v CONVEYOR_AXIS,-ConveyorBeltSlowSpeed
 RET
 
 ErrorExit:

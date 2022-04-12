@@ -6,6 +6,8 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
         public bool LockStopper;
         public bool RaiseBoardStopStopper;
         public bool BeltShroudVacuumOn;
+        public bool VacuumChuckEjector;
+        public bool VacuumChuckValve;
         public bool ClampPanel;
         public bool ResetButtonLight;
         public bool StartButtonLight;

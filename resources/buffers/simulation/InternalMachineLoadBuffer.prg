@@ -27,8 +27,10 @@ IF BoardStopPanelAlignSensor_Bit = 1
 	ERROR_CODE = LoadPanelAlignBeforeSlowSensorError			
 END
 
-CALL AdjustConveyorBeltSpeedToSlow									
-TILL BoardStopPanelAlignSensor_Bit,InternalMachineLoadBuffer_WaitTimeToAlign					
+CALL AdjustConveyorBeltSpeedToSlow
+!edit by issac for troubleshooting									
+TILL BoardStopPanelAlignSensor_Bit
+!TILL BoardStopPanelAlignSensor_Bit,InternalMachineLoadBuffer_WaitTimeToAlign					
 if BoardStopPanelAlignSensor_Bit = 1								
 	WAIT InternalMachineLoadBuffer_WaitTimeToAlign
 	CALL TurnOffConveyorBeltMotor										
@@ -55,7 +57,9 @@ ErrorExit:
 RET
 
 AdjustConveyorBeltSpeedToSlow:
-	JOG/v CONVEYOR_AXIS,ConveyorBeltSlowSpeed*ConveyorDirection
+	ACC (CONVEYOR_AXIS) = 10000
+	DEC (CONVEYOR_AXIS) = 16000
+	JOG/v CONVEYOR_AXIS,ConveyorBeltSlowSpeed
 RET
 
 TurnOffConveyorBeltMotor:

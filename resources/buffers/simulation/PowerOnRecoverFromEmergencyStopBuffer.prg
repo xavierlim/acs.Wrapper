@@ -8,12 +8,12 @@ PowerOnRecoveryWidthNotHomed = 900
 
 
 int WidthToW_0_Position
-
-CALL InitializeACS
-TILL Reset_Button_Bit = 1 ,PowerOnRecoveryBuffer_WaitTimeToReset
 START ConveyorResetBufferIndex, 1
 TILL ^ PST(ConveyorResetBufferIndex).#RUN
 WAIT 5000
+
+CALL InitializeACS
+TILL Reset_Button_Bit = 1 ,PowerOnRecoveryBuffer_WaitTimeToReset
 CALL InitializeMotors
 
 CALL EnableOptos
@@ -25,12 +25,19 @@ if EstopAndDoorOpenFeedback_Bit = 0																				!IF SAFETY NOT ENGAGED
 
 else
 	EMO_RECOVERY:
+
+	！Simulation
+	！if ConveyorLifterHomed = 0
+	！START LifterHomingBufferIndex, 1																											!START WIDTH HOMING BUFFER
+	！TILL ^ PST(LifterHomingBufferIndex).#RUN
+	！end
+
 	CALL EMO_Recovery_FreePanelSeq
 	TILL PanelFreed = 1
 
 		CURRENT_STATUS = SAFE_STATUS																					!SET CURRENT STATUS = SAFE STATUS		
 		
-	if BypassNormal_Bit = 1																						!IF BYPASS MODE = 1
+	if ByPassR2L = 1 | ByPassL2R = 1																						!IF BYPASS MODE = 1
 		START BypassModeBufferIndex,1																				!START BYPASS MODE BUFFER
 	else																										!ELSE 
 		CURRENT_STATUS = SEARGING_STATUS																			!SET CURRENT STATUS = SEARCHING STATUS
@@ -44,7 +51,7 @@ else
 				CALL ContinueFindPanel																							!START FIND PANEL BUFFER
 			else																											!ELSE IF TIMEOUT
 				CALL StopConveyorBelts																						!STOP CONVEYOR BELT
-				CALL HomeWidth																								!START WIDTH HOMING BUFFER
+				!CALL HomeWidth																								!START WIDTH HOMING BUFFER
 			end
 		end
 	end
@@ -54,7 +61,7 @@ STOP
 
 
 ContinueFindPanel:																									
-	if ConveyorWidthHomed = 1																						!IF WIDTH HOMED
+	!if ConveyorWidthHomed = 1																						!IF WIDTH HOMED
 	    TILL ExitOpto_Bit = 1,PowerOnRecoveryBuffer_WaitTimeToExit																			!WAIT UNTIL EXIT OPTO BLOCKED OR TIMEOUT
 		if ExitOpto_Bit = 1																								!IF EXIT OPTO BLOCKED	
 			CALL StopConveyorBelts																							!STOP CONVEYOR BELT
@@ -63,11 +70,11 @@ ContinueFindPanel:
 			CALL ErrorExit																								!CALL ERROR EXIT
 			CURRENT_STATUS = ERROR_STATUS																				!SET STATUS = ERROR STATUS
 		end
-	else																											!IF WIDTH NOT HOMED
-		ERROR_CODE = PowerOnRecoveryWidthNotHomed																		!PowerOnRecoveryWidthNotHomed error code 900
-		CALL ErrorExit																								!CALL ERROR EXIT
-		CURRENT_STATUS = ERROR_STATUS																					!SET CURRENT STATUS = ERROR STATUS
-	end
+	!else																											!IF WIDTH NOT HOMED
+		!ERROR_CODE = PowerOnRecoveryWidthNotHomed																		!PowerOnRecoveryWidthNotHomed error code 900
+		!CALL ErrorExit																								!CALL ERROR EXIT
+		!CURRENT_STATUS = ERROR_STATUS																					!SET CURRENT STATUS = ERROR STATUS
+	!end
 
 RET
 
@@ -79,7 +86,7 @@ HomeWidth:
 		CURRENT_STATUS = WIDTH_HOMING_STATUS																			!SET CURRENT STATUS = WIDTH HOMING STATUS
 		CALL HomeConveyorWidthMotor																						!CALL CONVEYOR WIDTH HOMING BUFFER
 		if ConveyorWidthHomed = 1																						!IF CONVEYOR WIDTH HOMED
-			CALL AdjustConveyorWidthToW_0																					!CALL CHANGE WIDTH BUFFER
+			!CALL AdjustConveyorWidthToW_0																					!CALL CHANGE WIDTH BUFFER
 			CURRENT_STATUS = RELEASED_STATUS																				!SET CURRENT STATUS = RELEASED STATUS
 		else																											!ELSE
 			ERROR_CODE = PowerOnRecoveryWidthNotHomed																		!PowerOnRecoveryWidthNotHomed error code 900
@@ -133,8 +140,9 @@ EnableOptos:
 RET
 
 StartConveyorBeltsDownstream:
-	JOG/v CONVEYOR_AXIS,ConveyorBeltLoadingSpeed*ConveyorDirection
-	
+	ACC (CONVEYOR_AXIS) = 10000
+	DEC (CONVEYOR_AXIS) = 16000
+	JOG/v CONVEYOR_AXIS,ConveyorBeltUnloadingSpeed
 RET
 
 StopConveyorBelts:

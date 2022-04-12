@@ -9,31 +9,29 @@ FMASK5.#SLL = 0
 
 int Axis
 int Slave_Number
+int WidthECOffset_ControlWord
 
 Axis= 6
 Slave_Number = 3
 
-int EC_Offset
-
-EC_Offset = 364
+WidthECOffset_ControlWord = ECGETOFFSET ("Control Word" , Slave_Number)
 
 disable Axis
 till ^MST(Axis).#ENABLED
 wait 200
 
-!*********Unmapping ethercat offset******
-ecunmapin(EC_Offset)
-ecunmapout(EC_Offset)
+!*********Unmapping ethercat offset for control word******
+ecunmapin(WidthECOffset_ControlWord)
+ecunmapout(WidthECOffset_ControlWord)
 !***************************************
 
 !***********Fault Clear***********
-ecout(EC_Offset,ControlWord_Conveyor)
-ControlWord_Conveyor = 0x8F
+ecout(WidthECOffset_ControlWord,ControlWord_Width)
+ControlWord_Width = 0x8F
 wait 500
-ControlWord_Conveyor = 0x0F
-coewrite/1(Slave_Number,0x6060,0,8)
-ecunmapin(EC_Offset)
-ecunmapout(EC_Offset)
+ControlWord_Width = 0x0F
+ecunmapin(WidthECOffset_ControlWord)
+ecunmapout(WidthECOffset_ControlWord)
 !***********Fault Clear***********
 
 enable Axis
@@ -51,26 +49,25 @@ wait 100
 Axis= 7
 Slave_Number = 4
 
-
-EC_Offset = 378
+int LifterECOffset_ControlWord
+LifterECOffset_ControlWord = ECGETOFFSET ("Control Word" , Slave_Number)
 
 disable Axis
 till ^MST(Axis).#ENABLED
 wait 200
 
-!*********Unmapping ethercat offset******
-ecunmapin(EC_Offset)
-ecunmapout(EC_Offset)
+!*********Unmapping ethercat offset for control word******
+ecunmapin(LifterECOffset_ControlWord)
+ecunmapout(LifterECOffset_ControlWord)
 !***************************************
 
 !***********Fault Clear***********
-ecout(EC_Offset,ControlWord_Conveyor)
-ControlWord_Conveyor = 0x8F
+ecout(LifterECOffset_ControlWord,ControlWord_Lifter)
+ControlWord_Lifter = 0x8F
 wait 500
-ControlWord_Conveyor = 0x0F
-coewrite/1(Slave_Number,0x6060,0,8)
-ecunmapin(EC_Offset)
-ecunmapout(EC_Offset)
+ControlWord_Lifter = 0x0F
+ecunmapin(LifterECOffset_ControlWord)
+ecunmapout(LifterECOffset_ControlWord)
 !***********Fault Clear***********
 
 enable Axis
@@ -88,26 +85,36 @@ wait 100
 Axis= 5
 Slave_Number = 2
 
-
-EC_Offset = 350
+int ConveyorECOffset_ControlWord
+ConveyorECOffset_ControlWord = ECGETOFFSET ("Control Word" , Slave_Number)
 
 disable Axis
 till ^MST(Axis).#ENABLED
 wait 200
 
-!*********Unmapping ethercat offset******
-ecunmapin(EC_Offset)
-ecunmapout(EC_Offset)
+!*********Unmapping ethercat offset for control word******
+ecunmapin(ConveyorECOffset_ControlWord)
+ecunmapout(ConveyorECOffset_ControlWord)
 !***************************************
 
 !***********Fault Clear***********
-ecout(EC_Offset,ControlWord_Conveyor)
+ecout(ConveyorECOffset_ControlWord,ControlWord_Conveyor)
 ControlWord_Conveyor = 0x8F
 wait 500
 ControlWord_Conveyor = 0x0F
-coewrite/1(Slave_Number,0x6060,0,8)
-ecunmapin(EC_Offset)
-ecunmapout(EC_Offset)
+ECUNMAPOUT (ConveyorECOffset_ControlWord)
+ECUNMAPIN (ConveyorECOffset_ControlWord)
+!***********Fault Clear***********
+
+wait 2000
+
+!***********2ND TIME Fault Clear***********
+ecout(ConveyorECOffset_ControlWord,ControlWord_Conveyor)
+ControlWord_Conveyor = 0x8F
+wait 500
+ControlWord_Conveyor = 0x0F
+ECUNMAPOUT (ConveyorECOffset_ControlWord)
+ECUNMAPIN (ConveyorECOffset_ControlWord)
 !***********Fault Clear***********
 
 enable Axis
@@ -116,8 +123,42 @@ wait 100
 
 set FPOS(Axis)= 0 
 
+!Reset Z
 
+Axis= 4
+Slave_Number = 1
+int ZECOffset_ControlWord
+ZECOffset_ControlWord = ECGETOFFSET ("Control Word" , Slave_Number)
 
+!*********Unmapping ethercat offset for control word******
+ecunmapin(ZECOffset_ControlWord)
+ecunmapout(ZECOffset_ControlWord)
+!***************************************
+
+!***********Fault Clear***********
+ecout(ZECOffset_ControlWord,ControlWord_Z)
+ControlWord_Z = 0x8F
+wait 500
+ControlWord_Z = 0x0F
+ecunmapin(ZECOffset_ControlWord)
+ecunmapout(ZECOffset_ControlWord)
+!***********Fault Clear***********
+
+wait 1000
+
+!*********Unmapping ethercat offset for control word******
+ecunmapin(ZECOffset_ControlWord)
+ecunmapout(ZECOffset_ControlWord)
+!***************************************
+
+!***********2nd time Fault Clear***********
+ecout(ZECOffset_ControlWord,ControlWord_Z)
+ControlWord_Z = 0x8F
+wait 500
+ControlWord_Z = 0x0F
+ecunmapin(ZECOffset_ControlWord)
+ecunmapout(ZECOffset_ControlWord)
+!***********Fault Clear***********
 
 WidthLifterConveyor_Reset_Completed = 1
 

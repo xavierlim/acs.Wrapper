@@ -37,8 +37,6 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
         public int WaitTimeToSlow { get; set; }
         public int WaitTimeToAlign { get; set; }
         public int SlowDelayTime { get; set; }
-
-
     }
 
     public class LoadPanelBufferParameters
@@ -98,22 +96,23 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
 
     public class HomeConveyorWidthParameters
     {
-        public double HOME_VEL_IN { get; set; }
-
-        public double HOME_VEL_OUT { get; set; }
-
-        public double HOME_OFFSET { get; set; }
+        public bool AutoWidthEnable { set; get; }
+        public double HomeInVelocity { get; set; }
+        public double HomeOutVelocity { get; set; }
+        public double HomeOffset { get; set; }
     }
 
     public class DBufferParameters
     {
+        public bool ConveyorSimultaneousLoadUnload { get; set; }
         public double ConveyorBeltAcquireSpeed { get; set; }
         public double ConveyorBeltLoadingSpeed { get; set; }
         public double ConveyorBeltSlowSpeed { get; set; }
         public double ConveyorBeltReleaseSpeed { get; set; }
         public double ConveyorBeltUnloadingSpeed { get; set; }
         public double PanelLength { get; set; }
-        public bool PingPongMode { get; set; }
+        public OperationMode OperationMode { get; set; }
+        public int SmemaFailedBoardMode { get; set; }
 
         public ConveyorDirection ConveyorDirection { get; set; }
         public ushort ConveyorWaitTimeToAlign { get; set; }
@@ -146,5 +145,13 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
         public double Accel { set; get; }
 
         public double Decel { set; get; }
+    }
+    
+    public enum OperationMode {
+        PingPongMode = 0,
+        InlineMode = 1,
+        OfflineMode = 2,
+        SerialUpstream = 3,
+        SerialDownstream = 4,
     }
 }

@@ -77,6 +77,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         event Action ScanningEnd;
         void Connect();
         bool Disconnect();
+        void Disengage();
         bool IsIdle(GantryAxes axis);
         bool Enabled(GantryAxes axis);
         bool Homed(GantryAxes axis);
@@ -90,7 +91,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         bool AtNegativeSwLimit(GantryAxes axis);
 
         bool PrepareScanning(
-            List<IPvTuple3D> pvTuple3DList,
+            List<IPvTuple3D> motionPaths,
             int triggerToCameraStartPort,
             int triggerToCameraStartBit,
             int triggerFromCameraContinuePort,
@@ -147,7 +148,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         void SetRPos(GantryAxes axis, double pos);
         void StartPanelLoad(LoadPanelBufferParameters parameters, double panelLength, int timeout);
         void StartPanelReload(ReloadPanelBufferParameters parameters, double panelLength, int timeout);
-        void StopPanelLoad();
+        void StopPanelHandling();
         void StartPanelPreRelease(PreReleasePanelBufferParameters parameters, int timeout);
         void StartPanelRelease(ReleasePanelBufferParameters parameters, int timeout);
         IoStatus GetIoStatus();
@@ -165,7 +166,18 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         PresentSensors GetPresentSensorsStatus();
         SmemaIo GetSmemaIoStatus();
 
+        /// <summary>
+        /// check if bypass switch is enabled
+        /// </summary>
+        /// <returns>true if enabled</returns>
         bool IsBypassSignalSet();
+
+        /// <summary>
+        /// check bypass direction set by bypass switch
+        /// </summary>
+        /// <returns>true if direction is Right-to-Left, false for Left-to-Right</returns>
+        bool IsBypassDirectionRightToLeft();
+
         void BypassModeOn(BypassModeBufferParameters parameter);
         void BypassModeOff();
         void SetTowerLightRed(AcsIndicatorState state);
@@ -175,8 +187,22 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         void SetTowerLightBuzzer(AcsIndicatorState state);
         void SetStartButtonIndicator(AcsIndicatorState state);
         void SetStopButtonIndicator(AcsIndicatorState state);
+        void SetPartialManualSmemaMode();
+        void ResetPartialManualSmemaMode();
         void SetMachineReady();
         void ResetMachineReady();
+        void SetSmemaDownStreamFailedBoardAvailable();
+        void ResetSmemaDownStreamFailedBoardAvailable();
+        
+        /// <summary>
+        /// set failed board flag
+        /// </summary>
+        void SetFailedBoard();
+        
+        /// <summary>
+        /// reset failed board flag
+        /// </summary>
+        void ResetFailedBoard();
 
         bool IsConveyorAxisEnable();
         bool IsConveyorWidthAxisEnable();
