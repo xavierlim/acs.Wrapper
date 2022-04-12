@@ -61,8 +61,9 @@ PanelSearch:
 RET
 
 StartConveyorBeltsDownstreamInternalSpeed:
-    ENABLE CONVEYOR_AXIS
-	JOG/v CONVEYOR_AXIS,ConveyorBeltAcquireSpeed*ConveyorDirection
+	ACC (CONVEYOR_AXIS) = 10000
+	DEC (CONVEYOR_AXIS) = 16000
+	JOG/v CONVEYOR_AXIS,ConveyorBeltAcquireSpeed
 RET
 
 ErrorExit:
@@ -71,6 +72,7 @@ ErrorExit:
 RET
 
 MoveConveyorToSpecifiedWidth:
+	VEL (CONVEYOR_WIDTH_AXIS) = 80
 	PTP/em CONVEYOR_WIDTH_AXIS, ConveyorSpecifiedWidth
 	till ^MST(CONVEYOR_WIDTH_AXIS).#MOVE
 	wait 200

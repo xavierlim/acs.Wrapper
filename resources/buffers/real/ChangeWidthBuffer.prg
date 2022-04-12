@@ -10,11 +10,14 @@ ChangeWidthToNotAtSpecifiedError = 203
 ChangeWidthPanelPresent = 204
 
 
-int ConveyorSpecifiedWidth
+real ConveyorSpecifiedWidth
+if ERROR_CODE =0
 
 START FreePanelBufferIndex,1									!Perform Free Panel Buffer to lower lifter and Clamp
 TILL ^PST(FreePanelBufferIndex).#RUN
-TILL PanelFreed = 1
+TILL PanelFreed = 1, 5000
+
+if ERROR_CODE =0
 
 CALL PanelSearch												!Perform Panel Search
 
@@ -40,7 +43,10 @@ if ERROR_CODE <> ChangeWidthPanelPresent						!Only Execute change width buffer 
 	end
 
 end
-
+END
+	else
+	CALL ErrorExit
+END
 STOP
 
 PanelSearch:
@@ -63,7 +69,7 @@ RET
 StartConveyorBeltsDownstreamInternalSpeed:
 	ACC (CONVEYOR_AXIS) = 10000
 	DEC (CONVEYOR_AXIS) = 16000
-	JOG/v CONVEYOR_AXIS,ConveyorBeltAcquireSpeed*ConveyorDirection
+	JOG/v CONVEYOR_AXIS,ConveyorBeltAcquireSpeed
 RET
 
 ErrorExit:

@@ -79,6 +79,10 @@ namespace CO.Systems.Services.Acs.AcsWrapper.mockery
             return true;
         }
 
+        public void Disengage()
+        {
+        }
+
         public bool IsIdle(GantryAxes axis)
         {
             return true;
@@ -134,11 +138,11 @@ namespace CO.Systems.Services.Acs.AcsWrapper.mockery
             return false;
         }
 
-        public bool PrepareScanning(List<IPvTuple3D> pvTuple3DList, int triggerToCameraStartPort, int triggerToCameraStartBit,
+        public bool PrepareScanning(List<IPvTuple3D> motionPaths, int triggerToCameraStartPort, int triggerToCameraStartBit,
             int triggerFromCameraContinuePort, int triggerFromCameraContinueBit, int triggerFromCameraTimeOut)
         {
-            motionPaths.Clear();
-            motionPaths.AddRange(pvTuple3DList);
+            this.motionPaths.Clear();
+            this.motionPaths.AddRange(motionPaths);
             return true;
         }
 
@@ -363,7 +367,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.mockery
             Thread.Sleep(1000);
         }
 
-        public void StopPanelLoad()
+        public void StopPanelHandling()
         {
         }
 
@@ -432,6 +436,11 @@ namespace CO.Systems.Services.Acs.AcsWrapper.mockery
             return false;
         }
 
+        public bool IsBypassDirectionRightToLeft()
+        {
+            return false;
+        }
+
         public void BypassModeOn(BypassModeBufferParameters parameter)
         {
         }
@@ -468,11 +477,35 @@ namespace CO.Systems.Services.Acs.AcsWrapper.mockery
         {
         }
 
+        public void SetPartialManualSmemaMode()
+        {
+        }
+
+        public void ResetPartialManualSmemaMode()
+        {
+        }
+
         public void SetMachineReady()
         {
         }
 
         public void ResetMachineReady()
+        {
+        }
+
+        public void SetSmemaDownStreamFailedBoardAvailable()
+        {
+        }
+
+        public void ResetSmemaDownStreamFailedBoardAvailable()
+        {
+        }
+
+        public void SetFailedBoard()
+        {
+        }
+
+        public void ResetFailedBoard()
         {
         }
 

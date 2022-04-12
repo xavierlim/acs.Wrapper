@@ -6,14 +6,44 @@ FreePanelToUnliftError = 303
 FreePanelToUnclampError = 304
 PowerOnRecoveryWidthNotHomed = 900
 
+HALT X_AXIS
+HALT Y_AXIS
+HALT Z_AXIS
+
+HALT CONVEYOR_AXIS
+HALT CONVEYOR_WIDTH_AXIS
+HALT LIFTER_AXIS
+
+STOP 0
+STOP 1
+STOP 3
+STOP 4
+STOP 5
+STOP 6
+STOP 7
+STOP 9
+STOP 11
+STOP 12
+STOP 13
+STOP 14
+STOP 15
+STOP 16
+STOP 17
+STOP 19
+STOP 20
+STOP 21
+STOP 22
+STOP 23
+STOP 24
+STOP 25
 
 int WidthToW_0_Position
-
-CALL InitializeACS
-TILL Reset_Button_Bit = 1 ,PowerOnRecoveryBuffer_WaitTimeToReset
 START ConveyorResetBufferIndex, 1
 TILL ^ PST(ConveyorResetBufferIndex).#RUN
 WAIT 5000
+
+CALL InitializeACS
+TILL Reset_Button_Bit = 1 ,PowerOnRecoveryBuffer_WaitTimeToReset
 CALL InitializeMotors
 
 CALL EnableOptos
@@ -35,7 +65,7 @@ else
 
 		CURRENT_STATUS = SAFE_STATUS																					!SET CURRENT STATUS = SAFE STATUS		
 		
-	if BypassNormal_Bit = 1																						!IF BYPASS MODE = 1
+	if ByPassR2L = 1 | ByPassL2R = 1																						!IF BYPASS MODE = 1
 		START BypassModeBufferIndex,1																				!START BYPASS MODE BUFFER
 	else																										!ELSE 
 		CURRENT_STATUS = SEARGING_STATUS																			!SET CURRENT STATUS = SEARCHING STATUS
@@ -54,6 +84,11 @@ else
 		end
 	end
 end
+
+ERROR_CODE = 0
+StopFlag = 0
+GANTRY_ERROR = 0
+GANTRY_STATUS = 0
 
 STOP
 
@@ -140,7 +175,7 @@ RET
 StartConveyorBeltsDownstream:
 	ACC (CONVEYOR_AXIS) = 10000
 	DEC (CONVEYOR_AXIS) = 16000
-	JOG/v CONVEYOR_AXIS,ConveyorBeltLoadingSpeed*ConveyorDirection
+	JOG/v CONVEYOR_AXIS,ConveyorBeltUnloadingSpeed
 RET
 
 StopConveyorBelts:

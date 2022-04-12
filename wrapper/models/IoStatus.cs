@@ -16,6 +16,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
         public bool FrontClampUp;
         public bool RearClampDown;
         public bool FrontClampDown;
+        public bool ConveyorPressure;
         public bool ResetButton;
         public bool StartButton;
         public bool StopButton;
@@ -26,12 +27,17 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
         public bool UpstreamFailedBoardAvailableSignal;
         public bool DownstreamMachineReadySignal;
         public bool BypassNormal;
+        public bool BypassDirection;
+        public bool EstopRight;
+        public bool EstopLeft;
         public bool EstopAndDoorOpenFeedback;
 
         // Outputs
         public bool LockStopper;
         public bool RaiseBoardStopStopper;
         public bool BeltShroudVaccumOn;
+        public bool VacuumChuckEjector;
+        public bool VacuumChuckValve;
         public bool ClampPanel;
         public bool ResetButtonLight;
         public bool StartButtonLight;
@@ -53,7 +59,13 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
         public bool StartButton;
         public bool StopButton;
         public bool ResetButton;
-        public bool EStopButton;
+        public bool EstopRight;
+        public bool EstopLeft;
+        public bool SafetyRelay;
+
+        public PanelButtons() {
+            SafetyRelay = true;
+        }
     }
 
     public class PresentSensors

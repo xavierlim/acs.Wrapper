@@ -176,6 +176,8 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
 
         public bool Homed => Convert.ToBoolean(acsUtils.ReadInt("MFLAGS", (int) AcsAxisId) & 8);
 
+        public bool EncoderInverted => Convert.ToBoolean(acsUtils.ReadInt("MFLAGS", (int)AcsAxisId) & 4096);
+
         public Axis AcsAxisId { get; }
 
         public string Name { get; }
@@ -199,7 +201,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
             get { return position; }
             private set
             {
-                if (Math.Abs(position - value) < 0.01) return;
+                if (Math.Abs(position - value) < 0.0001) return;
                 position = value;
                 PositionUpdated?.Invoke(ApplicationAxisId, position);
             }
@@ -715,8 +717,8 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
                 DefaultVelocity = axisConfig.DefaultVelocity[ApplicationAxisId] * 1000.0;
                 DefaultAccel = axisConfig.DefaultAccel[ApplicationAxisId] * 1000.0;
                 DefaultDecel = axisConfig.DefaultDecel[ApplicationAxisId] * 1000.0;
-                MinPos = axisConfig.MinPositionLimit[ApplicationAxisId] * 1000L;
-                MaxPos = axisConfig.MaxPositionLimit[ApplicationAxisId] * 1000L;
+                MinPos = (double) axisConfig.MinPositionLimit[ApplicationAxisId] / 1000;
+                MaxPos = (double) axisConfig.MaxPositionLimit[ApplicationAxisId] / 1000;
                 HomeVelIn = axisConfig.HomeVelocity1[ApplicationAxisId] * 1000.0;
                 HomeVelOut = axisConfig.HomeVelocity2[ApplicationAxisId] * 1000.0;
                 HomeVelOut = Math.Abs(HomeVelOut);
@@ -1017,8 +1019,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
 
         public double GetPosition()
         {
-            Position = api.GetRPosition(AcsAxisId);
-            return Position;
+            var pos = api.GetFPosition(AcsAxisId);
+            Position = pos;
+            return pos;
         }
     }
 }

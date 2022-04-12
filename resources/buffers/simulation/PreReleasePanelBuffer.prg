@@ -69,11 +69,15 @@ end
 STOP
 
 StartConveyorBeltsDownstream:
-	JOG/v CONVEYOR_AXIS,ConveyorBeltReleaseSpeed*ConveyorDirection
+	ACC (CONVEYOR_AXIS) = 10000
+	DEC (CONVEYOR_AXIS) = 16000
+	JOG/v CONVEYOR_AXIS,ConveyorBeltReleaseSpeed
 RET
 
 AdjustConveyorBeltSpeedToSlow:
-	JOG/v CONVEYOR_AXIS,ConveyorBeltSlowSpeed*ConveyorDirection
+	ACC (CONVEYOR_AXIS) = 10000
+	DEC (CONVEYOR_AXIS) = 16000
+	JOG/v CONVEYOR_AXIS,ConveyorBeltSlowSpeed
 RET
 
 TurnOffConveyor:

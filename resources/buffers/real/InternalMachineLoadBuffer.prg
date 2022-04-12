@@ -19,16 +19,25 @@ TILL EntryOpto_Bit = 0
 if EntryOpto_Bit = 0
 	absPosTemp = RPOS(CONVEYOR_AXIS)
 END
+
+if Panel_Count = 1
 SlowPosition = DistanceBetweenEntryAndStopSensor-DistanceBetweenSlowPositionAndStopSensor-PanelLength + absPosTemp
+end
+
+if Panel_Count = 0
+SlowPosition = DistanceBetweenEntryAndStopSensor-DistanceBetweenSlowPositionAndStopSensor-PanelLength + absPosTemp - 20
+end
+
 TILL RPOS(CONVEYOR_AXIS) > SlowPosition
-!TILL RPOS(CONVEYOR_AXIS) < SlowPosition
 
 IF BoardStopPanelAlignSensor_Bit = 1								
 	ERROR_CODE = LoadPanelAlignBeforeSlowSensorError			
 END
 
-CALL AdjustConveyorBeltSpeedToSlow									
-TILL BoardStopPanelAlignSensor_Bit,InternalMachineLoadBuffer_WaitTimeToAlign					
+CALL AdjustConveyorBeltSpeedToSlow
+!edit by issac for troubleshooting									
+TILL BoardStopPanelAlignSensor_Bit
+!TILL BoardStopPanelAlignSensor_Bit,InternalMachineLoadBuffer_WaitTimeToAlign					
 if BoardStopPanelAlignSensor_Bit = 1								
 	WAIT InternalMachineLoadBuffer_WaitTimeToAlign
 	CALL TurnOffConveyorBeltMotor										
@@ -57,7 +66,7 @@ RET
 AdjustConveyorBeltSpeedToSlow:
 	ACC (CONVEYOR_AXIS) = 10000
 	DEC (CONVEYOR_AXIS) = 16000
-	JOG/v CONVEYOR_AXIS,ConveyorBeltSlowSpeed*ConveyorDirection
+	JOG/v CONVEYOR_AXIS,ConveyorBeltSlowSpeed
 RET
 
 TurnOffConveyorBeltMotor:

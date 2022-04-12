@@ -28,9 +28,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
         ReloadPanel = 21, // 0x00000015
         SecurePanel = 22, // 0x00000016
         InternalErrorExit = 23, // 0x00000017
+        InitIo = 31,
         HomeX = 55, // 0x00000037
         HomeY = 56, // 0x00000038
         HomeZ = 57, // 0x00000039
-        initIO = 63, // 0x0000003F
     }
 }

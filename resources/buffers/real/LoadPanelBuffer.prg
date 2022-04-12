@@ -4,7 +4,7 @@
 ERROR_CODE = ERROR_SAFE
 
 global int LoadPanelNotReleasedError,LoadPanelSensorBlockedError,LoadPanelAcqError,LoadPanelSlowSensorError
-
+Panel_Count = 0 !!!!! IssacTest
 
 LoadPanelNotReleasedError = 401
 LoadPanelSensorBlockedError = 402
@@ -15,12 +15,15 @@ LoadPanelSlowSensorError = 404
 !Sequence only commence when status is RELEASED_STATUS
 REPANEL_LOADING:
 
-if CURRENT_STATUS = RELEASED_STATUS
-	if (ExitOpto_Bit = 0 & BoardStopPanelAlignSensor_Bit = 0)
+if (CURRENT_STATUS = RELEASED_STATUS | CURRENT_STATUS = RELEASING_STATUS) & StopFlag = 0 
+	if (BoardStopPanelAlignSensor_Bit = 0)
 		CURRENT_STATUS = LOADING_STATUS
+		!DownStreamBoardAvailable_Bit = 0
 
 		if (PingPongMode = 0) !if not pingpong mode
+		if SqTriggerSmemaUpStreamMachineReady = 0
 			CALL UpstreamSmemaMachineReady
+		end
 			TILL UpstreamBoardAvailableSignal_Bit = 1
 		end
 
@@ -28,6 +31,7 @@ if CURRENT_STATUS = RELEASED_STATUS
 		CALL StartConveyorBeltsDownstream
 		TILL EntryOpto_Bit = 1,LoadPanelBuffer_WaitTimeToAcq
 		if EntryOpto_Bit = 1
+			CALL AdjustConveyorBeltSpeedToInternalSpeed
 		
 			IfSlowDown:	TILL EntryOpto_Bit = 0,LoadPanelBuffer_WaitTimeToAcq
 				if EntryOpto_Bit = 0 !Unblocked
@@ -54,6 +58,7 @@ if CURRENT_STATUS = RELEASED_STATUS
 !if stop button is pressed after loading buffer starts, while waiting for UpstreamBoardAvailableSignal_Bit
 elseif 	CURRENT_STATUS = LOADING_STATUS
 			CURRENT_STATUS = RELEASED_STATUS
+			StopFlag = 0
 			goto REPANEL_LOADING
 
 !if panel already loaded, and stop button is press regardless inspection started or not	
@@ -80,16 +85,36 @@ elseif CURRENT_STATUS = RELEASING_STATUS & ExitOpto_Bit = 0
 		if PST(ReleasePanelBufferIndex).#RUN
 			STOP ReleasePanelBufferIndex
 		end	
+			StopFlag = 0
 			CURRENT_STATUS = RELEASED_STATUS
 			GOTO REPANEL_LOADING
 
 !after panel is at Releasing state and stop button is pressed. When panel is at exit opto and start button is pressed.		
-elseif CURRENT_STATUS = RELEASING_STATUS & ExitOpto_Bit = 1
+elseif CURRENT_STATUS = RELEASING_STATUS & ExitOpto_Bit = 1 & PingPongMode = 0 & StopFlag = 0
+		if PST(ReleasePanelBufferIndex).#RUN
+			STOP ReleasePanelBufferIndex
+		end	
+			START InternalMachineLoadBufferIndex,1 
+			TILL ^ PST(InternalMachineLoadBufferIndex).#RUN
+			StopFlag = 0
+			
+elseif CURRENT_STATUS = RELEASING_STATUS & ExitOpto_Bit = 1 & PingPongMode = 1
+		DownStreamBoardAvailable_Bit = 0
 		if PST(ReleasePanelBufferIndex).#RUN
 			STOP ReleasePanelBufferIndex
 		end	
 			START ReloadPanelBufferIndex,1 
 			TILL ^ PST(ReloadPanelBufferIndex).#RUN
+			StopFlag = 0
+			
+elseif CURRENT_STATUS = RELEASING_STATUS & ExitOpto_Bit = 1 & PingPongMode = 0
+		DownStreamBoardAvailable_Bit = 0
+		if PST(ReleasePanelBufferIndex).#RUN
+			STOP ReleasePanelBufferIndex
+		end	
+		ERROR_CODE = LoadPanelNotReleasedError
+		CALL ErrorExit
+		StopFlag = 0
 
 elseif CURRENT_STATUS = ERROR_STATUS
 	CALL ErrorExit
@@ -119,18 +144,19 @@ RET
 RaiseBoardStop:
 	RaiseBoardStopStopper_Bit = 1
 	Till StopperArmUp_Bit
-	wait 1000
-	LockStopper_Bit = 1
+	Start 11,1
+!	wait 1000
+!	LockStopper_Bit = 1
 RET
 
 StartConveyorBeltsDownstream:
 	ACC (CONVEYOR_AXIS) = 10000
 	DEC (CONVEYOR_AXIS) = 16000
-	JOG/v CONVEYOR_AXIS,ConveyorBeltAcquireSpeed*ConveyorDirection
+	JOG/v CONVEYOR_AXIS,ConveyorBeltAcquireSpeed
 RET
 
 AdjustConveyorBeltSpeedToInternalSpeed:
 	ACC (CONVEYOR_AXIS) = 10000
 	DEC (CONVEYOR_AXIS) = 16000
-	JOG/v CONVEYOR_AXIS,ConveyorBeltLoadingSpeed*ConveyorDirection
+	JOG/v CONVEYOR_AXIS,ConveyorBeltLoadingSpeed
 RET

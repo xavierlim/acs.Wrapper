@@ -60,6 +60,13 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
             }
         }
 
+        public void WaitProgramEnd(ProgramBuffer index, int timeout)
+        {
+            if (IsProgramRunning(index)) {
+                Api.WaitProgramEnd(index, timeout);
+            }
+        }
+
         public void RunBuffer(ProgramBuffer index, string label = null)
         {
             if (!Api.IsConnected) {
@@ -143,7 +150,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
 
         public void InitIoBuffer()
         {
-            WriteBuffer(AcsBuffers.initIO);
+            WriteBuffer(AcsBuffers.InitIo);
         }
 
         /// <summary>
@@ -403,7 +410,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
                     return "LifterHoming";
                 case AcsBuffers.ConveyorReset:
                     return "WidthLifterConveyorReset";
-                case AcsBuffers.initIO:
+                case AcsBuffers.InitIo:
                     return "IO_InitializationBuffer";
                 default:
                     throw new ArgumentOutOfRangeException(nameof(bufferNumber), bufferNumber, null);

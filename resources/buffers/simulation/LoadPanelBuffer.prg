@@ -27,7 +27,7 @@ STOP
 REPANEL_LOADING:
 
 if CURRENT_STATUS = RELEASED_STATUS
-	if (EntryOpto_Bit = 0 & ExitOpto_Bit = 0 & BoardStopPanelAlignSensor_Bit = 0)
+	if (ExitOpto_Bit = 0 & BoardStopPanelAlignSensor_Bit = 0)
 		CURRENT_STATUS = LOADING_STATUS
 
 		if (PingPongMode = 0) !if not pingpong mode
@@ -39,6 +39,7 @@ if CURRENT_STATUS = RELEASED_STATUS
 		CALL StartConveyorBeltsDownstream
 		TILL EntryOpto_Bit = 1,LoadPanelBuffer_WaitTimeToAcq
 		if EntryOpto_Bit = 1
+			CALL AdjustConveyorBeltSpeedToInternalSpeed
 		
 			IfSlowDown:	TILL EntryOpto_Bit = 0,LoadPanelBuffer_WaitTimeToAcq
 				if EntryOpto_Bit = 0 !Unblocked
@@ -59,9 +60,6 @@ if CURRENT_STATUS = RELEASED_STATUS
 			ERROR_CODE = LoadPanelAcqError
 			CALL ErrorExit
 		end
-	else
-		ERROR_CODE = LoadPanelSensorBlockedError
-		CALL ErrorExit
 	end
 
 
@@ -83,6 +81,11 @@ elseif 	CURRENT_STATUS = PRERELEASED_STATUS & ExitOpto_Bit = 0
 elseif 	CURRENT_STATUS = PRERELEASED_STATUS & ExitOpto_Bit = 1
 			START ReloadPanelBufferIndex,1 
 			TILL ^ PST(ReloadPanelBufferIndex).#RUN
+
+!after machine power up and after width homed and in Released state, use load panel at exit and pressed start button.			
+elseif 	CURRENT_STATUS = RELEASED_STATUS & ExitOpto_Bit = 1
+			START ReloadPanelBufferIndex,1 
+			TILL ^ PST(ReloadPanelBufferIndex).#RUN
 			
 !after panel is at Releasing state and stop button is pressed. When panel was removed from exit opto and start button is pressed.
 elseif CURRENT_STATUS = RELEASING_STATUS & ExitOpto_Bit = 0
@@ -99,6 +102,9 @@ elseif CURRENT_STATUS = RELEASING_STATUS & ExitOpto_Bit = 1
 		end	
 			START ReloadPanelBufferIndex,1 
 			TILL ^ PST(ReloadPanelBufferIndex).#RUN
+
+elseif CURRENT_STATUS = ERROR_STATUS
+	CALL ErrorExit
 			
 else			
 	ERROR_CODE = LoadPanelNotReleasedError
@@ -125,14 +131,19 @@ RET
 RaiseBoardStop:
 	RaiseBoardStopStopper_Bit = 1
 	Till StopperArmUp_Bit
-	wait 1000
-	LockStopper_Bit = 1
+	Start 11,1
+!	wait 1000
+!	LockStopper_Bit = 1
 RET
 
 StartConveyorBeltsDownstream:
-	JOG/v CONVEYOR_AXIS,ConveyorBeltAcquireSpeed*ConveyorDirection
+	ACC (CONVEYOR_AXIS) = 10000
+	DEC (CONVEYOR_AXIS) = 16000
+	JOG/v CONVEYOR_AXIS,ConveyorBeltAcquireSpeed
 RET
 
 AdjustConveyorBeltSpeedToInternalSpeed:
-	JOG/v CONVEYOR_AXIS,ConveyorBeltLoadingSpeed*ConveyorDirection
+	ACC (CONVEYOR_AXIS) = 10000
+	DEC (CONVEYOR_AXIS) = 16000
+	JOG/v CONVEYOR_AXIS,ConveyorBeltLoadingSpeed
 RET
