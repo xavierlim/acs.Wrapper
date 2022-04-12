@@ -87,12 +87,16 @@ if (SmemaFailedBoardMode = SmemaFailedBoardModeNormal)
     ! trigger failed board output to downstream according to FailedBoard flag
     SmemaDownStreamFailedBoardAvailable_Bit = FailedBoard
 elseif (SmemaFailedBoardMode = SmemaFailedBoardModeCustom)
-    ! ignore
+    ! trigger failed board and customer outputs to downstream according to FailedBoard flag
+    SmemaDownStreamFailedBoardAvailable_Bit = FailedBoard
+	CustomerDO1Signal_Bit = FailedBoard
 elseif (SmemaFailedBoardMode = SmemaFailedBoardModeNotifyUpstream)
     ! ignore
 elseif (SmemaFailedBoardMode = SmemaFailedBoardModeInverseLogic)
-    ! trigger failed board output to downstream according to FailedBoard flag, inverted
+    ! trigger failed board and customer outputs to downstream according to FailedBoard flag
+    ! SmemaDownStreamFailedBoardAvailable_Bit to be inverted
     SmemaDownStreamFailedBoardAvailable_Bit = ^FailedBoard
+	CustomerDO1Signal_Bit = FailedBoard
 end
 
 wait 200
