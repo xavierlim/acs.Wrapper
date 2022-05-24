@@ -5,7 +5,7 @@ int Slave_Number
 Axis= 5
 Slave_Number = 2
 
-ConveyorECOffset_ControlWord = ECGETOFFSET ("Control Word" , Slave_Number)
+ConveyorECOffset_ControlWord = ECGETOFFSET ("ControlWord" , Slave_Number)
 MFLAGS(Axis).#HOME = 0
 
 ACC(Axis) = 10000

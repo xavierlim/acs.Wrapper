@@ -36,8 +36,8 @@ END
 
 CALL AdjustConveyorBeltSpeedToSlow
 !edit by issac for troubleshooting									
-TILL BoardStopPanelAlignSensor_Bit
-!TILL BoardStopPanelAlignSensor_Bit,InternalMachineLoadBuffer_WaitTimeToAlign					
+!TILL BoardStopPanelAlignSensor_Bit
+TILL BoardStopPanelAlignSensor_Bit,InternalMachineLoadBuffer_WaitTimeToAlign					
 if BoardStopPanelAlignSensor_Bit = 1								
 	WAIT InternalMachineLoadBuffer_WaitTimeToAlign
 	CALL TurnOffConveyorBeltMotor										

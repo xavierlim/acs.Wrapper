@@ -21,11 +21,15 @@ SlowPosition = absPosTemp + (DistanceBetweenStopSensorAndExitSensor - DistanceBe
 
 
 
-if (PingPongMode = 0)	!if not pingpong mode
+if (OperationMode <> 0)	!if not pingpong mode
 	if CURRENT_STATUS = PRERELEASED_STATUS
 		CURRENT_STATUS = RELEASING_STATUS
+
+		if (OperationMode = 1)
 		CALL SetDownstreamBoardAvailable
 		TILL DownstreamMachineReadySignal_Bit = 1
+		end
+
 		CALL ContinueFrom_SetConveyorBeltsDownstreamSpeedToRelease
 
 	else
@@ -83,20 +87,17 @@ STOP
 
 SetDownstreamBoardAvailable:
 
+!! SAMPLE CODE FOR FAILED BOARD SIGNAL TRIGGER
 if (SmemaFailedBoardMode = SmemaFailedBoardModeNormal)
     ! trigger failed board output to downstream according to FailedBoard flag
     SmemaDownStreamFailedBoardAvailable_Bit = FailedBoard
 elseif (SmemaFailedBoardMode = SmemaFailedBoardModeCustom)
-    ! trigger failed board and customer outputs to downstream according to FailedBoard flag
-    SmemaDownStreamFailedBoardAvailable_Bit = FailedBoard
-	CustomerDO1Signal_Bit = FailedBoard
+    ! ignore
 elseif (SmemaFailedBoardMode = SmemaFailedBoardModeNotifyUpstream)
     ! ignore
 elseif (SmemaFailedBoardMode = SmemaFailedBoardModeInverseLogic)
-    ! trigger failed board and customer outputs to downstream according to FailedBoard flag
-    ! SmemaDownStreamFailedBoardAvailable_Bit to be inverted
+    ! trigger failed board output to downstream according to FailedBoard flag, inverted
     SmemaDownStreamFailedBoardAvailable_Bit = ^FailedBoard
-	CustomerDO1Signal_Bit = FailedBoard
 end
 
 wait 200
@@ -104,15 +105,20 @@ DownStreamBoardAvailable_Bit = 1
 RET
 
 ContinueFrom_SetConveyorBeltsDownstreamSpeedToRelease:
+
+if (OperationMode = 1)
 		CALL SetConveyorBeltsDownstreamSpeedToRelease
 		TILL RPOS(CONVEYOR_AXIS) > SlowPosition
 		CALL AdjustConveyorBeltSpeedToSlow
+end
+
 RET3:	TILL ExitOpto_Bit = 0,ReleasePanelBuffer_WaitTimeToRelease
 		if ExitOpto_Bit = 0
 			TILL ExitOpto_Bit = 1,ReleasePanelBuffer_WaitTimeToCutout
 			if ExitOpto_Bit = 1
 				GOTO RET3
 			else
+				if (OperationMode = 1)
 				CALL ClearDownstreamSmemaBoardAvailable
 				TILL DownstreamMachineReadySignal_Bit = 0,ReleasePanelBuffer_WaitTimeToSmema
 				if DownstreamMachineReadySignal_Bit = 1
@@ -125,11 +131,15 @@ RET3:	TILL ExitOpto_Bit = 0,ReleasePanelBuffer_WaitTimeToRelease
 					!BeltShroudVaccumON_Bit = 0
 					CURRENT_STATUS = RELEASED_STATUS
 				end
+				end
+				CURRENT_STATUS = RELEASED_STATUS
 			end
 		else
 			ERROR_CODE = ReleasePanelReleaseError
 			CALL ErrorExit
 		end
+
+
 RET
 
 TurnOffConveyorBelts:
@@ -137,8 +147,8 @@ TurnOffConveyorBelts:
 RET
 
 ClearDownstreamSmemaBoardAvailable:
-    DownStreamBoardAvailable_Bit = 0
-    SmemaDownStreamFailedBoardAvailable_Bit = 0
+DownStreamBoardAvailable_Bit = 0
+SmemaDownStreamFailedBoardAvailable_Bit = 0
 	
 	if (SmemaFailedBoardMode = SmemaFailedBoardModeNormal)
     SmemaDownStreamFailedBoardAvailable_Bit = 0
@@ -160,28 +170,37 @@ SetConveyorBeltsDownstreamSpeedToRelease:
 RET
 
 ContinueFrom_SetDownstreamSmemaBoardAvailable:
+if OperationMode = 1
 	CALL SetDownstreamSmemaBoardAvailable
+end
 	TILL RPOS(CONVEYOR_AXIS) > SlowPosition
 	CALL AdjustConveyorBeltSpeedToSlow
 	TILL ExitOpto_Bit = 1,ReleasePanelBuffer_WaitTimeToExit
+
 	if ExitOpto_Bit = 1
-		if DownstreamMachineReadySignal_Bit = 1
-			CALL ContinueFrom_SetConveyorBeltsDownstreamSpeedToRelease
-		else
-			CALL StopConveyorBelts
-			TILL DownstreamMachineReadySignal_Bit = 1
-			if ConveyorSimultaneousLoadUnload = 1
-			if SqTriggerSmemaUpStreamMachineReady = 1
-			SmemaUpStreamMachineReady_Bit = 1
+		if OperationMode = 1
+			if DownstreamMachineReadySignal_Bit = 1
+				CALL ContinueFrom_SetConveyorBeltsDownstreamSpeedToRelease
+			else
+				CALL StopConveyorBelts
+				TILL DownstreamMachineReadySignal_Bit = 1
+				if ConveyorSimultaneousLoadUnload = 1
+				if SqTriggerSmemaUpStreamMachineReady = 1
+				SmemaUpStreamMachineReady_Bit = 1
+				end
+				START 24, 1
+				end
+				CALL ContinueFrom_SetConveyorBeltsDownstreamSpeedToRelease
 			end
-			START 24, 1
-			end
-			CALL ContinueFrom_SetConveyorBeltsDownstreamSpeedToRelease
+		elseif OperationMode = 2
+		CALL StopConveyorBelts
+		till ExitOpto_Bit = 0
 		end
 	else
 		ERROR_CODE = ReleasePanelExitError
 		CALL ErrorExit
 	end
+
 RET
 
 
@@ -191,6 +210,7 @@ RET
 
 SetDownstreamSmemaBoardAvailable:
 
+!! SAMPLE CODE FOR FAILED BOARD SIGNAL TRIGGER
 if (SmemaFailedBoardMode = SmemaFailedBoardModeNormal)
     ! trigger failed board output to downstream according to FailedBoard flag
     SmemaDownStreamFailedBoardAvailable_Bit = FailedBoard

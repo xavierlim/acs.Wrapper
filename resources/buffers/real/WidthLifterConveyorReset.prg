@@ -14,7 +14,7 @@ int WidthECOffset_ControlWord
 Axis= 6
 Slave_Number = 3
 
-WidthECOffset_ControlWord = ECGETOFFSET ("Control Word" , Slave_Number)
+WidthECOffset_ControlWord = ECGETOFFSET ("ControlWord" , Slave_Number)
 
 disable Axis
 till ^MST(Axis).#ENABLED
@@ -50,7 +50,7 @@ Axis= 7
 Slave_Number = 4
 
 int LifterECOffset_ControlWord
-LifterECOffset_ControlWord = ECGETOFFSET ("Control Word" , Slave_Number)
+LifterECOffset_ControlWord = ECGETOFFSET ("ControlWord" , Slave_Number)
 
 disable Axis
 till ^MST(Axis).#ENABLED
@@ -86,7 +86,7 @@ Axis= 5
 Slave_Number = 2
 
 int ConveyorECOffset_ControlWord
-ConveyorECOffset_ControlWord = ECGETOFFSET ("Control Word" , Slave_Number)
+ConveyorECOffset_ControlWord = ECGETOFFSET ("ControlWord" , Slave_Number)
 
 disable Axis
 till ^MST(Axis).#ENABLED
@@ -128,7 +128,7 @@ set FPOS(Axis)= 0
 Axis= 4
 Slave_Number = 1
 int ZECOffset_ControlWord
-ZECOffset_ControlWord = ECGETOFFSET ("Control Word" , Slave_Number)
+ZECOffset_ControlWord = ECGETOFFSET ("Controlword" , Slave_Number)
 
 !*********Unmapping ethercat offset for control word******
 ecunmapin(ZECOffset_ControlWord)

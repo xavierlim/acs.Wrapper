@@ -8,9 +8,9 @@ int Slave_Number
 Axis= 7
 Slave_Number = 4
 
-LifterECOffset_ControlWord = ECGETOFFSET ("Control Word" , Slave_Number)
-LifterECOffset_TouchProbeFunction = ECGETOFFSET ("Touch Probe Function" , Slave_Number)
-LifterECOffset_ActualPosition = ECGETOFFSET ("Actual Position" , Slave_Number)
+LifterECOffset_ControlWord = ECGETOFFSET ("ControlWord" , Slave_Number)
+!LifterECOffset_TouchProbeFunction = ECGETOFFSET ("Touch Probe Function" , Slave_Number)
+!LifterECOffset_ActualPosition = ECGETOFFSET ("Actual Position" , Slave_Number)
 
 ConveyorLifterHomed = 0
 MFLAGS(Axis).#HOME = 0
@@ -63,64 +63,66 @@ till ^MST(Axis).#MOVE
 wait 10
 !*******************************************
 
-int Touch_Probe_Status = 0
-ecout( LifterECOffset_TouchProbeFunction, Touch_Probe_Function )
-real Index_Position
+!int Touch_Probe_Status = 0
+!ecout( LifterECOffset_TouchProbeFunction, Touch_Probe_Function )
+!real Index_Position
 
 !********Initiating touch probe******************
 !coewrite/2 (Slave_Number,0x60B8,0,0)
 !wait 200
 !coewrite/2 (Slave_Number,0x60B8,0,21)
 !Touch_Probe_Status=coeread/2 (Slave_Number,0x60B9,0)
-while ^(Touch_Probe_Status = 65)
-Touch_Probe_Function = 0
-wait 200
-Touch_Probe_Function = 21
-wait 200
-Touch_Probe_Status = coeread/2(Slave_Number, 0x60B9, 0)
-end
-!**********************************************************
-
-!*************Looking for index*****************
-jog/v Axis,V_Index_Search
-while (Touch_Probe_Status=65)
-Touch_Probe_Status=coeread/2 (Slave_Number,0x60B9,0)
-if ^(Touch_Probe_Status = 65 )
-kill Axis
-wait 200
-end
-end
+!while ^(Touch_Probe_Status = 65)
+!Touch_Probe_Function = 0
+!wait 200
+!Touch_Probe_Function = 21
+!wait 200
+!Touch_Probe_Status = coeread/2(Slave_Number, 0x60B9, 0)
+!end
+!!**********************************************************
+!
+!!*************Looking for index*****************
+!jog/v Axis,V_Index_Search
+!while (Touch_Probe_Status=65)
+!Touch_Probe_Status=coeread/2 (Slave_Number,0x60B9,0)
+!if ^(Touch_Probe_Status = 65 )
+!kill Axis
+!wait 200
+!end
+!end
+!!************************************************
+!
+!!********Initiating 2nd touch probe******************
+!while ^(Touch_Probe_Status = 65)
+!Touch_Probe_Function = 0
+!wait 200
+!Touch_Probe_Function = 21
+!wait 200
+!Touch_Probe_Status = coeread/2(Slave_Number, 0x60B9, 0)
+!end
+!!**********************************************************
+!
+!!*************Looking for 2nd index*****************
+!jog/v Axis,V_Index_Search
+!while (Touch_Probe_Status=65)
+!Touch_Probe_Status=coeread/2 (Slave_Number,0x60B9,0)
+!if ^(Touch_Probe_Status = 65 )
+!kill Axis
+!wait 200
+!end
+!end
 !************************************************
 
-!********Initiating 2nd touch probe******************
-while ^(Touch_Probe_Status = 65)
-Touch_Probe_Function = 0
-wait 200
-Touch_Probe_Function = 21
-wait 200
-Touch_Probe_Status = coeread/2(Slave_Number, 0x60B9, 0)
-end
-!**********************************************************
+!ecin (LifterECOffset_ActualPosition, ActualPos_Lifter)
+!set FPOS(Axis)=ActualPos_Lifter/1000
+!Index_Position=(coeread/4 (Slave_Number,0x60BA,0))/1000
+!set FPOS(Axis)=(FPOS(Axis)-Index_Position)
 
-!*************Looking for 2nd index*****************
-jog/v Axis,V_Index_Search
-while (Touch_Probe_Status=65)
-Touch_Probe_Status=coeread/2 (Slave_Number,0x60B9,0)
-if ^(Touch_Probe_Status = 65 )
-kill Axis
-wait 200
-end
-end
-!************************************************
-
-ecin (LifterECOffset_ActualPosition, ActualPos_Lifter)
-set FPOS(Axis)=ActualPos_Lifter/1000
-Index_Position=(coeread/4 (Slave_Number,0x60BA,0))/1000
-set FPOS(Axis)=(FPOS(Axis)-Index_Position)
-
-ptp/v Axis,0,10
+set FPOS(Axis)=0
+ptp/v Axis,10,10
 till ^MST(Axis).#MOVE
 wait 200
+set FPOS(Axis)=0
 
 
 

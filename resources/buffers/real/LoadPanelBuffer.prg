@@ -19,12 +19,17 @@ if (CURRENT_STATUS = RELEASED_STATUS | CURRENT_STATUS = RELEASING_STATUS) & Stop
 	if (BoardStopPanelAlignSensor_Bit = 0)
 		CURRENT_STATUS = LOADING_STATUS
 		!DownStreamBoardAvailable_Bit = 0
+		StopFlag = 0
 
-		if (PingPongMode = 0) !if not pingpong mode
+		if (OperationMode = 1) !if InlineMode
 		if SqTriggerSmemaUpStreamMachineReady = 0
 			CALL UpstreamSmemaMachineReady
 		end
 			TILL UpstreamBoardAvailableSignal_Bit = 1
+		end
+
+		if (OperationMode = 2) !if OfflineMode
+			TILL EntryOpto_Bit = 1
 		end
 
 		CALL RaiseBoardStop
@@ -36,7 +41,7 @@ if (CURRENT_STATUS = RELEASED_STATUS | CURRENT_STATUS = RELEASING_STATUS) & Stop
 			IfSlowDown:	TILL EntryOpto_Bit = 0,LoadPanelBuffer_WaitTimeToAcq
 				if EntryOpto_Bit = 0 !Unblocked
 
-					if (PingPongMode = 0) !if not pingpong mode
+					if (OperationMode = 1) !if not pingpong mode
 						CALL ClearUpstreamSmemaMachineReady
 					end
 
@@ -89,16 +94,22 @@ elseif CURRENT_STATUS = RELEASING_STATUS & ExitOpto_Bit = 0
 			CURRENT_STATUS = RELEASED_STATUS
 			GOTO REPANEL_LOADING
 
-!after panel is at Releasing state and stop button is pressed. When panel is at exit opto and start button is pressed.		
-elseif CURRENT_STATUS = RELEASING_STATUS & ExitOpto_Bit = 1 & PingPongMode = 0 & StopFlag = 0
-		if PST(ReleasePanelBufferIndex).#RUN
-			STOP ReleasePanelBufferIndex
-		end	
-			START InternalMachineLoadBufferIndex,1 
-			TILL ^ PST(InternalMachineLoadBufferIndex).#RUN
-			StopFlag = 0
+! 7 Panel at exit after PowerOnRecovery, required to reload when start inspection
+elseif 	ExitOpto_Bit = 1 & EMO_Release = 1
+			START ReloadPanelBufferIndex,1 
+			TILL ^ PST(ReloadPanelBufferIndex).#RUN
+			EMO_Release = 0
 			
-elseif CURRENT_STATUS = RELEASING_STATUS & ExitOpto_Bit = 1 & PingPongMode = 1
+!after panel is at Releasing state and stop button is pressed. When panel is at exit opto and start button is pressed.		
+!elseif CURRENT_STATUS = RELEASING_STATUS & ExitOpto_Bit = 1 & (OperationMode = 1 | OperationMode = 2) & StopFlag = 0
+!		if PST(ReleasePanelBufferIndex).#RUN
+!			STOP ReleasePanelBufferIndex
+!		end	
+!			START InternalMachineLoadBufferIndex,1 
+!			TILL ^ PST(InternalMachineLoadBufferIndex).#RUN
+!			StopFlag = 0
+			
+elseif CURRENT_STATUS = RELEASING_STATUS & ExitOpto_Bit = 1 & OperationMode = 0
 		DownStreamBoardAvailable_Bit = 0
 		if PST(ReleasePanelBufferIndex).#RUN
 			STOP ReleasePanelBufferIndex
@@ -107,7 +118,7 @@ elseif CURRENT_STATUS = RELEASING_STATUS & ExitOpto_Bit = 1 & PingPongMode = 1
 			TILL ^ PST(ReloadPanelBufferIndex).#RUN
 			StopFlag = 0
 			
-elseif CURRENT_STATUS = RELEASING_STATUS & ExitOpto_Bit = 1 & PingPongMode = 0
+elseif CURRENT_STATUS = RELEASING_STATUS & ExitOpto_Bit = 1 & EMO_Release = 0
 		DownStreamBoardAvailable_Bit = 0
 		if PST(ReleasePanelBufferIndex).#RUN
 			STOP ReleasePanelBufferIndex

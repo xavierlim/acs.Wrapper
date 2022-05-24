@@ -15,7 +15,6 @@ real absPosTemp
 
 PanelSecured = 0
 
-CALL TurnOffPanelSensingOptos
 StageLifterResult = 0
 CALL Stage_1_LifterOnly
 if StageLifterResult = 1
@@ -26,6 +25,7 @@ if StageLifterResult = 1
 		TILL (StopperUnlocked_Bit & StopperArmDown_Bit),SecurePanelBuffer_WaitTimeToUnstop
 		if (StopperUnlocked_Bit & StopperArmDown_Bit)
 			PanelSecured = 1
+			CALL TurnOffPanelSensingOptos
 		else
 			ERROR_CODE = SecurePanelToUnstopError
 		end

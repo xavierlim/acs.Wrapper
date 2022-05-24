@@ -1,5 +1,6 @@
 global real static CorrectionX(82)
 global real static CorrectionY(64)
+global int EMO_Release
 global int Panel_Count
 global int StopPanelHandling
 global int StopFlag
@@ -106,9 +107,11 @@ global real PanelLength
 global real DistanceBetweenSlowPositionAndStopSensor = 70
 global real DistanceBetweenSlowPositionAndExitSensor = 50
 global real DistanceBetweenSlowPositionAndEntrySensor = 50
+
+!! To be measure and declare the actual distance in Buffer 31 under subroutine L2R and R2L
 global real DistanceBetweenEntryAndStopSensor = 630
 global real DistanceBetweenStopSensorAndExitSensor = 605
-global real DistanceBetweenEntrySensorAndExitSensor = 1170
+global real DistanceBetweenEntrySensorAndExitSensor = 1240
 
 global real Stage_1_LifterOnlyDistance
 global real Stage_2_LifterAndClamperDistance
@@ -229,6 +232,7 @@ global real ConveyorBeltLoadingSpeed = 350
 global real ConveyorBeltSlowSpeed = 50
 global real ConveyorBeltReleaseSpeed = 350
 global real ConveyorBeltUnloadingSpeed = 350
+global int OperationMode; !0=PingPongMode; 1=InlineMode; 2=OfflineMode
 global int PingPongMode = 0; ! 0 is Off 1 is on
 
 !BypassModeBuffer

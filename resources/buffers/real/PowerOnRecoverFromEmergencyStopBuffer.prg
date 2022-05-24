@@ -1,9 +1,11 @@
 !PowerOnRecoverFromEmergencyStopBuffer
 
 global int FreePanelToUnliftError, FreePanelToUnclampError, PowerOnRecoveryWidthNotHomed
-
+global int EntryOrStopperBlocked, SensorDetectionMisBehaved
 FreePanelToUnliftError = 303
 FreePanelToUnclampError = 304
+EntryOrStopperBlocked = 305
+SensorDetectionMisBehaved = 306
 PowerOnRecoveryWidthNotHomed = 900
 
 HALT X_AXIS
@@ -49,6 +51,11 @@ CALL InitializeMotors
 CALL EnableOptos
 !CALL ErrorExit
 
+!RESET ALL SMEMA BIT
+DownStreamBoardAvailable_Bit = 0
+SmemaDownStreamFailedBoardAvailable_Bit = 0
+SmemaUpStreamMachineReady_Bit = 0
+
 if EstopAndDoorOpenFeedback_Bit = 0																				!IF SAFETY NOT ENGAGED
 	CURRENT_STATUS = ERROR_STATUS																					!SET CURRENT STATUS = ERROR STATUS
 	CALL ErrorExit																									!CALL ERROR EXIT
@@ -64,6 +71,9 @@ else
 	TILL PanelFreed = 1
 
 		CURRENT_STATUS = SAFE_STATUS																					!SET CURRENT STATUS = SAFE STATUS		
+		ERROR_CODE = 0
+		GANTRY_ERROR = 0
+		GANTRY_STATUS = 0
 		
 	if ByPassR2L = 1 | ByPassL2R = 1																						!IF BYPASS MODE = 1
 		START BypassModeBufferIndex,1																				!START BYPASS MODE BUFFER
@@ -79,6 +89,7 @@ else
 				CALL ContinueFindPanel																							!START FIND PANEL BUFFER
 			else																											!ELSE IF TIMEOUT
 				CALL StopConveyorBelts																						!STOP CONVEYOR BELT
+				CURRENT_STATUS = RELEASED_STATUS
 				CALL HomeWidth																								!START WIDTH HOMING BUFFER
 			end
 		end
@@ -87,8 +98,7 @@ end
 
 ERROR_CODE = 0
 StopFlag = 0
-GANTRY_ERROR = 0
-GANTRY_STATUS = 0
+
 
 STOP
 
@@ -99,7 +109,14 @@ ContinueFindPanel:
 		if ExitOpto_Bit = 1																								!IF EXIT OPTO BLOCKED	
 			CALL StopConveyorBelts																							!STOP CONVEYOR BELT
 			CURRENT_STATUS = PRERELEASED_STATUS																				!SET STATUS = PRERELEASED STATE
-		else																											!ELSE IF TIMEOUT
+			ERROR_CODE = 0
+			EMO_Release = 1
+		elseif ExitOpto_Bit = 0	& EntryOpto_Bit = 0 & BoardStopPanelAlignSensor_Bit = 0																							!IF EXIT OPTO BLOCKED	
+			ERROR_CODE  = SensorDetectionMisBehaved
+			CALL ErrorExit																								!CALL ERROR EXIT
+			CURRENT_STATUS = ERROR_STATUS
+		elseif	EntryOpto_Bit = 1 | BoardStopPanelAlignSensor_Bit = 1																							!ELSE IF TIMEOUT
+			ERROR_CODE  = EntryOrStopperBlocked
 			CALL ErrorExit																								!CALL ERROR EXIT
 			CURRENT_STATUS = ERROR_STATUS																				!SET STATUS = ERROR STATUS
 		end
@@ -112,7 +129,7 @@ ContinueFindPanel:
 RET
 
 HomeWidth:
-
+If AutoWidthEnable = 1
 	if ConveyorWidthHomed = 1																						!IF WIDTH HOMED
 		CURRENT_STATUS = RELEASED_STATUS																				!SET CURRENT STATUS = RELEASED
 	else																											!ELSE
@@ -127,6 +144,7 @@ HomeWidth:
 			CURRENT_STATUS = ERROR_STATUS																					!SET CURRENT STATUS = ERROR STATUS
 		end
 	end
+end
 RET
 
 HomeConveyorWidthMotor:																								

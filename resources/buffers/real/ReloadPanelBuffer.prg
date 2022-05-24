@@ -30,7 +30,7 @@ if CURRENT_STATUS = LOADED_STATUS								!IF CURRENT STATE = LOADED STATE
 	if PanelFreed = 1												!IF PANEL IS FREED
 
 	absPosTemp = RPOS(CONVEYOR_AXIS)
-	SlowPosition = absPosTemp - (DistanceBetweenEntryAndStopSensor-DistanceBetweenSlowPositionAndEntrySensor-PanelLength)
+	SlowPosition = absPosTemp - (DistanceBetweenEntryAndStopSensor-DistanceBetweenSlowPositionAndStopSensor-PanelLength)
 
 		CALL ContinueReloading											!CALL CONTINUERELOADING
 
@@ -46,7 +46,7 @@ else																	!ELSE IF CURRENT STATE IS NOT = LOADED STATE
 		CURRENT_STATUS = RELOADING_STATUS									!SET CURRENT STATUS = RELOADING STATUS
 
 		absPosTemp = RPOS(CONVEYOR_AXIS)
-		SlowPosition = absPosTemp - (DistanceBetweenEntrySensorAndExitSensor-DistanceBetweenSlowPositionAndEntrySensor-PanelLength )
+		SlowPosition = absPosTemp - (DistanceBetweenEntrySensorAndExitSensor-DistanceBetweenSlowPositionAndStopSensor-PanelLength )
 
 		CALL ContinueReloading												!CALL CONTINUERELOADING 
 
@@ -54,7 +54,7 @@ else																	!ELSE IF CURRENT STATE IS NOT = LOADED STATE
 		CURRENT_STATUS = RELOADING_STATUS									!SET CURRENT STATUS = RELOADING STATUS
 
 		absPosTemp = RPOS(CONVEYOR_AXIS)
-		SlowPosition = absPosTemp - (DistanceBetweenEntrySensorAndExitSensor-DistanceBetweenSlowPositionAndEntrySensor-PanelLength )
+		SlowPosition = absPosTemp - (DistanceBetweenEntrySensorAndExitSensor-DistanceBetweenSlowPositionAndStopSensor-PanelLength )
 
 		CALL ContinueReloading												!CALL CONTINUERELOADING 
 		

@@ -10,9 +10,9 @@ int Slave_Number
 Axis= 6
 Slave_Number = 3
 
-WidthECOffset_ControlWord = ECGETOFFSET ("Control Word" , Slave_Number)
-WidthECOffset_TouchProbeFunction = ECGETOFFSET ("Touch Probe Function" , Slave_Number)
-WidthECOffset_ActualPosition = ECGETOFFSET ("Actual Position" , Slave_Number)
+WidthECOffset_ControlWord = ECGETOFFSET ("ControlWord" , Slave_Number)
+!WidthECOffset_TouchProbeFunction = ECGETOFFSET ("Touch Probe Function" , Slave_Number)
+!WidthECOffset_ActualPosition = ECGETOFFSET ("Actual Position" , Slave_Number)
 
 ConveyorWidthHomed = 0
 MFLAGS(Axis).#HOME = 0
@@ -66,6 +66,13 @@ till SAFINI(Axis).#LL=1
 halt Axis
 till ^MST(Axis).#MOVE
 wait 10
+
+jog/v Axis , V_Index_Search
+till SAFINI(Axis).#LL=0
+halt Axis
+till ^MST(Axis).#MOVE
+wait 10
+
 end
 !*******************************************
 
@@ -75,85 +82,81 @@ jog/v Axis , 20
 till SAFINI(Axis).#RL=1
 halt Axis
 till ^MST(Axis).#MOVE
-wait 10
+wait 500
 end
 !*******************************************
 
-int Touch_Probe_Status = 0
-ecout( WidthECOffset_TouchProbeFunction, Touch_Probe_Function )
-real Index_Position
-
-!********Initiating touch probe******************
-!while ^(Touch_Probe_Status = 65)
-!coewrite/2 (Slave_Number,0x60B8,0,0)
+!int Touch_Probe_Status = 0
+!!ecout( WidthECOffset_TouchProbeFunction, Touch_Probe_Function )
+!real Index_Position
+!
+!!********Initiating touch probe******************
+!while ^(Touch_Probe_Status = 1)
+!coewrite/2 (Slave_Number,0x60B8,0,0x0)
 !wait 200
-!coewrite/2 (Slave_Number,0x60B8,0,21)
-!Touch_Probe_Status=coeread/2 (Slave_Number,0x60B9,0)
+!coewrite/2 (Slave_Number,0x60B8,0,0x15)
+!wait 200
+!Touch_Probe_Status = coeread/2(Slave_Number, 0x60B9, 0)
 !end
-while ^(Touch_Probe_Status = 65)
-Touch_Probe_Function = 0
-wait 200
-Touch_Probe_Function = 21
-wait 200
-Touch_Probe_Status = coeread/2(Slave_Number, 0x60B9, 0)
-end
-!**********************************************************
-
-!*************Looking for index*****************\
-if WidthHomingDirection = 0
-jog/v Axis,V_Index_Search
-end
-if WidthHomingDirection = 1
-jog/v Axis,-15
-end
-
-while (Touch_Probe_Status=65)
-Touch_Probe_Status=coeread/2 (Slave_Number,0x60B9,0)
-if ^(Touch_Probe_Status = 65 )
-kill Axis
-wait 200
-end
-end
+!!**********************************************************
+!
+!!*************Looking for index*****************\
+!if WidthHomingDirection = 0
+!jog/v Axis,V_Index_Search
+!end
+!if WidthHomingDirection = 1
+!jog/v Axis,-15
+!end
+!
+!while (Touch_Probe_Status=65)
+!Touch_Probe_Status=coeread/2 (Slave_Number,0x60B9,0)
+!if ^(Touch_Probe_Status = 65 )
+!kill Axis
+!wait 200
+!end
+!end
 !************************************************
 
 !2nd index find if index fall withlim LL
-if SAFINI(Axis).#LL=1
+!if SAFINI(Axis).#LL=1
 
-while ^(Touch_Probe_Status = 65)
-Touch_Probe_Function = 0
-wait 200
-Touch_Probe_Function = 21
-wait 200
-Touch_Probe_Status = coeread/2(Slave_Number, 0x60B9, 0)
-end
+!while ^(Touch_Probe_Status = 65)
+!Touch_Probe_Function = 0
+!wait 200
+!Touch_Probe_Function = 21
+!wait 200
+!Touch_Probe_Status = coeread/2(Slave_Number, 0x60B9, 0)
+!end
 !**********************************************************
 
 !*************Looking for index*****************\
-if WidthHomingDirection = 0
-jog/v Axis,V_Index_Search
-end
-if WidthHomingDirection = 1
-jog/v Axis,-15
-end
-while (Touch_Probe_Status=65)
-Touch_Probe_Status=coeread/2 (Slave_Number,0x60B9,0)
-if ^(Touch_Probe_Status = 65 )
-kill Axis
-wait 200
-end
-end
+!if WidthHomingDirection = 0
+!jog/v Axis,V_Index_Search
+!end
+!if WidthHomingDirection = 1
+!jog/v Axis,-15
+!end
+!while (Touch_Probe_Status=65)
+!Touch_Probe_Status=coeread/2 (Slave_Number,0x60B9,0)
+!if ^(Touch_Probe_Status = 65 )
+!kill Axis
+!wait 200
+!end
+!end
 
-end
+!end
+!
+!ecin (WidthECOffset_ActualPosition, ActualPos_Width)
+!set FPOS(Axis)=ActualPos_Width/1000
+!Index_Position=(coeread/4 (Slave_Number,0x60BA,0))/1000
+!
+!set FPOS(Axis)=(FPOS(Axis)-Index_Position)
 
-ecin (WidthECOffset_ActualPosition, ActualPos_Width)
-set FPOS(Axis)=ActualPos_Width/1000
-Index_Position=(coeread/4 (Slave_Number,0x60BA,0))/1000
-
-set FPOS(Axis)=(FPOS(Axis)-Index_Position)
-
-ptp/v Axis,0,10
+set FPOS(Axis)= 0
+ptp/v Axis,16,80
 till ^MST(Axis).#MOVE
 wait 200
+set FPOS(Axis)= 0
 MFLAGS(Axis).#HOME = 1
 ConveyorWidthHomed = 1
 
