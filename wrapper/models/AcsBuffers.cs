@@ -16,6 +16,7 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
         LifterHoming = 6,
         ConveyorReset = 7,
         Scanning = 9,
+        LockStopperChecker = 11,
         BypassMode = 12, // 0x0000000C
         ChangeWidth = 13, // 0x0000000D
         EmergencyStop = 14, // 0x0000000E
@@ -28,6 +29,8 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
         ReloadPanel = 21, // 0x00000015
         SecurePanel = 22, // 0x00000016
         InternalErrorExit = 23, // 0x00000017
+        SimultaneousLoadUnloadChecker = 24,
+        SimultaneousLoadUnloadHandler = 25,
         InitIo = 31,
         HomeX = 55, // 0x00000037
         HomeY = 56, // 0x00000038

@@ -1,4 +1,8 @@
-﻿WidthLifterConveyor_Reset_Completed = 0
+#/ Controller version = 3.10
+#/ Date = 4/22/2022 5:46 PM
+#/ User remarks = 
+#7
+WidthLifterConveyor_Reset_Completed = 0
 
 !TURN OFF CONVEYOR BELT SOFT LIMIT
 FMASK5.#SRL = 0

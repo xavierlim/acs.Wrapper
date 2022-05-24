@@ -1,4 +1,8 @@
-﻿!Homing LIFTER
+#/ Controller version = 3.10
+#/ Date = 4/22/2022 5:46 PM
+#/ User remarks = 
+#6
+!Homing LIFTER
 
 int LifterECOffset_ControlWord
 int LifterECOffset_TouchProbeFunction

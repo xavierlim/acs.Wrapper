@@ -1,3 +1,7 @@
+#/ Controller version = 3.10
+#/ Date = 4/22/2022 5:54 PM
+#/ User remarks = 
+#A
 global real static CorrectionX(82)
 global real static CorrectionY(64)
 global int EMO_Release

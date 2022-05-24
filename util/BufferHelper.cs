@@ -170,6 +170,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
             WriteBuffer(AcsBuffers.ReloadPanel);
             WriteBuffer(AcsBuffers.SecurePanel);
             WriteBuffer(AcsBuffers.InternalErrorExit);
+            WriteBuffer(AcsBuffers.LockStopperChecker);
+            WriteBuffer(AcsBuffers.SimultaneousLoadUnloadChecker);
+            WriteBuffer(AcsBuffers.SimultaneousLoadUnloadHandler);
         }
 
         /// <summary>
@@ -412,6 +415,12 @@ namespace CO.Systems.Services.Acs.AcsWrapper.util
                     return "WidthLifterConveyorReset";
                 case AcsBuffers.InitIo:
                     return "IO_InitializationBuffer";
+                case AcsBuffers.LockStopperChecker:
+                    return "11_LockStopperChecker";
+                case AcsBuffers.SimultaneousLoadUnloadChecker:
+                    return "24_SimultaneousLoadUnload";
+                case AcsBuffers.SimultaneousLoadUnloadHandler:
+                    return "25_SimultaneousLoadUnload";
                 default:
                     throw new ArgumentOutOfRangeException(nameof(bufferNumber), bufferNumber, null);
             }

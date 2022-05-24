@@ -1,10 +1,27 @@
+#/ Controller version = 3.10
+#/ Date = 4/22/2022 5:54 PM
+#/ User remarks = 
+#A
 global real static CorrectionX(82)
 global real static CorrectionY(64)
+global int EMO_Release
+global int Panel_Count
+global int StopPanelHandling
+global int StopFlag
+global int ConveyorInSimulationMode
+global int ConveyorSimultaneousLoadUnload
+global int SqTriggerSmemaUpStreamMachineReady
+
+global int FailedBoard      ! flag from SQ to indicate releasing board has inspection failure
+global int SmemaFailedBoardMode
+global int SmemaFailedBoardModeDisable = 0, SmemaFailedBoardModeNormal = 1, SmemaFailedBoardModeCustom = 2, SmemaFailedBoardModeNotifyUpstream = 3, SmemaFailedBoardModeInverseLogic = 4
 
 global int I(100),I0,I1,I2,I3,I4,I5,I6,I7,I8,I9,I90,I91,I92,I93,I94,I95,I96,I97,I98,I99
 global real V(100),V0,V1,V2,V3,V4,V5,V6,V7,V8,V9,V90,V91,V92,V93,V94,V95,V96,V97,V98,V99
 
 !homing variables
+global int WidthHomingDirection
+global int AutoWidthEnable
 global real HOME_VEL_IN(10)
 global real HOME_VEL_OUT(10)
 global real HOME_OFFSET(10)
@@ -22,13 +39,6 @@ global int ECOFFSETM(3)
 global int MotionSettlingTimeBeforeScan
 global int BeforeMoveDelay
 
-global int ConveyorInSimulationMode
-global int SqTriggerSmemaUpStreamMachineReady
-global int ConveyorSimultaneousLoadUnload
-
-global int FailedBoard      ! flag from SQ to indicate releasing board has inspection failure
-global int SmemaFailedBoardMode
-global int SmemaFailedBoardModeDisable = 0, SmemaFailedBoardModeNormal = 1, SmemaFailedBoardModeCustom = 2, SmemaFailedBoardModeNotifyUpstream = 3, SmemaFailedBoardModeInverseLogic = 4
 
 global int SAFE_STATUS = 0,LOADED_STATUS = 1,ERROR_STATUS = 2
 global int PRERELEASED_STATUS = 3 ,RELEASED_STATUS = 4,CHANGING_WIDTH_STATUS = 5
@@ -42,6 +52,7 @@ global int Touch_Probe_Function
 global ERROR_SAFE = 0
 global int CURRENT_STATUS
 global int ERROR_CODE
+global int GANTRY_ERROR, GANTRY_STATUS
 
 !BypassSensorBlockedError = 101
 !BypassAcqError = 102
@@ -100,9 +111,11 @@ global real PanelLength
 global real DistanceBetweenSlowPositionAndStopSensor = 70
 global real DistanceBetweenSlowPositionAndExitSensor = 50
 global real DistanceBetweenSlowPositionAndEntrySensor = 50
+
+!! To be measure and declare the actual distance in Buffer 31 under subroutine L2R and R2L
 global real DistanceBetweenEntryAndStopSensor = 630
 global real DistanceBetweenStopSensorAndExitSensor = 605
-global real DistanceBetweenEntrySensorAndExitSensor = 1170
+global real DistanceBetweenEntrySensorAndExitSensor = 1240
 
 global real Stage_1_LifterOnlyDistance
 global real Stage_2_LifterAndClamperDistance
@@ -223,8 +236,8 @@ global real ConveyorBeltLoadingSpeed = 350
 global real ConveyorBeltSlowSpeed = 50
 global real ConveyorBeltReleaseSpeed = 350
 global real ConveyorBeltUnloadingSpeed = 350
-global int PingPongMode = 0; ! 0 is Off 1 is on
 global int OperationMode; !0=PingPongMode; 1=InlineMode; 2=OfflineMode
+global int PingPongMode = 0; ! 0 is Off 1 is on
 
 !BypassModeBuffer
 global int BypassModeBuffer_WaitTimeToSearch = 10000

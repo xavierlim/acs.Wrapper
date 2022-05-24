@@ -1,3 +1,7 @@
+#/ Controller version = 3.10
+#/ Date = 4/22/2022 5:45 PM
+#/ User remarks = 
+#3
 !Gantry Z Homing
 
 int ZECOffset_ControlWord

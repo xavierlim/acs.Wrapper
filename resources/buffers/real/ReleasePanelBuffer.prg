@@ -1,3 +1,7 @@
+#/ Controller version = 3.10
+#/ Date = 4/22/2022 5:49 PM
+#/ User remarks = 
+#20
 !ReleasePanelBuffer
 
 ERROR_CODE = ERROR_SAFE
@@ -91,13 +95,22 @@ SetDownstreamBoardAvailable:
 if (SmemaFailedBoardMode = SmemaFailedBoardModeNormal)
     ! trigger failed board output to downstream according to FailedBoard flag
     SmemaDownStreamFailedBoardAvailable_Bit = FailedBoard
+	
 elseif (SmemaFailedBoardMode = SmemaFailedBoardModeCustom)
-    ! ignore
+	! trigger failed board and customer outputs to downstream according to FailedBoard flag
+    SmemaDownStreamFailedBoardAvailable_Bit = FailedBoard
+	CustomerDO1Signal_Bit = FailedBoard
+	
 elseif (SmemaFailedBoardMode = SmemaFailedBoardModeNotifyUpstream)
     ! ignore
+	
 elseif (SmemaFailedBoardMode = SmemaFailedBoardModeInverseLogic)
-    ! trigger failed board output to downstream according to FailedBoard flag, inverted
+	! trigger failed board and customer outputs to downstream according to FailedBoard flag
+    ! SmemaDownStreamFailedBoardAvailable_Bit to be inverted
+	
     SmemaDownStreamFailedBoardAvailable_Bit = ^FailedBoard
+	CustomerDO1Signal_Bit = FailedBoard
+
 end
 
 wait 200
@@ -152,13 +165,20 @@ SmemaDownStreamFailedBoardAvailable_Bit = 0
 	
 	if (SmemaFailedBoardMode = SmemaFailedBoardModeNormal)
     SmemaDownStreamFailedBoardAvailable_Bit = 0
+	
 	elseif (SmemaFailedBoardMode = SmemaFailedBoardModeCustom)
-    ! ignore
+    SmemaDownStreamFailedBoardAvailable_Bit = 0
+	CustomerDO1Signal_Bit = 0
+	
 	elseif (SmemaFailedBoardMode = SmemaFailedBoardModeNotifyUpstream)
     ! ignore
+	
 	elseif (SmemaFailedBoardMode = SmemaFailedBoardModeInverseLogic)
     ! trigger failed board output to downstream according to FailedBoard flag, inverted
+	! SmemaDownStreamFailedBoardAvailable_Bit to be inverted
     SmemaDownStreamFailedBoardAvailable_Bit = 1
+	CustomerDO1Signal_Bit = 0
+	
 	end
 
 RET
@@ -214,13 +234,20 @@ SetDownstreamSmemaBoardAvailable:
 if (SmemaFailedBoardMode = SmemaFailedBoardModeNormal)
     ! trigger failed board output to downstream according to FailedBoard flag
     SmemaDownStreamFailedBoardAvailable_Bit = FailedBoard
+	
 elseif (SmemaFailedBoardMode = SmemaFailedBoardModeCustom)
-    ! ignore
+    ! trigger failed board and customer outputs to downstream according to FailedBoard flag
+    SmemaDownStreamFailedBoardAvailable_Bit = FailedBoard
+	CustomerDO1Signal_Bit = FailedBoard
+	
 elseif (SmemaFailedBoardMode = SmemaFailedBoardModeNotifyUpstream)
     ! ignore
+	
 elseif (SmemaFailedBoardMode = SmemaFailedBoardModeInverseLogic)
-    ! trigger failed board output to downstream according to FailedBoard flag, inverted
+    ! trigger failed board and customer outputs to downstream according to FailedBoard flag
+    ! SmemaDownStreamFailedBoardAvailable_Bit to be inverted
     SmemaDownStreamFailedBoardAvailable_Bit = ^FailedBoard
+	CustomerDO1Signal_Bit = FailedBoard
 end
 
 wait 200
