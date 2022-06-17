@@ -10,6 +10,7 @@ global int StopPanelHandling
 global int StopFlag
 global int ConveyorInSimulationMode
 global int ConveyorSimultaneousLoadUnload
+global int ConveyorReleaseToUpstream
 global int SqTriggerSmemaUpStreamMachineReady
 
 global int FailedBoard      ! flag from SQ to indicate releasing board has inspection failure
@@ -174,6 +175,16 @@ global int ConveyorPressureSwitchFeedback_Bit ! done I 3.6
 global int WidthHomeSwitch_Bit ! not used in PBA modification
 global int WidthLimitSwitch_Bit ! not used in PBA modification
 
+!! Smema serial upstream/downstream
+global int SmemaSerialUpStreamBoardPassthrough_Bit
+!global int SmemaSerialUpStreamSpare_Bit
+
+!! Flipper
+global int SmemaFlipperBoardAvailableFromDownstream_Bit
+
+!! Smema reverse upstream release
+global int SmemaReverseUpstreamReadyToReceive_Bit
+
 
 
 !///////////////////////////////////////////////////////////
@@ -205,6 +216,21 @@ global int VacuumChuckGeneratorOnOff_Bit ! done O 2.5
 global int VacuumReleaseChuckOnOff_Bit ! done O 2.6
 global int HighVacummValve ! done O 2.7
 
+!! custom smema outputs
+global int SmemaDownStreamPanelIsTopSide_Bit
+global int SmemaDownStreamPassBoard_Bit
+
+!! Smema serial upstream/downstream
+global int SmemaSerialDownStreamBoardPassthrough_Bit
+!global int SmemaSerialDownStreamSpare_Bit
+
+!! Flipper
+global int SmemaFlipperDownStreamReadyToReceive_Bit
+global int SmemaFlipperRequestFlip_Bit
+global int SmemaFlipperBarcodeFailStatus_Bit
+
+!! Smema reverse upstream release
+global int SmemaReverseUpStreamBoardAvailable_Bit
 
 
 

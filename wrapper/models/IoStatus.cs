@@ -89,11 +89,18 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
         public bool UpstreamBoardAvailableSignal;
         public bool UpstreamFailedBoardAvailableSignal;
         public bool DownstreamMachineReadySignal;
+        public bool SmemaSerialUpStreamBoardPassthrough;
+        public bool SmemaFlipperBoardAvailableFromDownstream;
+        public bool SmemaReverseUpstreamReadyToReceive;
 
         // outputs
         public bool SmemaUpStreamMachineReady;
         public bool DownStreamBoardAvailable;
         public bool SmemaDownStreamFailedBoardAvailable;
+        public bool SmemaDownStreamPanelIsTopSide;
+        public bool SmemaReverseUpStreamBoardAvailable;
+        public bool SmemaFlipperDownStreamReadyToReceive;
+        public bool SmemaSerialDownStreamBoardPassthrough;
     }
 
     public enum AcsIndicatorState

@@ -1,7 +1,3 @@
-#/ Controller version = 3.10
-#/ Date = 4/22/2022 5:47 PM
-#/ User remarks = 
-#13
 !ChangeWidthBuffer
 
 ERROR_CODE = ERROR_SAFE

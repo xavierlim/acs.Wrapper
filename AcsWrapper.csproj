@@ -79,6 +79,7 @@
     <Compile Include="util\AcsUtils.cs" />
     <Compile Include="util\BufferHelper.cs" />
     <Compile Include="wrapper\AcsWrapper.cs" />
+    <Compile Include="wrapper\AcsWrapper.Smema.cs" />
     <Compile Include="wrapper\AcsWrapperFactory.cs" />
     <Compile Include="wrapper\exceptions\AcsException.cs" />
     <Compile Include="wrapper\exceptions\IAcsException.cs" />

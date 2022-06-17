@@ -18,7 +18,7 @@ using CO.Systems.Services.Robot.RobotBase;
 
 namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
 {
-    public class AcsWrapper : IAcsWrapper
+    public partial class AcsWrapper : IAcsWrapper
     {
         private readonly Api api;
         private readonly AcsUtils acsUtils;
@@ -739,20 +739,16 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             acsUtils.WriteVariable(parameters.ConveyorBeltSlowSpeed, "ConveyorBeltSlowSpeed", buffer);
             acsUtils.WriteVariable(parameters.ConveyorBeltReleaseSpeed, "ConveyorBeltReleaseSpeed", buffer);
             acsUtils.WriteVariable(parameters.ConveyorBeltUnloadingSpeed, "ConveyorBeltUnloadingSpeed", buffer);
-            acsUtils.WriteVariable(Convert.ToInt32(parameters.ConveyorSimultaneousLoadUnload), "ConveyorSimultaneousLoadUnload", buffer);
-            
+
             acsUtils.WriteVariable(Convert.ToInt32(parameters.OperationMode), "OperationMode", buffer);
+            acsUtils.WriteVariable(Convert.ToInt32(parameters.ConveyorSimultaneousLoadUnload), "ConveyorSimultaneousLoadUnload", buffer);
+            acsUtils.WriteVariable(Convert.ToInt32(parameters.ConveyorReleaseToUpstream), "ConveyorReleaseToUpstream", buffer);
             acsUtils.WriteVariable(parameters.SmemaFailedBoardMode, "SmemaFailedBoardMode", buffer);
 
             acsUtils.WriteVariable(parameters.ConveyorDirection, "ConveyorDirection", buffer);
             acsUtils.WriteVariable(parameters.ConveyorWaitTimeToAlign, "InternalMachineLoadBuffer_WaitTimeToAlign", buffer);
-
-            // TODO: enable?
-            // acsUtils.WriteVariable(parameters.DistanceBetweenEntryAndStopSensor, "DistanceBetweenEntryAndStopSensor", buffer);
             acsUtils.WriteVariable(parameters.DistanceBetweenSlowPositionAndStopSensor, "DistanceBetweenSlowPositionAndStopSensor", buffer);
             acsUtils.WriteVariable(parameters.DistanceBetweenSlowPositionAndEntrySensor, "DistanceBetweenSlowPositionAndEntrySensor", buffer);
-            // acsUtils.WriteVariable(parameters.DistanceBetweenStopSensorAndExitSensor, "DistanceBetweenStopSensorAndExitSensor", buffer);
-            // acsUtils.WriteVariable(parameters.DistanceBetweenSlowPositionAndExitSensor, "DistanceBetweenSlowPositionAndExitSensor", buffer);
 
             acsUtils.WriteVariable(parameters.Stage_1_LifterSpeed, "Stage_1_LifterSpeed", buffer);
             acsUtils.WriteVariable(parameters.Stage_2_LifterSpeed, "Stage_2_LifterSpeed", buffer);
@@ -2227,20 +2223,6 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
             };
         }
 
-        public SmemaIo GetSmemaIoStatus()
-        {
-            return new SmemaIo
-            {
-                UpstreamBoardAvailableSignal = Convert.ToBoolean(acsUtils.ReadVar("UpstreamBoardAvailableSignal_Bit")),
-                UpstreamFailedBoardAvailableSignal = Convert.ToBoolean(acsUtils.ReadVar("UpstreamFailedBoardAvailableSignal_Bit")),
-                DownstreamMachineReadySignal = Convert.ToBoolean(acsUtils.ReadVar("DownstreamMachineReadySignal_Bit")),
-
-                SmemaUpStreamMachineReady = Convert.ToBoolean(acsUtils.ReadVar("SmemaUpStreamMachineReady_Bit")),
-                DownStreamBoardAvailable = Convert.ToBoolean(acsUtils.ReadVar("DownStreamBoardAvailable_Bit")),
-                SmemaDownStreamFailedBoardAvailable = Convert.ToBoolean(acsUtils.ReadVar("SmemaDownStreamFailedBoardAvailable_Bit")),
-            };
-        }
-
         public bool IsBypassSignalSet()
         {
             return Convert.ToBoolean(acsUtils.ReadVar("ByPassR2L")) || Convert.ToBoolean(acsUtils.ReadVar("ByPassL2R"));
@@ -2358,44 +2340,6 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
                     acsUtils.WriteVariable(1, "StopButtonLight_Bit");
                     break;
             }
-        }
-
-        public void SetPartialManualSmemaMode()
-        {
-            acsUtils.WriteVariable(1, "SqTriggerSmemaUpStreamMachineReady");
-        }
-
-        public void ResetPartialManualSmemaMode()
-        {
-            acsUtils.WriteVariable(0, "SqTriggerSmemaUpStreamMachineReady");
-        }
-
-        public void SetMachineReady()
-        {
-            acsUtils.WriteVariable(1, "SmemaUpStreamMachineReady_Bit");
-        }
-
-        public void ResetMachineReady()
-        {
-            acsUtils.WriteVariable(0, "SmemaUpStreamMachineReady_Bit");
-        }
-
-        public void SetSmemaDownStreamFailedBoardAvailable() {
-            acsUtils.WriteVariable(1, "SmemaDownStreamFailedBoardAvailable_Bit");
-        }
-
-        public void ResetSmemaDownStreamFailedBoardAvailable() {
-            acsUtils.WriteVariable(0, "SmemaDownStreamFailedBoardAvailable_Bit");
-        }
-
-        public void SetFailedBoard()
-        {
-            acsUtils.WriteVariable(1, "FailedBoard");
-        }
-
-        public void ResetFailedBoard()
-        {
-            acsUtils.WriteVariable(0, "FailedBoard");
         }
 
         public bool IsConveyorAxisEnable()

@@ -1,7 +1,3 @@
-#/ Controller version = 3.10
-#/ Date = 4/22/2022 5:48 PM
-#/ User remarks = 
-#17
 !LoadPanelBuffer
 	!LoadPanelBuffer runs at every start button
 

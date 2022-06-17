@@ -493,12 +493,30 @@ namespace CO.Systems.Services.Acs.AcsWrapper.mockery
         {
         }
 
+        public void SetPanelIsTopSide() {
+        }
+
+        public void ResetPanelIsTopSide() {
+        }
+
+        public void SetPassBoard() {
+        }
+
+        public void ResetPassBoard() {
+        }
+
         public void SetSmemaDownStreamFailedBoardAvailable()
         {
         }
 
         public void ResetSmemaDownStreamFailedBoardAvailable()
         {
+        }
+
+        public void SetDownStreamSerialBoardPassThrough() {
+        }
+
+        public void ResetDownStreamSerialBoardPassThrough() {
         }
 
         public void SetFailedBoard()

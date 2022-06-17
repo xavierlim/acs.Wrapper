@@ -1,7 +1,3 @@
-#/ Controller version = 3.10
-#/ Date = 4/22/2022 5:51 PM
-#/ User remarks = 
-#25
 !! Buffer for simultaneous load and unload
 
 global int ReleasePanelStateError,ReleasePanelFreeError,ReleasePanelExitError,ReleasePanelReleaseError,ReleasePanelSmemaError

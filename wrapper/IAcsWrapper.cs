@@ -187,12 +187,22 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         void SetTowerLightBuzzer(AcsIndicatorState state);
         void SetStartButtonIndicator(AcsIndicatorState state);
         void SetStopButtonIndicator(AcsIndicatorState state);
+
+
+        #region Smema
+        
         void SetPartialManualSmemaMode();
         void ResetPartialManualSmemaMode();
         void SetMachineReady();
         void ResetMachineReady();
+        void SetPanelIsTopSide();
+        void ResetPanelIsTopSide();
+        void SetPassBoard();
+        void ResetPassBoard();
         void SetSmemaDownStreamFailedBoardAvailable();
         void ResetSmemaDownStreamFailedBoardAvailable();
+        void SetDownStreamSerialBoardPassThrough();
+        void ResetDownStreamSerialBoardPassThrough();
         
         /// <summary>
         /// set failed board flag
@@ -204,6 +214,9 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper
         /// </summary>
         void ResetFailedBoard();
 
+        #endregion
+
+        
         bool IsConveyorAxisEnable();
         bool IsConveyorWidthAxisEnable();
         void HomeConveyorWidthAxis(HomeConveyorWidthParameters parameter);

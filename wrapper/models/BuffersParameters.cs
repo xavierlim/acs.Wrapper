@@ -1,4 +1,6 @@
 
+using CO.Systems.Services.Configuration.Settings;
+
 namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
 {
     public class BypassModeBufferParameters
@@ -104,23 +106,31 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
 
     public class DBufferParameters
     {
-        public bool ConveyorSimultaneousLoadUnload { get; set; }
         public double ConveyorBeltAcquireSpeed { get; set; }
         public double ConveyorBeltLoadingSpeed { get; set; }
         public double ConveyorBeltSlowSpeed { get; set; }
         public double ConveyorBeltReleaseSpeed { get; set; }
         public double ConveyorBeltUnloadingSpeed { get; set; }
-        public double PanelLength { get; set; }
-        public OperationMode OperationMode { get; set; }
+        
+        public ConveyorOperationMode OperationMode { get; set; }
+        public bool ConveyorSimultaneousLoadUnload { get; set; }
+        public bool ConveyorReleaseToUpstream { get; set; }
+        
+        /// <summary>
+        /// failed board mode with value definition following <see cref="IConveyorControlSetting.EnableFailedBoardSmemaEx"/>
+        /// 0: disable
+        /// 1: when inspection failed, trigger failed board output to downstream 
+        /// 2: when inspection failed, trigger failed board and customer outputs to downstream
+        /// 3: when inspection failed, trigger failed board output to upstream
+        /// 4: when inspection failed, trigger failed board and customer outputs to downstream, failed board output to be inverted
+        /// </summary>
         public int SmemaFailedBoardMode { get; set; }
-
+        
         public ConveyorDirection ConveyorDirection { get; set; }
         public ushort ConveyorWaitTimeToAlign { get; set; }
 
         public double DistanceBetweenEntryAndStopSensor { get; set; }
         public double DistanceBetweenSlowPositionAndStopSensor { get; set; }
-        public double DistanceBetweenStopSensorAndExitSensor { get; set; }
-        public double DistanceBetweenSlowPositionAndExitSensor { get; set; }
         public double DistanceBetweenSlowPositionAndEntrySensor { get; set; }
 
         public double Stage_1_LifterSpeed { get; set; }
@@ -147,11 +157,14 @@ namespace CO.Systems.Services.Acs.AcsWrapper.wrapper.models
         public double Decel { set; get; }
     }
     
-    public enum OperationMode {
+    /// <summary>
+    /// defined conveyor operation mode on ACS controller
+    /// </summary>
+    public enum ConveyorOperationMode {
         PingPongMode = 0,
         InlineMode = 1,
         OfflineMode = 2,
-        SerialUpstream = 3,
-        SerialDownstream = 4,
+        SmemaSerialUpstream = 3,
+        SmemaSerialDownstream = 4,
     }
 }
